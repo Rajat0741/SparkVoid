@@ -43,3 +43,5 @@ next-env.d.ts
 .claude
 .agents
 PRD.md
+
+!.env.example
