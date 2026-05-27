@@ -16,7 +16,7 @@ export default function TestPage() {
       console.log("session:", session);
       
     }
-  }, [isPending , error]);
+  }, [isPending , error, session]);
   
   if (isPending) {
     return (

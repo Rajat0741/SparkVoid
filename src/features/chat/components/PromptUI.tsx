@@ -7,7 +7,7 @@ import {
   PromptInputSubmit,
   type PromptInputMessage,
 } from "@/components/ai-elements/prompt-input";
-import { SendMessageFunctionType } from "@/types/ai-elements";
+import { SendMessageFunctionType } from "@/types";
 
 export default function PromptUI({ sendMessage, className }: { sendMessage: SendMessageFunctionType; className?: string }) {
   const handleSubmit = (message: PromptInputMessage) => sendMessage(message);
