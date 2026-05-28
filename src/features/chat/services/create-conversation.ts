@@ -3,17 +3,18 @@
 import { db } from "@/lib/db"
 import { conversations, NewConversationType } from "@/lib/db/schema"
 
-export const createConversation = async (userId: string, data: NewConversationType) => {
+export const createConversation = async ( data: NewConversationType) => {
     try {
-        const { id, title } = data;
+        const { title } = data;
 
         const newConversation = await db
             .insert(conversations)
             .values({
-                id,
-                userId,
+                id: data.id,
+                userId: data.userId,
                 title,
             })
+            .onConflictDoNothing()
             .returning();
 
         return newConversation[0];
