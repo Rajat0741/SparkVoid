@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db"
 import { conversations } from "@/lib/db/schema"
-import { eq } from "drizzle-orm"
+import { desc, eq } from "drizzle-orm"
 import { ConversationType } from "@/lib/db/schema"
 
 export const getConversations = async (userId: string) => {
@@ -10,7 +10,8 @@ export const getConversations = async (userId: string) => {
         const retrievedConversations: ConversationType[] = await db
             .select()
             .from(conversations)
-            .where(eq(conversations.userId, userId));
+            .where(eq(conversations.userId, userId))
+            .orderBy(desc(conversations.createdAt));
 
         return retrievedConversations;
     } catch (error) {

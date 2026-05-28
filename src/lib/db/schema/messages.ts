@@ -10,7 +10,7 @@ export type roleTypes = z.infer<typeof roleEnum>;
 
 export const messages = pgTable('messages', {
   id:             text('id').primaryKey(),
-  conversationId: text('conversation_id').notNull().references(() => conversations.id),
+  conversationId: text('conversation_id').notNull().references(() => conversations.id, { onDelete: 'cascade' }),
   role:           roleEnum('role').notNull(),
   metadata:       jsonb('metadata').$type<MetadataType>(),
   parts:          jsonb('parts').notNull().default([]).$type<UIMessagePart<UIDataTypes, UITools>[]>(),
