@@ -19,7 +19,7 @@ export async function streamAIResponse(
   messages: CustomUIMessage[],
   conversationId: string,
 ): Promise<Response> {
-  const model = google("gemini-2.5-flash-preview-05-20");
+  const model = google("gemini-3.1-flash-lite");
 
   const result = streamText({
     model,

@@ -1,6 +1,6 @@
 import { MetadataType } from '@/types';
 import { UIDataTypes, UIMessagePart, UITools } from 'ai';
-import { pgTable, text, timestamp, pgEnum, jsonb, index, integer } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, pgEnum, jsonb, index } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
 import { conversations } from './conversations';
@@ -9,7 +9,7 @@ export const roleEnum = pgEnum('role', ['system', 'user', 'assistant']);
 export type roleTypes = z.infer<typeof roleEnum>;
 
 export const messages = pgTable('messages', {
-  id:             integer('id').generatedAlwaysAsIdentity().primaryKey(),
+  id:             text('id').primaryKey(),
   conversationId: text('conversation_id').notNull().references(() => conversations.id),
   role:           roleEnum('role').notNull(),
   metadata:       jsonb('metadata').$type<MetadataType>(),

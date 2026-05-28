@@ -3,7 +3,7 @@ import { CustomUIMessage } from "@/types";
 
 export function toUIMessage(message: MessageType[]): CustomUIMessage[] {
     return message.map((msg) => ({
-        id: msg.id.toString(),
+        id: msg.id,
         role: msg.role,
         parts: msg.parts,
         metadata: msg.metadata ?? undefined,
