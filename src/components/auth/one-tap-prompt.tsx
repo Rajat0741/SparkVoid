@@ -15,7 +15,7 @@ export function OneTapPrompt() {
         await authClient.oneTap({
           fetchOptions: {
             onSuccess: () => {
-              router.push("/test");
+              router.push("/chat");
             },
           },
         });

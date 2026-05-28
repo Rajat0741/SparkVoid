@@ -22,7 +22,7 @@ export default function SignInPage() {
           },
         },
         fetchOptions: {
-          onSuccess: () => router.push("/test"),
+          onSuccess: () => router.push("/chat"),
         },
       });
     }

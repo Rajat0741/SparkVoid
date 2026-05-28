@@ -1,25 +1,15 @@
-"use client"
+"use client";
+
 import { authClient } from "@/lib/auth-client";
+import { OneTapPrompt } from "@/components/auth/one-tap-prompt";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 export default function Home() {
-  
-  const router = useRouter();
-
-  useEffect(() => {
-    authClient.oneTap({
-      fetchOptions: {
-        onSuccess: () => {
-          router.push("/test");
-        }
-      }
-    });
-  }, [router]);
+  const { data: session, isPending } = authClient.useSession();
 
   return (
     <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
+      {!session && !isPending && <OneTapPrompt />}
       <main className="flex flex-1 w-full max-w-4xl flex-col items-center justify-center px-6 py-24">
         <div className="flex flex-col items-center gap-8 text-center max-w-2xl">
           <div className="space-y-4">
@@ -41,7 +31,7 @@ export default function Home() {
               Get Started
             </Link>
             <Link
-              href="/test"
+              href="/chat"
               className="inline-flex h-12 items-center justify-center rounded-full border border-zinc-300 px-8 text-base font-medium text-zinc-900 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-50 dark:hover:bg-zinc-900"
             >
               Try Demo
