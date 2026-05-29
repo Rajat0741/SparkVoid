@@ -11,7 +11,7 @@ export default async function ChatLayout({ children }: { children: React.ReactNo
   try {
     const sessionHeaders = await headers();
     session = await getUserSession(sessionHeaders);
-  } catch(error) {
+  } catch {
     redirect("/login");
   }
 

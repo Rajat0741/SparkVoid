@@ -49,7 +49,7 @@ export function SidebarConversations({ conversations }: SidebarConversationsProp
                 >
                   <ItemContent>
                     <ItemTitle className="text-sm font-sans truncate">
-                      {conv.title === "title" ? "New Chat" : conv.title}
+                      {conv.title}
                     </ItemTitle>
                   </ItemContent>
                 </Item>

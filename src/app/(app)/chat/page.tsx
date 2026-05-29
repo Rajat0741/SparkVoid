@@ -1,6 +1,12 @@
-import { redirect } from "next/navigation";
 import { generateId } from "ai";
+import ChatInterface from "@/features/chat/components/ChatInterface";
 
 export default function ChatRootPage() {
-  redirect(`/chat/${generateId()}`);
+  const newId = generateId();
+  return (
+    <ChatInterface 
+      conversationId={newId} 
+      initialMessages={[]} 
+    />
+  );
 }

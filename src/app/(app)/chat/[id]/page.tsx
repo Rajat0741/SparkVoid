@@ -1,6 +1,6 @@
 import { getConversationHistory } from "@/features/chat/services/get-messages";
 import { toUIMessage } from "@/utils/toUIMessage";
-import ChatClientPage from "./chat-client-page";
+import ChatInterface from "@/features/chat/components/ChatInterface";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -16,9 +16,9 @@ export default async function ConversationPage({ params }: PageProps) {
   const initialMessages = toUIMessage(rawHistory);
 
   return (
-    <ChatClientPage 
+    <ChatInterface 
       conversationId={id} 
-      initialMessages={initialMessages} 
+      initialMessages={initialMessages}
     />
   );
 }
