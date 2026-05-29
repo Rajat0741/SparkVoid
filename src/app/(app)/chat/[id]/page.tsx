@@ -1,6 +1,6 @@
 import { getConversationHistory } from "@/features/chat/services/get-messages";
 import { toUIMessage } from "@/utils/toUIMessage";
-import ChatInterface from "@/features/chat/components/ChatInterface";
+import ChatInterface from "@/features/chat/components/layout/ChatInterface";
 
 interface PageProps {
   params: Promise<{ id: string }>;
