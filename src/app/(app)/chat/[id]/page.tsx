@@ -17,6 +17,7 @@ export default async function ConversationPage({ params }: PageProps) {
 
   return (
     <ChatInterface 
+      key={id}
       conversationId={id} 
       initialMessages={initialMessages}
     />

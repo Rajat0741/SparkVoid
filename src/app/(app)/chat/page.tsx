@@ -5,8 +5,9 @@ export default function ChatRootPage() {
   const newId = generateId();
   return (
     <ChatInterface 
+      key={newId}
       conversationId={newId} 
-      initialMessages={[]} 
+      initialMessages={[]}
     />
   );
 }

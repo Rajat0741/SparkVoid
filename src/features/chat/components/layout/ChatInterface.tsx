@@ -4,9 +4,12 @@ import NewChatView from "./NewChatView";
 import ChatConversation from "./ChatConversation";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { CustomUIMessage } from "@/types";
 import { UIMessage, UIDataTypes, UITools } from "ai";
+import { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { getConversationQueryOptions } from "@/features/sidebar/services/get-conversations-query";
 
 export default function ChatInterface({
   conversationId,
@@ -16,11 +19,10 @@ export default function ChatInterface({
   initialMessages: CustomUIMessage[];
 }) {
   const pathname = usePathname();
-  const router = useRouter();
+  const queryClient = useQueryClient();
 
   const { messages, sendMessage, status, error } = useChat({
     id: conversationId,
-    onFinish: () => router.refresh(),
     messages: initialMessages as UIMessage<unknown, UIDataTypes, UITools>[],
     transport: new DefaultChatTransport({
       api: "/api/chat",
@@ -33,9 +35,15 @@ export default function ChatInterface({
     }),
   });
 
+  useEffect(() => {
+    if (status === "streaming") {
+      queryClient.invalidateQueries({ queryKey: getConversationQueryOptions().queryKey });
+    }
+  }, [status, queryClient]);
+
   const handleSendMessage: typeof sendMessage = async (message, options) => {
     if (pathname === "/chat") {
-      window.history.replaceState(null, "", `/chat/${conversationId}`);
+      history.pushState(null, "", `/chat/${conversationId}`);
     }
     return sendMessage(message, options);
   };

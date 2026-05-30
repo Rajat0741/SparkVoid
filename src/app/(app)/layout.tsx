@@ -4,7 +4,6 @@ import { headers } from "next/headers";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/features/sidebar/components/AppSidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { getConversations } from "@/features/sidebar/services/get-conversations";
 
 export default async function ChatLayout({ children }: { children: React.ReactNode }){
   let session = null;
@@ -19,12 +18,10 @@ export default async function ChatLayout({ children }: { children: React.ReactNo
     redirect("/login");
   }
 
-  const conversationsList = await getConversations(session.user.id);
-
   return (
     <SidebarProvider>
       <TooltipProvider>
-        <AppSidebar user={session.user} conversations={conversationsList} />
+        <AppSidebar user={session.user} />
         <SidebarInset className="flex flex-col h-screen overflow-hidden">
           {children}
         </SidebarInset>

@@ -3,7 +3,6 @@ import { SidebarHeaderBrand } from "./SidebarHeaderBrand";
 import { SidebarMenuActions } from "./SidebarMenuActions";
 import { SidebarConversations } from "./SidebarConversations";
 import { SidebarUserFooter } from "./SidebarUserFooter";
-import { ConversationType } from "@/lib/db/schema";
 
 interface AppSidebarProps {
   user: {
@@ -12,10 +11,9 @@ interface AppSidebarProps {
     email: string;
     image?: string | null;
   };
-  conversations: ConversationType[];
 }
 
-export function AppSidebar({ user, conversations }: AppSidebarProps) {
+export function AppSidebar({ user }: AppSidebarProps) {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
@@ -24,7 +22,7 @@ export function AppSidebar({ user, conversations }: AppSidebarProps) {
       <SidebarContent className="flex flex-col min-h-0 justify-between">
         <div className="flex flex-col min-h-0 w-full">
           <SidebarMenuActions />
-          <SidebarConversations conversations={conversations} />
+          <SidebarConversations />
         </div>
       </SidebarContent>
       <SidebarFooter>

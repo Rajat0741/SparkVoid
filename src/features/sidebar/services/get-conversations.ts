@@ -1,19 +1,33 @@
-import { db } from "@/lib/db"
-import { conversations } from "@/lib/db/schema"
-import { desc, eq } from "drizzle-orm"
-import { ConversationType } from "@/lib/db/schema"
+import { db } from "@/lib/db";
+import { conversations } from "@/lib/db/schema";
+import { desc, eq } from "drizzle-orm";
+import { ConversationType } from "@/lib/db/schema";
+import { queryOptions } from "@tanstack/react-query";
 
 export const getConversations = async (userId: string) => {
-    try {
-        const retrievedConversations: ConversationType[] = await db
-            .select()
-            .from(conversations)
-            .where(eq(conversations.userId, userId))
-            .orderBy(desc(conversations.createdAt));
+  try {
+    const retrievedConversations: ConversationType[] = await db
+      .select()
+      .from(conversations)
+      .where(eq(conversations.userId, userId))
+      .orderBy(desc(conversations.createdAt));
 
-        return retrievedConversations;
-    } catch (error) {
-        console.error("Failed to get conversations:", error);
-        throw new Error("Failed to get conversations");
-    }
-}
+    return retrievedConversations;
+  } catch (error) {
+    console.error("Failed to get conversations:", error);
+    throw new Error("Failed to get conversations");
+  }
+};
+
+export const getConversationQueryFunction = async (): Promise<
+  ConversationType[]
+> => {
+  const response: Response = await fetch(`/api/conversations`);
+  return await response.json();
+};
+
+export const getConversationQueryOptions = () =>
+  queryOptions({
+    queryKey: ["conversations"],
+    queryFn: () => getConversationQueryFunction(),
+  });
