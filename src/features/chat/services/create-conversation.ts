@@ -1,5 +1,6 @@
 import { db } from "@/lib/db"
 import { conversations, NewConversationType } from "@/lib/db/schema"
+import { AppError } from "@/utils/app-error";
 
 export const createConversation = async ( data: NewConversationType) => {
     try {
@@ -19,6 +20,6 @@ export const createConversation = async ( data: NewConversationType) => {
         
     } catch (error) {
         console.error("Failed to create conversation:", error);
-        throw new Error("Failed to create conversation");
+        throw new AppError("Failed to create conversation", 500);
     }
 }

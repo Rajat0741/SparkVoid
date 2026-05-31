@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db"
 import { messages, MessageType } from "@/lib/db/schema"
+import { AppError } from "@/utils/app-error"
 import { asc, eq } from "drizzle-orm"
 
 export const getConversationHistory = async (conversationId: string) => {
@@ -15,6 +16,6 @@ export const getConversationHistory = async (conversationId: string) => {
         return conversationHistory;
     } catch (error) {
         console.error("Failed to get conversation history:", error);
-        throw new Error("Failed to get conversation history");
+        throw new AppError("Failed to get conversation history", 500);
     }
 }
