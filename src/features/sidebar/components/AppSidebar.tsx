@@ -25,7 +25,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
           <SidebarConversations />
         </div>
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="border-t">
         <SidebarUserFooter user={user} />
       </SidebarFooter>
     </Sidebar>

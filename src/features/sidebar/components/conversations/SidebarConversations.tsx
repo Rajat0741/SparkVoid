@@ -19,7 +19,7 @@ export function SidebarConversations() {
   }
 
   return (
-    <div className="flex-1 flex flex-col min-h-0 border-y">
+    <div className="flex-1 flex flex-col min-h-0 border-t">
       <span className="px-5 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider font-sans">
         Conversations
       </span>
