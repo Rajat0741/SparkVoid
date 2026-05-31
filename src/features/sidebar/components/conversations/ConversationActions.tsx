@@ -1,6 +1,7 @@
 "use client";
 
-import { MoreHorizontal, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { MoreHorizontal } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -12,54 +13,87 @@ import { deleteConversationAction } from "../../actions/delete-conversation-acti
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter, usePathname } from "next/navigation";
 import { toast } from "sonner";
+import type { ConversationType } from "@/lib/db/schema";
+import { conversationActionItems } from "./conversation-actions/action-items";
+import { RenameDialog } from "./conversation-actions/RenameDialog";
+import { ShareDialog } from "./conversation-actions/ShareDialog";
 
 interface ConversationActionsProps {
-  conversationId: string;
+  conversation: ConversationType;
 }
 
 export function ConversationActions({
-  conversationId,
+  conversation,
 }: ConversationActionsProps) {
   const router = useRouter();
   const pathname = usePathname();
   const queryClient = useQueryClient();
 
-  const { execute, isExecuting } = useAction(deleteConversationAction, {
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["conversations"] });
-      toast.success("Conversation deleted");
+  const [isRenameOpen, setIsRenameOpen] = useState(false);
+  const [isShareOpen, setIsShareOpen] = useState(false);
 
-      if (pathname === `/chat/${conversationId}`) {
-        router.push("/chat");
-      }
-    },
+  const { execute: executeDelete, isExecuting: isDeleting } = useAction(
+    deleteConversationAction,
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["conversations"] });
+        toast.success("Conversation deleted");
+        if (pathname === `/chat/${conversation.id}`) {
+          router.push("/chat");
+        }
+      },
+      onError: () => {
+        toast.error("Failed to delete conversation");
+      },
+    }
+  );
 
-    onError: () => {
-      toast.error("Failed to delete conversation");
-    },
-  });
+  const dialogHandlers: Record<string, () => void> = {
+    rename: () => setIsRenameOpen(true),
+    share: () => setIsShareOpen(true),
+    delete: () => executeDelete({ conversationId: conversation.id }),
+  };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger onClick={(e) => e.stopPropagation()}>
-        <div
-          role="button"
-          tabIndex={0}
-          className="flex items-center justify-center h-6 w-6 rounded hover:bg-sidebar-accent-foreground/10"
-        >
-          <MoreHorizontal className="h-4 w-4" />
-        </div>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem
-          variant="destructive"
-          disabled={isExecuting}
-          onClick={() => execute({ conversationId })}
-        >
-          <Trash2 className="h-4 w-4" />
-          Delete
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger onClick={(e) => e.stopPropagation()}>
+          <div
+            role="button"
+            tabIndex={0}
+            className="flex items-center justify-center h-6 w-6 rounded hover:bg-sidebar-accent-foreground/10 cursor-pointer focus-visible:outline-hidden"
+          >
+            <MoreHorizontal className="h-4 w-4" />
+          </div>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          {conversationActionItems.map((item) => (
+            <DropdownMenuItem
+              key={item.key}
+              variant={item.variant}
+              disabled={item.key === "delete" && isDeleting}
+              onClick={(e) => {
+                e.stopPropagation();
+                dialogHandlers[item.key]();
+              }}
+            >
+              <item.icon className="mr-2 h-4 w-4" />
+              {item.label}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <RenameDialog
+        conversation={conversation}
+        open={isRenameOpen}
+        onOpenChange={setIsRenameOpen}
+      />
+      <ShareDialog
+        conversation={conversation}
+        open={isShareOpen}
+        onOpenChange={setIsShareOpen}
+      />
+    </>
   );
 }
