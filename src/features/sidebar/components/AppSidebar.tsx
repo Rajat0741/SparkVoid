@@ -1,7 +1,7 @@
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from "@/components/ui/sidebar";
 import { SidebarHeaderBrand } from "./SidebarHeaderBrand";
 import { SidebarMenuActions } from "./SidebarMenuActions";
-import { SidebarConversations } from "./SidebarConversations";
+import { SidebarConversations } from "./conversations/SidebarConversations";
 import { SidebarUserFooter } from "./SidebarUserFooter";
 
 interface AppSidebarProps {

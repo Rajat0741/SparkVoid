@@ -2,7 +2,6 @@ import { db } from "@/lib/db";
 import { conversations } from "@/lib/db/schema";
 import { desc, eq } from "drizzle-orm";
 import { ConversationType } from "@/lib/db/schema";
-import { queryOptions } from "@tanstack/react-query";
 
 export const getConversations = async (userId: string) => {
   try {
@@ -18,16 +17,3 @@ export const getConversations = async (userId: string) => {
     throw new Error("Failed to get conversations");
   }
 };
-
-export const getConversationQueryFunction = async (): Promise<
-  ConversationType[]
-> => {
-  const response: Response = await fetch(`/api/conversations`);
-  return await response.json();
-};
-
-export const getConversationQueryOptions = () =>
-  queryOptions({
-    queryKey: ["conversations"],
-    queryFn: () => getConversationQueryFunction(),
-  });
