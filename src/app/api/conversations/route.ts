@@ -6,9 +6,6 @@ export async function GET(request: Request) {
   try {
 
     const userSession = await getUserSession(request.headers);
-    if (!userSession) {
-      throw new AppError("Unauthorized", 401);
-    }
 
     const conversations = await getConversations(userSession.session.userId);
     return Response.json({ conversations });

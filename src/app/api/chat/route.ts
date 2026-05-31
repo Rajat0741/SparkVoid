@@ -1,6 +1,6 @@
 import { AppError } from "@/utils/app-error";
-import { prepareChatRequest } from "@/features/chat/preparation/prepare-chat-request";
-import { streamAIResponse } from "@/features/chat/streaming/stream-ai-response";
+import { prepareChatRequest } from "@/features/chat/pipeline/preparation/prepare-chat-request";
+import { streamAIResponse } from "@/features/chat/pipeline/streaming/stream-ai-response";
 
 export async function POST(request: Request) {
   try {

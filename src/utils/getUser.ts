@@ -8,7 +8,7 @@ type Session = typeof auth.$Infer.Session;
 /**
 * Pass req.headers when calling getSession in route handlers.
 */
-export const getUserSession = cache(async (headersObj ? : Headers): Promise < Session | null > => {
+export const getUserSession = cache(async (headersObj ? : Headers): Promise < Session > => {
 	const headersToUse = headersObj ?? await headers();
 	const userSession = await auth.api.getSession({ headers: headersToUse });
     if (!userSession || !userSession.user) {

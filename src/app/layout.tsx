@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
 import QueryProvider from "@/lib/providers/QueryProvider";
+import { Toaster } from "@/components/ui/sonner";
 
 const oxanium = Oxanium({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -47,7 +48,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <QueryProvider>{children}</QueryProvider>
+          <QueryProvider>
+  {children}
+  <Toaster />
+</QueryProvider>
         </ThemeProvider>
       </body>
     </html>

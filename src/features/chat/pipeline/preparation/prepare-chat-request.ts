@@ -37,10 +37,6 @@ export async function prepareChatRequest(
 
   const userSession = await getUserSession(request.headers);
 
-  if (!userSession) {
-    throw new AppError("Unauthorized", 401);
-  }
-
   const newConversationData: NewConversationType = {
     id: conversationId,
     title: "title",
