@@ -1,68 +1,52 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth-client";
+import { motion } from "motion/react";
+import { Sparkles } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { OneTapPrompt } from "@/components/auth/one-tap-prompt";
+import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
 
 export default function SignInPage() {
   const router = useRouter();
-  const buttonRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (buttonRef.current) {
-      authClient.oneTap({
-        button: {
-          container: buttonRef.current,
-          config: {
-            theme: "outline",
-            size: "large",
-            type: "standard",
-            text: "signin_with",
-          },
-        },
-        fetchOptions: {
-          onSuccess: () => router.push("/chat"),
-        },
-      });
-    }
-  }, [router]);
 
   return (
-    <div className="flex min-h-dvh flex-col items-center justify-center bg-background px-4">
-      <div className="w-full max-w-sm rounded-xl border bg-card p-8 shadow-sm">
-        <div className="flex flex-col items-center gap-6 text-center">
-          <div className="space-y-2">
+    <div className="relative flex min-h-dvh flex-col items-center justify-center overflow-hidden bg-background px-4">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,oklch(0.7_0.15_280/0.08),transparent_60%)] dark:bg-[radial-gradient(ellipse_at_top,oklch(0.55_0.2_280/0.18),transparent_60%)]"
+      />
+
+      <OneTapPrompt onSuccess={() => router.push("/chat")} />
+
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35, ease: "easeOut" }}
+        className="relative z-10 w-full max-w-sm rounded-xl border bg-card p-8 shadow-sm"
+      >
+        <div className="flex flex-col items-center gap-8 text-center">
+          <div className="flex items-center gap-2">
+            <Sparkles className="size-5 shrink-0 text-amber-500 animate-pulse" />
             <h1
               className="text-2xl font-bold tracking-tight text-foreground"
               style={{ fontFamily: "var(--font-sans)" }}
             >
-              Welcome to{" "}
-              <span className="text-foreground">SparkVoid AI</span>
+              SparkVoid AI
             </h1>
-            <p className="text-sm text-muted-foreground">
-              Sign in to continue to your conversations
-            </p>
           </div>
 
           <div className="flex w-full flex-col items-center gap-3">
-            <div ref={buttonRef} className="w-full [&>div]:w-full" />
-            <p className="text-xs text-muted-foreground">
-              By continuing, you agree to our{" "}
-              <Link href="/terms" className="underline underline-offset-2 hover:text-foreground">
-                Terms
-              </Link>{" "}
-              and{" "}
-              <Link href="/privacy" className="underline underline-offset-2 hover:text-foreground">
-                Privacy Policy
-              </Link>
-            </p>
+            <GoogleSignInButton callbackURL="/chat" />
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      <p className="mt-6 text-xs text-muted-foreground">
-        <Link href="/" className="underline underline-offset-2 hover:text-foreground">
+      <p className="relative z-10 mt-6 text-xs text-muted-foreground">
+        <Link
+          href="/"
+          className="underline underline-offset-2 hover:text-foreground"
+        >
           Back to home
         </Link>
       </p>
