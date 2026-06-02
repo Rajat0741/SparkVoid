@@ -1,6 +1,11 @@
 allowBuilds:
+  core-js: set this to true or false
+  cwebp-bin: set this to true or false
   esbuild: true
+  gifsicle: set this to true or false
+  jpegtran-bin: set this to true or false
   msw: true
+  pngquant-bin: set this to true or false
   sharp: true
   unrs-resolver: true
 ignoredBuiltDependencies:

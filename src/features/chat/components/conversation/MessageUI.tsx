@@ -10,7 +10,8 @@ import {
   ReasoningContent,
   ReasoningTrigger,
 } from "@/components/ai-elements/reasoning";
-import { UIDataTypes, UITools, UIMessage } from "ai";
+import { UIDataTypes, UITools, UIMessage, DynamicToolUIPart } from "ai";
+import { ToolInvocation } from "./ToolPart";
 
 export default function MessageUI({
   messages,
@@ -40,6 +41,19 @@ export default function MessageUI({
                     </Reasoning>
                   );
                 default:
+                  if (
+                    typeof part.type === "string" &&
+                    part.type.startsWith("tool-")
+                  ) {
+                    return (
+                      <ToolInvocation
+                        key={`${message.id}-${i}`}
+                        messageId={message.id}
+                        index={i}
+                        part={part as unknown as DynamicToolUIPart}
+                      />
+                    );
+                  }
                   return null;
               }
             })}

@@ -5,12 +5,14 @@ import {
   createGoogleGenerativeAI,
   GoogleGenerativeAIProviderOptions,
 } from "@ai-sdk/google";
-import { convertToModelMessages, generateId, streamText } from "ai";
+import { convertToModelMessages, generateId, stepCountIs, streamText } from "ai";
+import { FirecrawlTools } from 'firecrawl-aisdk';
 
 const google = createGoogleGenerativeAI({
   apiKey: process.env.GOOGLE_API_KEY,
 });
 
+const { systemPrompt, ...tools } = FirecrawlTools();
 /**
  * Configures the AI model, starts streaming, and returns the streaming Response.
  * Persists the assistant message to the DB inside onFinish.
@@ -33,6 +35,8 @@ export async function streamAIResponse(
         },
       } satisfies GoogleGenerativeAIProviderOptions,
     },
+    tools: { ...tools, },
+    stopWhen: stepCountIs(8),
   });
 
   return result.toUIMessageStreamResponse({
