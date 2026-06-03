@@ -10,3 +10,5 @@ export interface MetadataType {
 }
 
 export type CustomUIMessage = UIMessage<MetadataType, UIDataTypes, UITools>;
+
+export type MessagePart = CustomUIMessage["parts"][number];

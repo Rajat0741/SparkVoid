@@ -391,14 +391,11 @@ export const CodeBlockContent = ({
 
   // Async highlighting result (populated after shiki loads)
   const [asyncTokens, setAsyncTokens] = useState<TokenizedCode | null>(null);
-  const asyncKeyRef = useRef({ code, language });
+  const [prev, setPrev] = useState({ code, language });
 
-  // Invalidate stale async tokens synchronously during render
-  if (
-    asyncKeyRef.current.code !== code ||
-    asyncKeyRef.current.language !== language
-  ) {
-    asyncKeyRef.current = { code, language };
+  // Invalidate stale async tokens synchronously during render when props change
+  if (prev.code !== code || prev.language !== language) {
+    setPrev({ code, language });
     setAsyncTokens(null);
   }
 
@@ -426,21 +423,22 @@ export const CodeBlockContent = ({
 };
 
 export const CodeBlock = ({
-  code,
+  code = "",
   language,
   showLineNumbers = false,
   className,
   children,
   ...props
 }: CodeBlockProps) => {
-  const contextValue = useMemo(() => ({ code }), [code]);
+  const safeCode = code ?? "";
+  const contextValue = useMemo(() => ({ code: safeCode }), [safeCode]);
 
   return (
     <CodeBlockContext.Provider value={contextValue}>
       <CodeBlockContainer className={className} language={language} {...props}>
         {children}
         <CodeBlockContent
-          code={code}
+          code={safeCode}
           language={language}
           showLineNumbers={showLineNumbers}
         />

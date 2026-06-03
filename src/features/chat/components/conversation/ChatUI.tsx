@@ -7,16 +7,21 @@ import {
   ConversationScrollButton,
 } from "@/components/ai-elements/conversation";
 import { MessageSquare } from "lucide-react";
-import { UIMessage, UIDataTypes, UITools } from "ai";
+import type { CustomUIMessage } from "@/types";
 import MessageUI from "./MessageUI";
+import { GenerationError } from "./GenerationError";
 
-export default function ChatUI ({
-  messages
-}: {
-  messages: UIMessage<unknown, UIDataTypes, UITools>[];
+interface ChatUIProps {
+  messages: CustomUIMessage[];
   status: string;
   error: Error | undefined;
-}) {
+}
+
+export default function ChatUI({
+  messages,
+  status,
+  error,
+}: ChatUIProps) {
   return (
     <div className="w-3xl mx-auto p-6 relative size-full">
       <div className="flex flex-col h-full">
@@ -29,7 +34,10 @@ export default function ChatUI ({
                 description="Type a message below to begin chatting"
               />
             ) : (
-              <MessageUI messages={messages} />
+              <>
+                <MessageUI messages={messages} status={status} />
+                {error && <GenerationError error={error} />}
+              </>
             )}
           </ConversationContent>
           <ConversationScrollButton />
@@ -37,4 +45,4 @@ export default function ChatUI ({
       </div>
     </div>
   );
-};
+}

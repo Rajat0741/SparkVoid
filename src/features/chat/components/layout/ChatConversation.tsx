@@ -2,11 +2,10 @@
 
 import ChatUI from "@/features/chat/components/conversation/ChatUI";
 import PromptUI from "@/features/chat/components/prompt/PromptUI";
-import type { SendMessageFunctionType } from "@/types";
-import { UIMessage, UIDataTypes, UITools } from "ai";
+import type { SendMessageFunctionType, CustomUIMessage } from "@/types";
 
 interface ChatConversationProps {
-  messages: UIMessage<unknown, UIDataTypes, UITools>[];
+  messages: CustomUIMessage[];
   status: string;
   error: Error | undefined;
   sendMessage: SendMessageFunctionType;

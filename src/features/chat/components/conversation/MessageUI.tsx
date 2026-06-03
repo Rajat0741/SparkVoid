@@ -1,65 +1,126 @@
 "use client";
 
-import {
-  Message,
-  MessageContent,
-  MessageResponse,
-} from "@/components/ai-elements/message";
-import {
-  Reasoning,
-  ReasoningContent,
-  ReasoningTrigger,
-} from "@/components/ai-elements/reasoning";
-import { UIDataTypes, UITools, UIMessage, DynamicToolUIPart } from "ai";
-import { ToolInvocation } from "./ToolPart";
+import { isReasoningUIPart, isToolUIPart } from "ai";
+import { Message, MessageContent } from "@/components/ai-elements/message";
+import ExtendedThinking from "./Extended-thinking";
+import { MessageTextGroup } from "./MessageTextGroup";
+import type { CustomUIMessage, MessagePart } from "@/types";
 
-export default function MessageUI({
-  messages,
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Splits a flat parts array into consecutive groups of the same kind.
+ *
+ * Text parts act as boundaries — every time the LLM emits text mid-loop,
+ * it closes the current step group and starts a new one after the text.
+ *
+ * Example (3 groups):
+ * Input:  [reasoning, text-A, tool-search]
+ * Output: [
+ *   { type: "steps", parts: [reasoning] },
+ *   { type: "text",  parts: [text-A] },
+ *   { type: "steps", parts: [tool-search] },
+ * ]
+ */
+
+interface PartGroup {
+  type: "text" | "steps";
+  parts: MessagePart[];
+}
+
+function groupParts(parts: MessagePart[]): PartGroup[] {
+
+  const groups: PartGroup[] = [];
+  let current: PartGroup | null = null;
+
+  for (const part of parts) {
+    const kind = isReasoningUIPart(part) || isToolUIPart(part) ? "steps" : "text";
+
+    if (!current || current.type !== kind) {
+      current = { type: kind, parts: [part] };
+      groups.push(current);
+    } else {
+      current.parts.push(part);
+    }
+  }
+
+  return groups;
+}
+
+// ---------------------------------------------------------------------------
+// Sub-component
+// ---------------------------------------------------------------------------
+
+/**
+ * Renders all groups belonging to a single chat message.
+ *
+ * Each group is either:
+ *   - "steps" → ExtendedThinking panel (reasoning + tool calls)
+ *   - "text"  → streamed markdown answer
+ *
+ * Step groups always go through ExtendedThinking regardless of how many
+ * parts they contain — this keeps rendering consistent and avoids branching.
+ */
+function MessageItem({
+  message,
+  isStreaming,
 }: {
-  messages: UIMessage<unknown, UIDataTypes, UITools>[];
+  message: CustomUIMessage;
+  isStreaming: boolean;
 }) {
+  const groups = groupParts(message.parts);
+
+  return (
+    <Message from={message.role} key={message.id}>
+      <MessageContent>
+        {groups.map((group, idx) => {
+          const groupKey = `${message.id}-group-${idx}`;
+          const isLastGroup = idx === groups.length - 1;
+
+          if (group.type === "steps") {
+            return (
+              <ExtendedThinking
+                key={groupKey}
+                messageId={message.id}
+                stepParts={group.parts}
+                isStreaming={isStreaming && isLastGroup}
+              />
+            );
+          }
+
+          return (
+            <MessageTextGroup
+              key={groupKey}
+              parts={group.parts}
+              groupKey={groupKey}
+            />
+          );
+        })}
+      </MessageContent>
+    </Message>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Root export
+// ---------------------------------------------------------------------------
+
+interface MessageUIProps {
+  messages: CustomUIMessage[];
+  status?: string;
+}
+
+/** Renders the full conversation message list. */
+export default function MessageUI({ messages, status }: MessageUIProps) {
   return (
     <>
-      {messages.map((message) => (
-        <Message from={message.role} key={message.id}>
-          <MessageContent>
-            {message.parts.map((part, i) => {
-              switch (part.type) {
-                // Text response
-                case "text":
-                  return (
-                    <MessageResponse key={`${message.id}-${i}`}>
-                      {part.text}
-                    </MessageResponse>
-                  );
-                // Reasoning
-                case "reasoning":
-                  return (
-                    <Reasoning key={`${message.id}-${i}`}>
-                      <ReasoningTrigger />
-                      <ReasoningContent>{part.text}</ReasoningContent>
-                    </Reasoning>
-                  );
-                default:
-                  if (
-                    typeof part.type === "string" &&
-                    part.type.startsWith("tool-")
-                  ) {
-                    return (
-                      <ToolInvocation
-                        key={`${message.id}-${i}`}
-                        messageId={message.id}
-                        index={i}
-                        part={part as unknown as DynamicToolUIPart}
-                      />
-                    );
-                  }
-                  return null;
-              }
-            })}
-          </MessageContent>
-        </Message>
-      ))}
+      {messages.map((message, idx) => {
+        
+        const isStreaming = status === "streaming" && idx === messages.length - 1;
+        return <MessageItem key={message.id} message={message} isStreaming={isStreaming} />;
+      })}
     </>
   );
 }
