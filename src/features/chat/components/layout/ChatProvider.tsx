@@ -2,11 +2,11 @@
 
 import { createContext, use, useEffect } from "react";
 import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport } from "ai";
+import { ChatStatus, DefaultChatTransport } from "ai";
 import { usePathname } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { getConversationQueryOptions } from "@/features/sidebar/services/get-conversations-query";
-import type { CustomUIMessage, SendMessageFunctionType } from "@/types";
+import type { CustomUIMessage, SendMessageFunctionType, stopGenerationFunctionType } from "@/types";
 
 // ---------------------------------------------------------------------------
 // Context
@@ -14,9 +14,10 @@ import type { CustomUIMessage, SendMessageFunctionType } from "@/types";
 
 interface ChatContextValue {
   messages: CustomUIMessage[];
-  status: string;
+  status: ChatStatus;
   error: Error | undefined;
   sendMessage: SendMessageFunctionType;
+  stop: stopGenerationFunctionType
 }
 
 const ChatContext = createContext<ChatContextValue | null>(null);
@@ -56,7 +57,7 @@ export function ChatProvider({
   const pathname = usePathname();
   const queryClient = useQueryClient();
 
-  const { messages, sendMessage, status, error } = useChat<CustomUIMessage>({
+  const { messages, sendMessage, status, error, stop } = useChat<CustomUIMessage>({
     id: conversationId,
     messages: initialMessages,
     transport: new DefaultChatTransport({
@@ -92,6 +93,7 @@ export function ChatProvider({
         status,
         error,
         sendMessage: handleSendMessage,
+        stop
       }}
     >
       {children}

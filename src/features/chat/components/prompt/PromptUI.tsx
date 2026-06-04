@@ -14,7 +14,7 @@ interface PromptUIProps {
 }
 
 export default function PromptUI({ className }: PromptUIProps) {
-  const { sendMessage } = useChatContext();
+  const { sendMessage, status, stop } = useChatContext();
 
   const handleSubmit = (message: PromptInputMessage) => sendMessage(message);
 
@@ -26,7 +26,7 @@ export default function PromptUI({ className }: PromptUIProps) {
         </PromptInputBody>
         <PromptInputFooter>
           <PromptInputTools />
-          <PromptInputSubmit />
+          <PromptInputSubmit status={status} onStop={stop} />
         </PromptInputFooter>
       </PromptInput>
     </div>
