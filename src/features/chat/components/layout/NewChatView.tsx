@@ -1,14 +1,9 @@
 "use client";
 
 import PromptUI from "@/features/chat/components/prompt/PromptUI";
-import type { SendMessageFunctionType } from "@/types";
 import { Sparkles } from "lucide-react";
 
-interface NewChatViewProps {
-  sendMessage: SendMessageFunctionType;
-}
-
-export default function NewChatView({ sendMessage }: NewChatViewProps) {
+export default function NewChatView() {
   return (
     <div className="flex flex-col items-center justify-center flex-1 w-full max-w-2xl mx-auto px-4 h-full">
       <div className="flex flex-col items-center gap-4 text-center mb-8 select-none">
@@ -19,7 +14,7 @@ export default function NewChatView({ sendMessage }: NewChatViewProps) {
           What can I help with?
         </h1>
       </div>
-      <PromptUI sendMessage={sendMessage} className="w-full" />
+      <PromptUI className="w-full" />
     </div>
   );
 }

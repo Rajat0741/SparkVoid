@@ -7,9 +7,15 @@ import {
   PromptInputSubmit,
   type PromptInputMessage,
 } from "@/components/ai-elements/prompt-input";
-import { SendMessageFunctionType } from "@/types";
+import { useChatContext } from "@/features/chat/components/layout/ChatProvider";
 
-export default function PromptUI({ sendMessage, className }: { sendMessage: SendMessageFunctionType; className?: string }) {
+interface PromptUIProps {
+  className?: string;
+}
+
+export default function PromptUI({ className }: PromptUIProps) {
+  const { sendMessage } = useChatContext();
+
   const handleSubmit = (message: PromptInputMessage) => sendMessage(message);
 
   return (
@@ -19,8 +25,7 @@ export default function PromptUI({ sendMessage, className }: { sendMessage: Send
           <PromptInputTextarea placeholder="How can I help you today?" />
         </PromptInputBody>
         <PromptInputFooter>
-          <PromptInputTools>
-          </PromptInputTools>
+          <PromptInputTools />
           <PromptInputSubmit />
         </PromptInputFooter>
       </PromptInput>
