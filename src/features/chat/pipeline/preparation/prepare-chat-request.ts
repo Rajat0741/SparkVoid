@@ -50,7 +50,13 @@ export async function prepareChatRequest(
 
   messages.push(message);
 
+  // Filter reasoning messages
+  const filteredMessages: CustomUIMessage[] = messages.map((msg) => ({
+    ...msg,
+    parts: msg.parts.filter((part) => part.type !== "reasoning"),
+  }));
+
   await createMessage({ message, conversationId });
 
-  return { messages, conversationId };
+  return { messages: filteredMessages, conversationId };
 }

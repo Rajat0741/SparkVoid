@@ -6,7 +6,6 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { usePathname } from "next/navigation";
 import { CustomUIMessage } from "@/types";
-import { UIMessage, UIDataTypes, UITools } from "ai";
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { getConversationQueryOptions } from "@/features/sidebar/services/get-conversations-query";
@@ -21,9 +20,9 @@ export default function ChatInterface({
   const pathname = usePathname();
   const queryClient = useQueryClient();
 
-  const { messages, sendMessage, status, error } = useChat({
+  const { messages, sendMessage, status, error } = useChat<CustomUIMessage>({
     id: conversationId,
-    messages: initialMessages as UIMessage<unknown, UIDataTypes, UITools>[],
+    messages: initialMessages,
     transport: new DefaultChatTransport({
       api: "/api/chat",
       prepareSendMessagesRequest: ({ id, messages }) => ({
