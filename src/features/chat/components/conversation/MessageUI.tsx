@@ -1,10 +1,12 @@
 "use client";
 
 import { isReasoningUIPart, isToolUIPart } from "ai";
-import { Message, MessageContent } from "@/components/ai-elements/message";
+import { Message, MessageAction, MessageActions, MessageContent } from "@/components/ai-elements/message";
 import ExtendedThinking from "./Extended-thinking";
 import { MessageTextGroup } from "./MessageTextGroup";
 import type { CustomUIMessage, MessagePart } from "@/types";
+import { Check, Copy } from "lucide-react";
+import { useState, useCallback } from "react";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -36,6 +38,9 @@ function groupParts(parts: MessagePart[]): PartGroup[] {
   let current: PartGroup | null = null;
 
   for (const part of parts) {
+
+    if (part.type === "step-start") continue;
+
     const kind = isReasoningUIPart(part) || isToolUIPart(part) ? "steps" : "text";
 
     if (!current || current.type !== kind) {
@@ -71,6 +76,19 @@ function MessageItem({
   isStreaming: boolean;
 }) {
   const groups = groupParts(message.parts);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = useCallback(() => {
+    const text = message.parts
+      .filter((p) => p.type === "text")
+      .map((p) => p.text)
+      .join("\n");
+
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }, [message.parts]);
 
   return (
     <Message from={message.role} key={message.id}>
@@ -99,6 +117,15 @@ function MessageItem({
           );
         })}
       </MessageContent>
+      <MessageActions className={message.role === "user" ? "justify-end" : ""}>
+        <MessageAction
+          tooltip={copied ? "Copied!" : "Copy"}
+          onClick={handleCopy}
+          aria-label={copied ? "Copied" : "Copy message"}
+        >
+          {copied ? <Check size={14} /> : <Copy size={14} />}
+        </MessageAction>
+      </MessageActions>
     </Message>
   );
 }

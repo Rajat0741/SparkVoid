@@ -53,7 +53,7 @@ export function resolveTitle(
   if (toolParts.some((p) => isInteractTool(p) && isRunning(p)))
     return "Interacting with Website...";
   if (toolParts.some(isSearchTool)) return "Searched the web";
-  if (toolParts.some(isScrapTool)) return "Scraped a website";
+  if (toolParts.some(isScrapTool)) return "Scraped website";
   if (toolParts.some(isInteractTool)) return "Interacted with Website";
   if (toolParts.some(isRunning)) return "Running tools...";
   if (toolParts.length > 0) return "Used tools";
