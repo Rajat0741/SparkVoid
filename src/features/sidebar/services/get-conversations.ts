@@ -9,7 +9,7 @@ export const getConversations = async (userId: string) => {
       .select()
       .from(conversations)
       .where(eq(conversations.userId, userId))
-      .orderBy(desc(conversations.createdAt));
+      .orderBy(desc(conversations.updatedAt));
 
     return retrievedConversations;
   } catch (error) {

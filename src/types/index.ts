@@ -14,3 +14,5 @@ export type MessagePart = CustomUIMessage["parts"][number];
 export type SendMessageFunctionType = UseChatHelpers<CustomUIMessage>["sendMessage"];
 
 export type stopGenerationFunctionType = UseChatHelpers<CustomUIMessage>["stop"];
+
+export type clearErrorFunctionType = UseChatHelpers<CustomUIMessage>["clearError"];

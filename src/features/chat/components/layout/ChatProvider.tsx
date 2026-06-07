@@ -6,7 +6,7 @@ import { ChatStatus, DefaultChatTransport } from "ai";
 import { usePathname } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { getConversationQueryOptions } from "@/features/sidebar/services/get-conversations-query";
-import type { CustomUIMessage, SendMessageFunctionType, stopGenerationFunctionType } from "@/types";
+import type { clearErrorFunctionType, CustomUIMessage, SendMessageFunctionType, stopGenerationFunctionType } from "@/types";
 
 // ---------------------------------------------------------------------------
 // Context
@@ -17,7 +17,8 @@ interface ChatContextValue {
   status: ChatStatus;
   error: Error | undefined;
   sendMessage: SendMessageFunctionType;
-  stop: stopGenerationFunctionType
+  stop: stopGenerationFunctionType;
+  clearError: clearErrorFunctionType;
 }
 
 const ChatContext = createContext<ChatContextValue | null>(null);
@@ -57,7 +58,7 @@ export function ChatProvider({
   const pathname = usePathname();
   const queryClient = useQueryClient();
 
-  const { messages, sendMessage, status, error, stop } = useChat<CustomUIMessage>({
+  const { messages, sendMessage, status, error, stop, clearError } = useChat<CustomUIMessage>({
     id: conversationId,
     messages: initialMessages,
     transport: new DefaultChatTransport({
@@ -93,7 +94,8 @@ export function ChatProvider({
         status,
         error,
         sendMessage: handleSendMessage,
-        stop
+        stop,
+        clearError,
       }}
     >
       {children}

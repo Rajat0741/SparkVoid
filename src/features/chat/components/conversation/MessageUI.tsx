@@ -1,11 +1,16 @@
 "use client";
 
-import { isReasoningUIPart, isToolUIPart } from "ai";
-import { Message, MessageAction, MessageActions, MessageContent } from "@/components/ai-elements/message";
+import { isReasoningUIPart, isToolUIPart, type ChatStatus } from "ai";
+import {
+  Message,
+  MessageAction,
+  MessageActions,
+  MessageContent,
+} from "@/components/ai-elements/message";
 import ExtendedThinking from "./Extended-thinking";
 import { MessageTextGroup } from "./MessageTextGroup";
 import type { CustomUIMessage, MessagePart } from "@/types";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, Loader2 } from "lucide-react";
 import { useState, useCallback } from "react";
 
 // ---------------------------------------------------------------------------
@@ -33,12 +38,10 @@ interface PartGroup {
 }
 
 function groupParts(parts: MessagePart[]): PartGroup[] {
-
   const groups: PartGroup[] = [];
   let current: PartGroup | null = null;
 
   for (const part of parts) {
-
     if (part.type === "step-start") continue;
 
     const kind = isReasoningUIPart(part) || isToolUIPart(part) ? "steps" : "text";
@@ -71,9 +74,11 @@ function groupParts(parts: MessagePart[]): PartGroup[] {
 function MessageItem({
   message,
   isStreaming,
+  status,
 }: {
   message: CustomUIMessage;
   isStreaming: boolean;
+  status?: ChatStatus;
 }) {
   const groups = groupParts(message.parts);
   const [copied, setCopied] = useState(false);
@@ -117,15 +122,18 @@ function MessageItem({
           );
         })}
       </MessageContent>
-      <MessageActions className={message.role === "user" ? "justify-end" : ""}>
-        <MessageAction
-          tooltip={copied ? "Copied!" : "Copy"}
-          onClick={handleCopy}
-          aria-label={copied ? "Copied" : "Copy message"}
-        >
-          {copied ? <Check size={14} /> : <Copy size={14} />}
-        </MessageAction>
-      </MessageActions>
+
+      {status === "ready" && (
+        <MessageActions className={message.role === "user" ? "justify-end" : ""}>
+          <MessageAction
+            tooltip={copied ? "Copied!" : "Copy"}
+            onClick={handleCopy}
+            aria-label={copied ? "Copied" : "Copy message"}
+          >
+            {copied ? <Check size={14} /> : <Copy size={14} />}
+          </MessageAction>
+        </MessageActions>
+      )}
     </Message>
   );
 }
@@ -136,7 +144,7 @@ function MessageItem({
 
 interface MessageUIProps {
   messages: CustomUIMessage[];
-  status?: string;
+  status?: ChatStatus;
 }
 
 /** Renders the full conversation message list. */
@@ -144,10 +152,25 @@ export default function MessageUI({ messages, status }: MessageUIProps) {
   return (
     <>
       {messages.map((message, idx) => {
-        
         const isStreaming = status === "streaming" && idx === messages.length - 1;
-        return <MessageItem key={message.id} message={message} isStreaming={isStreaming} />;
+        return (
+          <MessageItem
+            key={message.id}
+            message={message}
+            isStreaming={isStreaming}
+            status={status}
+          />
+        );
       })}
+
+      {/* Inline spinner — visible only while waiting for the first chunk */}
+      {status === "submitted" && (
+        <Message from="assistant">
+          <MessageContent>
+            <Loader2 size={16} className="animate-spin text-muted-foreground" />
+          </MessageContent>
+        </Message>
+      )}
     </>
   );
 }
