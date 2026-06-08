@@ -5,15 +5,22 @@ import {
   createGoogleGenerativeAI,
   GoogleGenerativeAIProviderOptions,
 } from "@ai-sdk/google";
-import { convertToModelMessages, generateId, stepCountIs, streamText } from "ai";
-import { FirecrawlTools } from 'firecrawl-aisdk';
+import { tavilySearch } from "@tavily/ai-sdk";
+import { webSearch } from "@exalabs/ai-sdk";
+import {
+  convertToModelMessages,
+  generateId,
+  stepCountIs,
+  streamText,
+} from "ai";
+import { FirecrawlTools } from "firecrawl-aisdk";
 import { weatherTool } from "@/features/tools/get-weather";
 
 const google = createGoogleGenerativeAI({
   apiKey: process.env.GOOGLE_API_KEY,
 });
 
-const {systemPrompt, ...tools} = FirecrawlTools();
+const { systemPrompt, ...tools } = FirecrawlTools();
 
 /**
  * Configures the AI model, starts streaming, and returns the streaming Response.
@@ -37,7 +44,19 @@ export async function streamAIResponse(
         },
       } satisfies GoogleGenerativeAIProviderOptions,
     },
-    tools: { ...tools, weatherTool },
+    tools: {
+      ...tools,
+      weatherTool,
+      webSearch: webSearch({
+        type: "neural",
+      }),
+      tavilySearch: tavilySearch({
+        searchDepth: "advanced",
+        includeAnswer: true,
+        maxResults: 8,
+        topic: "general",
+      }),
+    },
     stopWhen: stepCountIs(15),
   });
 
