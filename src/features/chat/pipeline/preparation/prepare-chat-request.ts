@@ -1,6 +1,7 @@
 import { createConversation } from "@/features/chat/services/create-conversation";
 import { createMessage } from "@/features/chat/services/create-message";
 import { getConversationHistory } from "@/features/chat/services/get-messages";
+import { linkPendingAttachments } from "@/features/chat/services/link-attachments";
 import { NewConversationType } from "@/lib/db/schema";
 import { CustomUIMessage } from "@/types";
 import { AppError } from "@/utils/app-error";
@@ -57,6 +58,13 @@ export async function prepareChatRequest(
   }));
 
   await createMessage({ message, conversationId });
+
+  // Link pending attachments to the message
+  await linkPendingAttachments({
+    userId: userSession.user.id,
+    messageId: message.id,
+    conversationId,
+  });
 
   return { messages: filteredMessages, conversationId };
 }

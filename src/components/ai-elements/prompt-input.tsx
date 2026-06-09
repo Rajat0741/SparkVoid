@@ -41,6 +41,7 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import type { ChatStatus, FileUIPart, SourceDocumentUIPart } from "ai";
+import type { BaseUIEvent } from "@base-ui/react/types";
 import {
   CornerDownLeftIcon,
   ImageIcon,
@@ -416,20 +417,23 @@ export type PromptInputActionAddAttachmentsProps = ComponentProps<
 
 export const PromptInputActionAddAttachments = ({
   label = "Add photos or files",
+  onClick,
   ...props
 }: PromptInputActionAddAttachmentsProps) => {
   const attachments = usePromptInputAttachments();
 
-  const handleSelect = useCallback(
-    (e: Event) => {
-      e.preventDefault();
-      attachments.openFileDialog();
+  const handleClick = useCallback(
+    (e: BaseUIEvent<React.MouseEvent<HTMLDivElement>>) => {
+      onClick?.(e);
+      // Open the file dialog after the menu closes on the next tick
+      // to avoid focus/portal conflicts.
+      setTimeout(() => attachments.openFileDialog(), 0);
     },
-    [attachments]
+    [onClick, attachments]
   );
 
   return (
-    <DropdownMenuItem {...props} onSelect={handleSelect}>
+    <DropdownMenuItem {...props} onClick={handleClick}>
       <ImageIcon className="mr-2 size-4" /> {label}
     </DropdownMenuItem>
   );
@@ -443,15 +447,15 @@ export type PromptInputActionAddScreenshotProps = ComponentProps<
 
 export const PromptInputActionAddScreenshot = ({
   label = "Take screenshot",
-  onSelect,
+  onClick,
   ...props
 }: PromptInputActionAddScreenshotProps) => {
   const attachments = usePromptInputAttachments();
 
-  const handleSelect = useCallback(
-    async (event: Event) => {
-      onSelect?.(event);
-      if (event.defaultPrevented) {
+  const handleClick = useCallback(
+    async (e: BaseUIEvent<React.MouseEvent<HTMLDivElement>>) => {
+      onClick?.(e);
+      if (e.defaultPrevented) {
         return;
       }
 
@@ -470,11 +474,11 @@ export const PromptInputActionAddScreenshot = ({
         throw error;
       }
     },
-    [onSelect, attachments]
+    [onClick, attachments]
   );
 
   return (
-    <DropdownMenuItem {...props} onSelect={handleSelect}>
+    <DropdownMenuItem {...props} onClick={handleClick}>
       <Monitor className="mr-2 size-4" />
       {label}
     </DropdownMenuItem>
@@ -505,6 +509,17 @@ export type PromptInputProps = Omit<
     code: "max_files" | "max_file_size" | "accept";
     message: string;
   }) => void;
+  /**
+   * Called after files pass validation and are added to the attachment list.
+   * Each entry pairs the assigned attachment `id` with the original `File`,
+   * giving callers everything needed to trigger a custom upload.
+   */
+  onFilesAdded?: (entries: { id: string; file: File }[]) => void;
+  /**
+   * Called after an attachment is removed from the list.
+   * Provides the removed attachment's `id` for custom cleanup.
+   */
+  onFileRemoved?: (id: string) => void;
   onSubmit: (
     message: PromptInputMessage,
     event: FormEvent<HTMLFormElement>
@@ -520,6 +535,8 @@ export const PromptInput = ({
   maxFiles,
   maxFileSize,
   onError,
+  onFilesAdded,
+  onFileRemoved,
   onSubmit,
   children,
   ...props
@@ -597,45 +614,54 @@ export const PromptInput = ({
         return;
       }
 
-      setItems((prev) => {
-        const capacity =
-          typeof maxFiles === "number"
-            ? Math.max(0, maxFiles - prev.length)
-            : undefined;
-        const capped =
-          typeof capacity === "number" ? sized.slice(0, capacity) : sized;
-        if (typeof capacity === "number" && sized.length > capacity) {
-          onError?.({
-            code: "max_files",
-            message: "Too many files. Some were not added.",
-          });
-        }
-        const next: (FileUIPart & { id: string })[] = [];
-        for (const file of capped) {
-          next.push({
-            filename: file.name,
-            id: nanoid(),
-            mediaType: file.type,
-            type: "file",
-            url: URL.createObjectURL(file),
-          });
-        }
-        return [...prev, ...next];
-      });
+      const currentLength = filesRef.current.length;
+      const capacity =
+        typeof maxFiles === "number"
+          ? Math.max(0, maxFiles - currentLength)
+          : undefined;
+      const capped =
+        typeof capacity === "number" ? sized.slice(0, capacity) : sized;
+      if (typeof capacity === "number" && sized.length > capacity) {
+        onError?.({
+          code: "max_files",
+          message: "Too many files. Some were not added.",
+        });
+      }
+
+      const next: (FileUIPart & { id: string })[] = [];
+      for (const file of capped) {
+        const id = nanoid();
+        next.push({
+          filename: file.name,
+          id,
+          mediaType: file.type,
+          type: "file",
+          url: URL.createObjectURL(file),
+        });
+      }
+
+      if (next.length > 0) {
+        setItems((prev) => [...prev, ...next]);
+        onFilesAdded?.(
+          next.map((item, i) => ({ id: item.id, file: capped[i] }))
+        );
+      }
     },
-    [matchesAccept, maxFiles, maxFileSize, onError]
+    [matchesAccept, maxFiles, maxFileSize, onError, onFilesAdded]
   );
 
   const removeLocal = useCallback(
-    (id: string) =>
+    (id: string) => {
       setItems((prev) => {
         const found = prev.find((file) => file.id === id);
         if (found?.url) {
           URL.revokeObjectURL(found.url);
         }
         return prev.filter((file) => file.id !== id);
-      }),
-    []
+      });
+      onFileRemoved?.(id);
+    },
+    [onFileRemoved]
   );
 
   // Wrapper that validates files before calling provider's add

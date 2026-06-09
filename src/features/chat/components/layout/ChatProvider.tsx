@@ -13,6 +13,7 @@ import type { clearErrorFunctionType, CustomUIMessage, SendMessageFunctionType, 
 // ---------------------------------------------------------------------------
 
 interface ChatContextValue {
+  conversationId: string;
   messages: CustomUIMessage[];
   status: ChatStatus;
   error: Error | undefined;
@@ -90,6 +91,7 @@ export function ChatProvider({
   return (
     <ChatContext
       value={{
+        conversationId,
         messages,
         status,
         error,
