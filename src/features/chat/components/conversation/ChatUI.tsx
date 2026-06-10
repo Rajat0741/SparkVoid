@@ -15,7 +15,7 @@ export default function ChatUI() {
   const { messages, status, error, clearError } = useChatContext();
 
   return (
-    <div className="w-3xl mx-auto p-6 relative size-full">
+    <div className="w-full mx-auto p-6 relative size-full">
       <div className="flex flex-col h-full">
         <Conversation>
           <ConversationContent>

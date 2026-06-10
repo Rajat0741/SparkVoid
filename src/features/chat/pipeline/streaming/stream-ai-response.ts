@@ -10,6 +10,7 @@ import { webSearch } from "@exalabs/ai-sdk";
 import {
   convertToModelMessages,
   generateId,
+  smoothStream,
   stepCountIs,
   streamText,
 } from "ai";
@@ -36,6 +37,9 @@ export async function streamAIResponse(
     model,
     system: SYSTEM_PROMPT,
     messages: await convertToModelMessages(messages),
+    experimental_transform: smoothStream({
+      delayInMs: 20,
+    }),
     providerOptions: {
       google: {
         thinkingConfig: {

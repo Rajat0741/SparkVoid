@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Oxanium } from "next/font/google";
+import { Geist, Geist_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
 import QueryProvider from "@/lib/providers/QueryProvider";
 import { Toaster } from "@/components/ui/sonner";
 
-const oxanium = Oxanium({ subsets: ["latin"], variable: "--font-sans" });
+const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-sans" });
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,11 +37,11 @@ export default function RootLayout({
         geistSans.variable,
         geistMono.variable,
         "font-sans",
-        oxanium.variable,
+        spaceGrotesk.variable,
       )}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col text-base">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

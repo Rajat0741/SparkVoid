@@ -57,6 +57,8 @@ export async function prepareChatRequest(
     parts: msg.parts.filter((part) => part.type !== "reasoning"),
   }));
 
+  const newAttachmentURLs = message.parts.filter(((part) => part.type=="file")).map((part)=>part.url) || [];
+
   await createMessage({ message, conversationId });
 
   // Link pending attachments to the message
@@ -64,6 +66,7 @@ export async function prepareChatRequest(
     userId: userSession.user.id,
     messageId: message.id,
     conversationId,
+    attachmentURLs: newAttachmentURLs,
   });
 
   return { messages: filteredMessages, conversationId };

@@ -3,15 +3,13 @@
 import { isReasoningUIPart, isToolUIPart, type ChatStatus } from "ai";
 import {
   Message,
-  MessageAction,
-  MessageActions,
   MessageContent,
 } from "@/components/ai-elements/message";
 import ExtendedThinking from "./Extended-thinking";
 import { MessageTextGroup } from "./MessageTextGroup";
+import MessageActionsGroup from "./Message-Actions";
 import type { CustomUIMessage, MessagePart } from "@/types";
-import { Check, Copy, Loader2 } from "lucide-react";
-import { useState, useCallback } from "react";
+import { Loader2 } from "lucide-react";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -81,59 +79,29 @@ function MessageItem({
   status?: ChatStatus;
 }) {
   const groups = groupParts(message.parts);
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = useCallback(() => {
-    const text = message.parts
-      .filter((p) => p.type === "text")
-      .map((p) => p.text)
-      .join("\n");
-
-    navigator.clipboard.writeText(text).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  }, [message.parts]);
-
   return (
     <Message from={message.role} key={message.id}>
+      
       <MessageContent>
-        {groups.map((group, idx) => {
-          const groupKey = `${message.id}-group-${idx}`;
-          const isLastGroup = idx === groups.length - 1;
-
-          if (group.type === "steps") {
-            return (
-              <ExtendedThinking
-                key={groupKey}
-                messageId={message.id}
-                stepParts={group.parts}
-                isStreaming={isStreaming && isLastGroup}
-              />
-            );
-          }
-
-          return (
-            <MessageTextGroup
-              key={groupKey}
-              parts={group.parts}
-              groupKey={groupKey}
+        {groups.map((group, idx) =>
+          group.type === "steps" ? (
+            <ExtendedThinking
+              key={`${message.id}-group-${idx}`}
+              messageId={message.id}
+              stepParts={group.parts}
+              isStreaming={isStreaming && idx === groups.length - 1}
             />
-          );
-        })}
+          ) : (
+            <MessageTextGroup
+              key={`${message.id}-group-${idx}`}
+              parts={group.parts}
+              groupKey={`${message.id}-group-${idx}`}
+            />
+          )
+        )}
       </MessageContent>
-
-      {status === "ready" && (
-        <MessageActions className={message.role === "user" ? "justify-end" : ""}>
-          <MessageAction
-            tooltip={copied ? "Copied!" : "Copy"}
-            onClick={handleCopy}
-            aria-label={copied ? "Copied" : "Copy message"}
-          >
-            {copied ? <Check size={14} /> : <Copy size={14} />}
-          </MessageAction>
-        </MessageActions>
-      )}
+      
+      <MessageActionsGroup message={message} status={status} />
     </Message>
   );
 }

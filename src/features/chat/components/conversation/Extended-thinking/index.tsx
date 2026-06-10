@@ -12,12 +12,10 @@ import { SearchStep } from "./SearchStep";
 import { ScrapStep } from "./ScrapStep";
 import { InteractStep } from "./InteractStep";
 import { GenericToolStep } from "./GenericToolStep";
-import {
-  resolveTitle,
-  allStepsComplete,
-} from "./helpers";
+import { resolveTitle, allStepsComplete } from "./helpers";
 import { isReasoningUIPart, isToolUIPart } from "./helpers";
 import type { MessagePart } from "./helpers";
+import { useEffect, useState } from "react";
 
 interface ExtendedThinkingProps {
   messageId: string;
@@ -41,7 +39,6 @@ const getToolType = (name: string) => {
   return "generic";
 };
 
-
 export default function ExtendedThinking({
   messageId,
   stepParts,
@@ -49,13 +46,27 @@ export default function ExtendedThinking({
 }: ExtendedThinkingProps) {
   const title = resolveTitle(stepParts, isStreaming);
   const isDone = allStepsComplete(stepParts, isStreaming);
+  const [isOpen, setIsOpen] = useState(isStreaming);
+
+  useEffect(() => {
+    if (isStreaming) {
+      const timer = setTimeout(() => {
+        setIsOpen(true);
+      }, 0);
+      return () => clearTimeout(timer);
+    } else if (isDone) {
+      const timer = setTimeout(() => {
+        setIsOpen(false);
+      }, 1200);
+      return () => clearTimeout(timer);
+    }
+  }, [isStreaming, isDone]);
 
   return (
     // Open by default while streaming so the user can follow along live
-    <ChainOfThought defaultOpen={isStreaming}>
+    <ChainOfThought open={isOpen} onOpenChange={setIsOpen}>
       <ChainOfThoughtHeader>{title}</ChainOfThoughtHeader>
       <ChainOfThoughtContent>
-
         {stepParts.map((part, index) => {
           const key = `${messageId}-step-${index}`;
           const isLast = index === stepParts.length - 1;
@@ -78,7 +89,7 @@ export default function ExtendedThinking({
               case "interact":
                 return <InteractStep key={key} part={part} status={status} />;
               default:
-                return <GenericToolStep key={key} part={part} status={status} />;
+                return <GenericToolStep key={key} part={part} status={status} />
             }
           }
 
@@ -89,11 +100,12 @@ export default function ExtendedThinking({
         {isDone && (
           <ChainOfThoughtStep
             icon={CheckCircleIcon}
-            label={<span className="font-medium text-muted-foreground">Done</span>}
+            label={
+              <span className="font-medium text-muted-foreground">Done</span>
+            }
             status="complete"
           />
         )}
-
       </ChainOfThoughtContent>
     </ChainOfThought>
   );

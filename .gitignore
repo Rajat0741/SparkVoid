@@ -43,5 +43,6 @@ next-env.d.ts
 .claude
 .agents
 PRD.md
+.eslintcache
 
 !.env.example

@@ -25,13 +25,14 @@ export interface UploadedAttachment {
 }
 
 export function useAttachmentUpload(conversationId: string) {
-  const [uploadStates, setUploadStates] = useState<
-    Map<string, AttachmentUploadState>
-  >(new Map());
-  const [uploadedFiles, setUploadedFiles] = useState<
-    Map<string, UploadedAttachment>
-  >(new Map());
+  // Set of attachment IDs currently being uploaded, mapped to their upload state
+  const [uploadStates, setUploadStates] = useState<Map<string, AttachmentUploadState>>(new Map());
+  // Map of successfully uploaded attachments, keyed by attachment ID
+  const [uploadedFiles, setUploadedFiles] = useState< Map<string, UploadedAttachment>>(new Map());
 
+  const uploadInProgress: boolean = [...uploadStates.values()]
+    .some((state) => state.status === "uploading");
+  
   const setState = (id: string, state: AttachmentUploadState | null) => {
     setUploadStates((prev) => {
       const next = new Map(prev);
@@ -111,14 +112,14 @@ export function useAttachmentUpload(conversationId: string) {
   };
 
   const handleFileRemoved = async (id: string) => {
-    await deleteAttachmentAction({ attachmentId: id }).catch((err) => {
-      console.error("Failed to delete attachment from server:", err);
-    });
     setState(id, null);
     setUploadedFiles((prev) => {
       const next = new Map(prev);
       next.delete(id);
       return next;
+    });
+    await deleteAttachmentAction({ attachmentId: id }).catch((err) => {
+      console.error("Failed to delete attachment from server:", err);
     });
   };
 
@@ -130,6 +131,7 @@ export function useAttachmentUpload(conversationId: string) {
   return {
     uploadedFiles,
     uploadStates,
+    uploadInProgress,
     handleFilesAdded,
     handleFileRemoved,
     clearUploads,
