@@ -1,5 +1,5 @@
 import { createSafeActionClient } from "next-safe-action";
-import { getUserSession } from "@/utils/getUser";
+import { getUserSession } from "@/lib/getUser";
 import { AppError } from "@/utils/app-error";
 
 export const actionClient = createSafeActionClient({

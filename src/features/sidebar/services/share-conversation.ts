@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { conversations } from "@/lib/db/schema";
+import { AppError } from "@/utils/app-error";
 import { eq } from "drizzle-orm";
 
 export const shareConversation = async (
@@ -13,6 +14,6 @@ export const shareConversation = async (
       .where(eq(conversations.id, conversationId));
   } catch (error) {
     console.error("Failed to share conversation:", error);
-    throw new Error("Failed to share conversation");
+    throw new AppError("Failed to share conversation", 500);
   }
 };

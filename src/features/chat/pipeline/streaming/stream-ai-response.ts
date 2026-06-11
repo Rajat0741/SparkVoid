@@ -15,7 +15,7 @@ import {
   streamText,
 } from "ai";
 import { FirecrawlTools } from "firecrawl-aisdk";
-import { weatherTool } from "@/features/tools/get-weather";
+import { weatherTool } from "@/lib/tools/get-weather";
 
 const google = createGoogleGenerativeAI({
   apiKey: process.env.GOOGLE_API_KEY,

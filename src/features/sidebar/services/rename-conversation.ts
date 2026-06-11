@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { conversations } from "@/lib/db/schema";
+import { AppError } from "@/utils/app-error";
 import { eq } from "drizzle-orm";
 
 export const renameConversation = async (
@@ -13,6 +14,6 @@ export const renameConversation = async (
       .where(eq(conversations.id, conversationId));
   } catch (error) {
     console.error("Failed to rename conversation:", error);
-    throw new Error("Failed to rename conversation");
+    throw new AppError("Failed to rename conversation", 500);
   }
 };

@@ -15,7 +15,8 @@ interface PromptUIFooterProps {
 }
 
 export function PromptUIFooter({ uploadInProgress }: PromptUIFooterProps) {
-  const { status, stop } = useChatContext();
+  const status = useChatContext((s) => s.status);
+  const stop = useChatContext((s) => s.stop);
 
   return (
     <PromptInputFooter>

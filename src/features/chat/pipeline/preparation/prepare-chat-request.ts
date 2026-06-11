@@ -5,7 +5,7 @@ import { linkPendingAttachments } from "@/features/chat/services/link-attachment
 import { NewConversationType } from "@/lib/db/schema";
 import { CustomUIMessage } from "@/types";
 import { AppError } from "@/utils/app-error";
-import { getUserSession } from "@/utils/getUser";
+import { getUserSession } from "@/lib/getUser";
 import { toUIMessage } from "@/utils/toUIMessage";
 
 export interface PreparedChatRequest {

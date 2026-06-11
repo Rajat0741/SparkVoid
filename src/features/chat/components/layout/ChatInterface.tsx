@@ -6,9 +6,9 @@ import { ChatProvider, useChatContext } from "./ChatProvider";
 import type { CustomUIMessage } from "@/types";
 
 function ChatContent() {
-  const { messages } = useChatContext();
+  const messageCount = useChatContext((s) => s.messages.length);
 
-  if (messages.length === 0) {
+  if (messageCount === 0) {
     return <NewChatView />;
   }
 

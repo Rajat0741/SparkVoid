@@ -1,6 +1,6 @@
 import { AppError } from "@/utils/app-error";
 import { getConversations } from "@/features/sidebar/services/get-conversations";
-import { getUserSession } from "@/utils/getUser";
+import { getUserSession } from "@/lib/getUser";
 
 export async function GET(request: Request) {
   try {

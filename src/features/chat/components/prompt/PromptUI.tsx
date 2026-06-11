@@ -16,7 +16,8 @@ interface PromptUIProps {
 }
 
 export default function PromptUI({ className }: PromptUIProps) {
-  const { conversationId, sendMessage } = useChatContext();
+  const conversationId = useChatContext((s) => s.conversationId);
+  const sendMessage = useChatContext((s) => s.sendMessage);
   const {
     uploadedFiles,
     uploadStates,

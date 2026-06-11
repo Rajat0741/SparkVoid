@@ -1,39 +1,41 @@
 "use client";
 
-import { createContext, use, useEffect } from "react";
+import { createContext, use, useEffect, useState } from "react";
+import { useStore } from "zustand";
 import { useChat } from "@ai-sdk/react";
-import { ChatStatus, DefaultChatTransport } from "ai";
+import { DefaultChatTransport } from "ai";
 import { usePathname } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { getConversationQueryOptions } from "@/features/sidebar/services/get-conversations-query";
-import type { clearErrorFunctionType, CustomUIMessage, SendMessageFunctionType, stopGenerationFunctionType } from "@/types";
+import { createChatStore, type ChatState, type ChatStore } from "@/features/chat/stores/chat-store";
+import type { CustomUIMessage } from "@/types";
 
 // ---------------------------------------------------------------------------
-// Context
+// Context — holds the *store reference*, never the data.
+// A stable reference means this Context never triggers re-renders by itself.
 // ---------------------------------------------------------------------------
 
-interface ChatContextValue {
-  conversationId: string;
-  messages: CustomUIMessage[];
-  status: ChatStatus;
-  error: Error | undefined;
-  sendMessage: SendMessageFunctionType;
-  stop: stopGenerationFunctionType;
-  clearError: clearErrorFunctionType;
-}
+const ChatStoreContext = createContext<ChatStore | null>(null);
 
-const ChatContext = createContext<ChatContextValue | null>(null);
-
-/**
- * Returns the nearest ChatContext value.
- * Throws if called outside of a <ChatProvider>.
- */
-export function useChatContext(): ChatContextValue {
-  const ctx = use(ChatContext);
-  if (!ctx) {
+function useChatStore(): ChatStore {
+  const store = use(ChatStoreContext);
+  if (!store) {
     throw new Error("useChatContext must be used within a <ChatProvider>");
   }
-  return ctx;
+  return store;
+}
+
+/**
+ * Subscribe to a fine-grained slice of the chat store.
+ * Only re-renders the calling component when the selected slice changes,
+ * eliminating the per-token full-tree re-render caused by React Context.
+ *
+ * @example
+ *   const messages = useChatContext((s) => s.messages);
+ *   const status   = useChatContext((s) => s.status);
+ */
+export function useChatContext<T>(selector: (state: ChatState) => T): T {
+  return useStore(useChatStore(), selector);
 }
 
 // ---------------------------------------------------------------------------
@@ -48,8 +50,8 @@ interface ChatProviderProps {
 
 /**
  * Owns the useChat hook for a single conversation and exposes its state
- * to all descendants via context, removing the need for prop drilling
- * through layout intermediaries.
+ * via a per-instance Zustand store. Consumers select only the slice they
+ * need, so streaming token updates do not re-render unrelated components.
  */
 export function ChatProvider({
   conversationId,
@@ -88,19 +90,34 @@ export function ChatProvider({
     return sendMessage(message, options);
   };
 
-  return (
-    <ChatContext
-      value={{
-        conversationId,
-        messages,
-        status,
-        error,
-        sendMessage: handleSendMessage,
-        stop,
-        clearError,
-      }}
-    >
-      {children}
-    </ChatContext>
+  // useState with a lazy initializer creates the store exactly once per mount.
+  // Reading `store` during render is safe (unlike useRef.current).
+  const [store] = useState<ChatStore>(() =>
+    createChatStore({
+      conversationId,
+      messages,
+      status,
+      error,
+      sendMessage: handleSendMessage,
+      stop,
+      clearError,
+    }),
   );
+
+  // Keep the store in sync with the latest useChat values after every render.
+  // useEffect (no deps array) runs after every commit. Zustand's internal
+  // shallow equality ensures subscribers only fire when their slice changes.
+  useEffect(() => {
+    store.setState({
+      conversationId,
+      messages,
+      status,
+      error,
+      sendMessage: handleSendMessage,
+      stop,
+      clearError,
+    });
+  });
+
+  return <ChatStoreContext value={store}>{children}</ChatStoreContext>;
 }

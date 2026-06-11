@@ -1,4 +1,4 @@
-import { getUserSession } from "@/utils/getUser";
+import { getUserSession } from "@/lib/getUser";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";

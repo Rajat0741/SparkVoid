@@ -12,7 +12,10 @@ import { GenerationError } from "./GenerationError";
 import { useChatContext } from "@/features/chat/components/layout/ChatProvider";
 
 export default function ChatUI() {
-  const { messages, status, error, clearError } = useChatContext();
+  const messages = useChatContext((s) => s.messages);
+  const status = useChatContext((s) => s.status);
+  const error = useChatContext((s) => s.error);
+  const clearError = useChatContext((s) => s.clearError);
 
   return (
     <div className="w-full mx-auto p-6 relative size-full">

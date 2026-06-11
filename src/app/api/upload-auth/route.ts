@@ -1,5 +1,5 @@
 // File: app/api/upload-auth/route.ts
-import { getUserSession } from "@/utils/getUser"
+import { getUserSession } from "@/lib/getUser"
 import { getUploadAuthParams } from "@imagekit/next/server"
 import { AppError } from "@/utils/app-error"
 
