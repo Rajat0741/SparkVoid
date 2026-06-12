@@ -6,7 +6,7 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { usePathname } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
-import { getConversationQueryOptions } from "@/features/sidebar/services/get-conversations-query";
+import { getConversationQueryOptions } from "@/features/sidebar/queries/get-conversations-query";
 import { createChatStore, type ChatState, type ChatStore } from "@/features/chat/stores/chat-store";
 import type { CustomUIMessage } from "@/types";
 

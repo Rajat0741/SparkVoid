@@ -4,7 +4,7 @@ import { upload } from "@imagekit/next";
 import {
   createPendingAttachmentAction,
   deleteAttachmentAction,
-} from "@/features/chat/services/attachment-actions";
+} from "@/features/chat/actions/attachment-actions";
 import { useState } from "react";
 
 export type AttachmentUploadStatus = "uploading" | "error" | "done";

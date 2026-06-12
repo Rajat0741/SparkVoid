@@ -1,7 +1,10 @@
-import { createConversation } from "@/features/chat/services/create-conversation";
-import { createMessage } from "@/features/chat/services/create-message";
-import { getConversationHistory } from "@/features/chat/services/get-messages";
-import { linkPendingAttachments } from "@/features/chat/services/link-attachments";
+import {
+  insertConversation,
+  findMessagesByConversationId,
+  insertMessage,
+  linkPendingAttachments,
+  updateConversationTimestamp,
+} from "@/lib/db/queries";
 import { NewConversationType } from "@/lib/db/schema";
 import { CustomUIMessage } from "@/types";
 import { AppError } from "@/utils/app-error";
@@ -44,30 +47,41 @@ export async function prepareChatRequest(
     userId: userSession.user.id,
   };
 
-  await createConversation(newConversationData);
+  await insertConversation(newConversationData);
 
-  const conversationHistory = await getConversationHistory(conversationId);
+  const conversationHistory = await findMessagesByConversationId(conversationId);
   const messages: CustomUIMessage[] = toUIMessage(conversationHistory);
 
   messages.push(message);
 
-  // Filter reasoning messages
+  // Filter reasoning parts before sending to the model
   const filteredMessages: CustomUIMessage[] = messages.map((msg) => ({
     ...msg,
     parts: msg.parts.filter((part) => part.type !== "reasoning"),
   }));
 
-  const newAttachmentURLs = message.parts.filter(((part) => part.type=="file")).map((part)=>part.url) || [];
+  const newAttachmentURLs = message.parts
+    .filter((part) => part.type === "file")
+    .map((part) => part.url);
 
-  await createMessage({ message, conversationId });
-
-  // Link pending attachments to the message
-  await linkPendingAttachments({
-    userId: userSession.user.id,
-    messageId: message.id,
+  await insertMessage({
+    id: message.id,
     conversationId,
-    attachmentURLs: newAttachmentURLs,
+    role: message.role,
+    metadata: message.metadata,
+    parts: message.parts,
   });
+
+  // Update conversation timestamp to reflect new activity
+  await updateConversationTimestamp(conversationId);
+
+  // Link pending attachments to the persisted message
+  await linkPendingAttachments(
+    userSession.user.id,
+    message.id,
+    conversationId,
+    newAttachmentURLs,
+  );
 
   return { messages: filteredMessages, conversationId };
 }

@@ -4,7 +4,7 @@ import { ItemGroup } from "@/components/ui/item";
 import { useSidebar } from "@/components/ui/sidebar";
 import { usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { getConversationQueryOptions } from "../../services/get-conversations-query";
+import { getConversationQueryOptions } from "../../queries/get-conversations-query";
 import { ConversationItem } from "./ConversationItem";
 
 export function SidebarConversations() {

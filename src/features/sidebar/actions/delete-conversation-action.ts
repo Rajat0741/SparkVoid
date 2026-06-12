@@ -1,14 +1,14 @@
 "use server";
 
 import { authActionClient } from "@/lib/safe-action";
-import { deleteConversation } from "../services/delete-conversation";
-import { getConversation } from "@/features/common/services/get-conversation";
+import {
+  findConversationById,
+  deleteConversationById,
+  findAttachmentFileIdsByConversationId,
+} from "@/lib/db/queries";
 import { AppError } from "@/utils/app-error";
-import z from "zod";
-import { db } from "@/lib/db";
-import { attachments } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
 import { imagekit } from "@/lib/imagekit";
+import z from "zod";
 
 const deleteConversationSchema = z.object({
   conversationId: z.string(),
@@ -17,7 +17,8 @@ const deleteConversationSchema = z.object({
 export const deleteConversationAction = authActionClient
   .inputSchema(deleteConversationSchema)
   .action(async ({ parsedInput: { conversationId }, ctx }) => {
-    const conversation = await getConversation(conversationId);
+    const conversation = await findConversationById(conversationId);
+
     if (!conversation) {
       throw new AppError("Conversation not found", 404);
     }
@@ -25,34 +26,33 @@ export const deleteConversationAction = authActionClient
       throw new AppError("Unauthorized to delete this conversation", 403);
     }
 
-    // Fetch and delete ImageKit files before deleting the conversation record
-    const conversationAttachments = await db
-      .select({ imagekitFileId: attachments.imagekitFileId })
-      .from(attachments)
-      .where(eq(attachments.conversationId, conversationId));
+    // Delete ImageKit files before removing the conversation record
+    const conversationAttachments =
+      await findAttachmentFileIdsByConversationId(conversationId);
 
     if (conversationAttachments.length > 0) {
-      const deletePromises = conversationAttachments.map(async (a) => {
-        try {
-          await imagekit.files.delete(a.imagekitFileId);
-        } catch (error) {
-          // A 404 from ImageKit is fine — the file may already be gone
-          const isNotFound =
-            error &&
-            typeof error === "object" &&
-            ("status" in error ? error.status === 404 : false);
-          
-          if (!isNotFound) {
-            console.error(
-              `Failed to delete file ${a.imagekitFileId} from ImageKit:`,
-              error,
-            );
+      await Promise.all(
+        conversationAttachments.map(async (a) => {
+          try {
+            await imagekit.files.delete(a.imagekitFileId);
+          } catch (error) {
+            // A 404 from ImageKit is fine — the file may already be gone
+            const isNotFound =
+              error &&
+              typeof error === "object" &&
+              ("status" in error ? error.status === 404 : false);
+
+            if (!isNotFound) {
+              console.error(
+                `Failed to delete file ${a.imagekitFileId} from ImageKit:`,
+                error,
+              );
+            }
           }
-        }
-      });
-      await Promise.all(deletePromises);
+        }),
+      );
     }
 
-    await deleteConversation(conversationId);
+    await deleteConversationById(conversationId);
     return { success: true };
   });

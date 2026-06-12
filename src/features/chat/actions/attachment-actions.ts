@@ -1,13 +1,15 @@
 "use server";
 
 import { authActionClient } from "@/lib/safe-action";
-import { db } from "@/lib/db";
-import { attachments } from "@/lib/db/schema";
+import {
+  insertAttachment,
+  findAttachmentByIdAndUser,
+  deleteAttachmentById,
+} from "@/lib/db/queries";
 import { AppError } from "@/utils/app-error";
-import { and, eq } from "drizzle-orm";
-import z from "zod";
 import { imagekit } from "@/lib/imagekit";
 import { NotFoundError } from "@imagekit/nodejs";
+import z from "zod";
 
 // ---------------------------------------------------------------------------
 // Schemas
@@ -39,20 +41,17 @@ const deleteAttachmentSchema = z.object({
 export const createPendingAttachmentAction = authActionClient
   .inputSchema(createPendingAttachmentSchema)
   .action(async ({ parsedInput, ctx }) => {
-    const [attachment] = await db
-      .insert(attachments)
-      .values({
-        id:             parsedInput.id,
-        userId:         ctx.user.id,
-        status:         "pending",
-        fileName:       parsedInput.fileName,
-        fileType:       parsedInput.fileType,
-        fileSize:       parsedInput.fileSize,
-        imagekitFileId: parsedInput.imagekitFileId,
-        url:            parsedInput.url,
-        thumbnailUrl:   parsedInput.thumbnailUrl ?? null,
-      })
-      .returning();
+    const attachment = await insertAttachment({
+      id:             parsedInput.id,
+      userId:         ctx.user.id,
+      status:         "pending",
+      fileName:       parsedInput.fileName,
+      fileType:       parsedInput.fileType,
+      fileSize:       parsedInput.fileSize,
+      imagekitFileId: parsedInput.imagekitFileId,
+      url:            parsedInput.url,
+      thumbnailUrl:   parsedInput.thumbnailUrl ?? null,
+    });
 
     return { attachment };
   });
@@ -64,13 +63,7 @@ export const createPendingAttachmentAction = authActionClient
 export const deleteAttachmentAction = authActionClient
   .inputSchema(deleteAttachmentSchema)
   .action(async ({ parsedInput: { attachmentId }, ctx }) => {
-    const [attachment] = await db
-      .select()
-      .from(attachments)
-      .where(
-        and(eq(attachments.id, attachmentId), eq(attachments.userId, ctx.user.id))
-      )
-      .limit(1);
+    const attachment = await findAttachmentByIdAndUser(attachmentId, ctx.user.id);
 
     if (!attachment) {
       throw new AppError("Attachment not found", 404);
@@ -86,7 +79,6 @@ export const deleteAttachmentAction = authActionClient
       }
     }
 
-    await db.delete(attachments).where(eq(attachments.id, attachmentId));
-
+    await deleteAttachmentById(attachmentId);
     return { deleted: true };
   });

@@ -1,4 +1,4 @@
-import { createMessage } from "@/features/chat/services/create-message";
+import { insertMessage, updateConversationTimestamp } from "@/lib/db/queries";
 import { SYSTEM_PROMPT } from "@/features/chat/constants/prompts";
 import { CustomUIMessage, MetadataType } from "@/types";
 import {
@@ -76,7 +76,14 @@ export async function streamAIResponse(
     },
     onFinish: async (aiMessage) => {
       const assistantMessage = aiMessage.messages.at(-1) as CustomUIMessage;
-      await createMessage({ message: assistantMessage, conversationId });
+      await insertMessage({
+        id: assistantMessage.id,
+        conversationId,
+        role: assistantMessage.role,
+        metadata: assistantMessage.metadata,
+        parts: assistantMessage.parts,
+      });
+      await updateConversationTimestamp(conversationId);
     },
   });
 }

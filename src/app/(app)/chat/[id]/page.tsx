@@ -1,4 +1,4 @@
-import { getConversationHistory } from "@/features/chat/services/get-messages";
+import { findMessagesByConversationId } from "@/lib/db/queries";
 import { toUIMessage } from "@/utils/toUIMessage";
 import ChatInterface from "@/features/chat/components/layout/ChatInterface";
 
@@ -8,17 +8,14 @@ interface PageProps {
 
 export default async function ConversationPage({ params }: PageProps) {
   const { id } = await params;
-  
-  // Fetch from DB
-  const rawHistory = await getConversationHistory(id);
-  
-  // Transform to CustomUIMessage[]
+
+  const rawHistory = await findMessagesByConversationId(id);
   const initialMessages = toUIMessage(rawHistory);
 
   return (
-    <ChatInterface 
+    <ChatInterface
       key={id}
-      conversationId={id} 
+      conversationId={id}
       initialMessages={initialMessages}
     />
   );

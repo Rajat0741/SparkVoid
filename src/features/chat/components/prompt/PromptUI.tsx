@@ -27,7 +27,14 @@ export default function PromptUI({ className }: PromptUIProps) {
     clearUploads,
   } = useAttachmentUpload(conversationId);
 
+  const status = useChatContext((s)=> s.status)
+  const submitIsBlocked = uploadInProgress || status!=="ready"
+
   const handleSubmit = async (message: PromptInputMessage) => {
+    if (submitIsBlocked) {
+      return
+    }
+      
     // Replace base64 data URLs from PromptInput with ImageKit URLs
     const fileParts: FileUIPart[] = [...uploadedFiles.values()].map(
       (uploaded) => ({
