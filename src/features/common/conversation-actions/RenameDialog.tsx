@@ -13,10 +13,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAction } from "next-safe-action/hooks";
-import { renameConversationAction } from "@/features/sidebar/actions/rename-conversation-action";
+import { renameConversationAction } from "@/features/common/actions/rename-conversation-action";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import type { ConversationType } from "@/lib/db/schema";
+import { conversationKeys } from "@/features/search/queries/conversation-keys";
 
 interface RenameDialogProps {
   conversation: ConversationType;
@@ -24,11 +25,7 @@ interface RenameDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function RenameDialog({
-  conversation,
-  open,
-  onOpenChange,
-}: RenameDialogProps) {
+export function RenameDialog({ conversation, open, onOpenChange }: RenameDialogProps) {
   const queryClient = useQueryClient();
   const [newTitle, setNewTitle] = useState(conversation.title);
 
@@ -41,7 +38,7 @@ export function RenameDialog({
 
   const { execute, isExecuting } = useAction(renameConversationAction, {
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["conversations"] });
+      queryClient.invalidateQueries({ queryKey: conversationKeys.all });
       toast.success("Conversation renamed");
       onOpenChange(false);
     },

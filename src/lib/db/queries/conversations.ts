@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { conversations, ConversationType, NewConversationType } from "@/lib/db/schema";
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, ilike, lt } from "drizzle-orm";
 
 export async function insertConversation(
   data: NewConversationType,
@@ -40,12 +40,20 @@ export async function findSharedConversation(
 
 export async function findConversationsByUserId(
   userId: string,
+  limit: number,
+  cursor?: Date,
+  search?: string
 ): Promise<ConversationType[]> {
   return db
     .select()
     .from(conversations)
-    .where(eq(conversations.userId, userId))
-    .orderBy(desc(conversations.updatedAt));
+    .where(and(
+      eq(conversations.userId, userId),
+      search ? ilike(conversations.title, `%${search}%`) : undefined,
+      cursor ? lt(conversations.updatedAt, cursor) : undefined
+    ))
+    .orderBy(desc(conversations.updatedAt))
+    .limit(limit)
 }
 
 export async function updateConversationTitle(

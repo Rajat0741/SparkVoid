@@ -13,6 +13,5 @@ export interface ConversationActionItem {
 export const conversationActionItems: ConversationActionItem[] = [
   { key: "rename", label: "Rename", icon: Pen, type: "dialog" },
   { key: "share", label: "Share", icon: Share2, type: "dialog" },
-  { key: "delete", label: "Delete", icon: Trash2, type: "immediate", variant: "destructive",
-  },
+  { key: "delete", label: "Delete", icon: Trash2, type: "immediate", variant: "destructive" },
 ];

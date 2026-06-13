@@ -14,11 +14,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAction } from "next-safe-action/hooks";
-import { shareConversationAction } from "@/features/sidebar/actions/share-conversation-action";
+import { shareConversationAction } from "@/features/common/actions/share-conversation-action";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import type { ConversationType } from "@/lib/db/schema";
+import { conversationKeys } from "@/features/search/queries/conversation-keys";
 
 interface ShareDialogProps {
   conversation: ConversationType;
@@ -26,11 +27,7 @@ interface ShareDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function ShareDialog({
-  conversation,
-  open,
-  onOpenChange,
-}: ShareDialogProps) {
+export function ShareDialog({ conversation, open, onOpenChange }: ShareDialogProps) {
   const queryClient = useQueryClient();
   const [isCopied, setIsCopied] = useState(false);
 
@@ -41,11 +38,11 @@ export function ShareDialog({
 
   const { execute, isExecuting } = useAction(shareConversationAction, {
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["conversations"] });
+      queryClient.invalidateQueries({ queryKey: conversationKeys.all });
       toast.success(
         conversation.isShared
           ? "Conversation is now private"
-          : "Conversation is now shared"
+          : "Conversation is now shared",
       );
     },
     onError: () => {
@@ -89,13 +86,13 @@ export function ShareDialog({
               disabled={isExecuting}
               className={cn(
                 "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-                conversation.isShared ? "bg-primary" : "bg-muted-foreground/30"
+                conversation.isShared ? "bg-primary" : "bg-muted-foreground/30",
               )}
             >
               <span
                 className={cn(
                   "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-background shadow-lg ring-0 transition duration-200 ease-in-out",
-                  conversation.isShared ? "translate-x-5" : "translate-x-0"
+                  conversation.isShared ? "translate-x-5" : "translate-x-0",
                 )}
               />
             </button>

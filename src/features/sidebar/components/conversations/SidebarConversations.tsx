@@ -4,8 +4,9 @@ import { ItemGroup } from "@/components/ui/item";
 import { useSidebar } from "@/components/ui/sidebar";
 import { usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { getConversationQueryOptions } from "../../queries/get-conversations-query";
+import { getConversationQueryOptions } from "@/features/common/queries/get-conversations-query";
 import { ConversationItem } from "./ConversationItem";
+import { ViewAll } from "./ViewAll";
 
 export function SidebarConversations() {
   const { state } = useSidebar();
@@ -21,16 +22,16 @@ export function SidebarConversations() {
   return (
     <div className="flex-1 flex flex-col min-h-0 border-t">
       <span className="px-5 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider font-sans">
-        Conversations
+        Recents
       </span>
 
-      <div className="flex-1 overflow-y-auto  px-2">
+      <div className="flex-1 overflow-y-auto px-2">
         {isLoading ? (
           <ConversationLoading />
         ) : conversations.length === 0 ? (
           <ConversationEmpty />
         ) : (
-          <ItemGroup className="gap-1">
+          <ItemGroup className="gap-1 mb-2">
             {conversations.map((conv) => (
               <ConversationItem
                 key={conv.id}
@@ -38,6 +39,7 @@ export function SidebarConversations() {
                 isActive={pathname === `/chat/${conv.id}`}
               />
             ))}
+            {conversations.length > 10 && <ViewAll />}
           </ItemGroup>
         )}
       </div>

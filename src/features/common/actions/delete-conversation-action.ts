@@ -26,7 +26,6 @@ export const deleteConversationAction = authActionClient
       throw new AppError("Unauthorized to delete this conversation", 403);
     }
 
-    // Delete ImageKit files before removing the conversation record
     const conversationAttachments =
       await findAttachmentFileIdsByConversationId(conversationId);
 
@@ -36,7 +35,6 @@ export const deleteConversationAction = authActionClient
           try {
             await imagekit.files.delete(a.imagekitFileId);
           } catch (error) {
-            // A 404 from ImageKit is fine — the file may already be gone
             const isNotFound =
               error &&
               typeof error === "object" &&

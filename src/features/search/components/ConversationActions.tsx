@@ -60,7 +60,7 @@ export function ConversationActions({
           <div
             role="button"
             tabIndex={0}
-            className="flex items-center justify-center h-6 w-6 rounded hover:bg-sidebar-accent-foreground/10 cursor-pointer focus-visible:outline-hidden"
+            className="flex items-center justify-center h-6 w-6 rounded active:bg-sidebar-accent-foreground/10 cursor-pointer focus-visible:outline-hidden"
           >
             <MoreHorizontal className="h-4 w-4" />
           </div>

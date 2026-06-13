@@ -2,10 +2,16 @@ import { AppError } from "@/utils/app-error";
 import { findConversationsByUserId } from "@/lib/db/queries";
 import { getUserSession } from "@/lib/getUser";
 
-export async function GET(request: Request) {
+export async function POST(request: Request) {
   try {
+    const { limit, cursor, query } = await request.json();
     const userSession = await getUserSession(request.headers);
-    const conversations = await findConversationsByUserId(userSession.session.userId);
+    const conversations = await findConversationsByUserId(
+      userSession.session.userId,
+      limit,
+      cursor,
+      query,
+    );
     return Response.json({ conversations });
   } catch (error) {
     console.error("API error:", error);

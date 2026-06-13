@@ -8,7 +8,7 @@ import { useSidebar } from "@/components/ui/sidebar";
 
 const actionItems = [
   { title: "New chat", url: "/chat", icon: SquarePen },
-  { title: "Search chat", url: "/chat/search", icon: BookSearch },
+  { title: "Chats", url: "/search", icon: BookSearch },
 ];
 
 export function SidebarMenuActions() {
