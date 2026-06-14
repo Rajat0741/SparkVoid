@@ -1,6 +1,6 @@
 import ky from "ky";
 import type { ConversationType } from "@/lib/db/schema";
-import { conversationKeys } from "@/features/search/queries/conversation-keys";
+import { conversationKeys } from "@/features/common/queries/conversation-keys";
 
 export const getConversationQuery = async (
   limit: number,

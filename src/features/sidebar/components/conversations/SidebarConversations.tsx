@@ -6,7 +6,8 @@ import { usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { getConversationQueryOptions } from "@/features/common/queries/get-conversations-query";
 import { ConversationItem } from "./ConversationItem";
-import { ViewAll } from "./ViewAll";
+import Link from "next/link";
+import { CircleEllipsis } from "lucide-react";
 
 export function SidebarConversations() {
   const { state } = useSidebar();
@@ -44,6 +45,18 @@ export function SidebarConversations() {
         )}
       </div>
     </div>
+  );
+}
+
+function ViewAll() {
+  return (
+    <Link
+      href="/search"
+      className="flex items-center gap-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground cursor-pointer transition-all duration-200 border-transparent rounded-lg px-3 py-2.5 text-sm font-sans truncate"
+    >
+      <CircleEllipsis className="h-4 w-4" />
+      All Chats
+    </Link>
   );
 }
 

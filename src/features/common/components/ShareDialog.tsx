@@ -9,17 +9,16 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-  DialogClose,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { useAction } from "next-safe-action/hooks";
 import { shareConversationAction } from "@/features/common/actions/share-conversation-action";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
 import type { ConversationType } from "@/lib/db/schema";
-import { conversationKeys } from "@/features/search/queries/conversation-keys";
+import { conversationKeys } from "@/features/common/queries/conversation-keys";
 
 interface ShareDialogProps {
   conversation: ConversationType;
@@ -38,7 +37,8 @@ export function ShareDialog({ conversation, open, onOpenChange }: ShareDialogPro
 
   const { execute, isExecuting } = useAction(shareConversationAction, {
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: conversationKeys.all });
+      queryClient.invalidateQueries({ queryKey: conversationKeys.list() });
+      queryClient.resetQueries({ queryKey: ["conversations", "infinite"] });
       toast.success(
         conversation.isShared
           ? "Conversation is now private"
@@ -59,7 +59,7 @@ export function ShareDialog({ conversation, open, onOpenChange }: ShareDialogPro
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent onClick={(e) => e.stopPropagation()}>
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Share Conversation</DialogTitle>
           <DialogDescription>
@@ -75,27 +75,16 @@ export function ShareDialog({ conversation, open, onOpenChange }: ShareDialogPro
                 Anyone with this link can view the conversation history
               </div>
             </div>
-            <button
-              type="button"
-              onClick={() =>
+            <Switch
+              checked={conversation.isShared}
+              onCheckedChange={(checked) =>
                 execute({
                   conversationId: conversation.id,
-                  isShared: !conversation.isShared,
+                  isShared: checked,
                 })
               }
               disabled={isExecuting}
-              className={cn(
-                "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-                conversation.isShared ? "bg-primary" : "bg-muted-foreground/30",
-              )}
-            >
-              <span
-                className={cn(
-                  "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-background shadow-lg ring-0 transition duration-200 ease-in-out",
-                  conversation.isShared ? "translate-x-5" : "translate-x-0",
-                )}
-              />
-            </button>
+            />
           </div>
 
           {conversation.isShared && (
@@ -121,11 +110,7 @@ export function ShareDialog({ conversation, open, onOpenChange }: ShareDialogPro
           )}
         </div>
 
-        <DialogFooter>
-          <DialogClose render={<Button type="button" variant="outline" />}>
-            Close
-          </DialogClose>
-        </DialogFooter>
+        <DialogFooter showCloseButton />
       </DialogContent>
     </Dialog>
   );

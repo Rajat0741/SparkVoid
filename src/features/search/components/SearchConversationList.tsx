@@ -4,8 +4,12 @@ import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import { ItemGroup } from "@/components/ui/item";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useConversationsInfinite } from "../hooks/useConversationsInfinite";
-import { ConversationItem } from "@/features/sidebar/components/conversations/ConversationItem";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { getConversationQuery } from "@/features/common/queries/get-conversations-query";
+import { conversationKeys } from "@/features/common/queries/conversation-keys";
+import { ConversationItem } from "./ConversationItem";
+
+const PAGE_SIZE = 12;
 
 interface SearchConversationListProps {
   search: string;
@@ -14,9 +18,27 @@ interface SearchConversationListProps {
 export function SearchConversationList({
   search,
 }: SearchConversationListProps) {
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+  } = useInfiniteQuery({
+    queryKey: conversationKeys.infinite({ search }),
+    queryFn: async ({ pageParam }) => {
+      const cursor = pageParam as Date | undefined;
+      return getConversationQuery(PAGE_SIZE, cursor, search);
+    },
+    initialPageParam: undefined as Date | undefined,
+    getNextPageParam: (lastPage) => {
+      if (!lastPage || lastPage.length < PAGE_SIZE) return undefined;
+      // Use the updatedAt of the last item as the cursor
+      return lastPage[lastPage.length - 1]?.updatedAt;
+    },
+  });
 
-  const { conversations, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-    useConversationsInfinite({ search });
+  const conversations = data?.pages.flat() ?? [];
 
   const { ref: sentinelRef, inView } = useInView({ threshold: 0 });
 

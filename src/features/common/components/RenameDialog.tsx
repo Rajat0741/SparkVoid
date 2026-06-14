@@ -17,7 +17,7 @@ import { renameConversationAction } from "@/features/common/actions/rename-conve
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import type { ConversationType } from "@/lib/db/schema";
-import { conversationKeys } from "@/features/search/queries/conversation-keys";
+import { conversationKeys } from "@/features/common/queries/conversation-keys";
 
 interface RenameDialogProps {
   conversation: ConversationType;
@@ -29,16 +29,10 @@ export function RenameDialog({ conversation, open, onOpenChange }: RenameDialogP
   const queryClient = useQueryClient();
   const [newTitle, setNewTitle] = useState(conversation.title);
 
-  // Sync local title state when the conversation title changes externally
-  const [prevTitle, setPrevTitle] = useState(conversation.title);
-  if (conversation.title !== prevTitle) {
-    setPrevTitle(conversation.title);
-    setNewTitle(conversation.title);
-  }
-
   const { execute, isExecuting } = useAction(renameConversationAction, {
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: conversationKeys.all });
+      queryClient.invalidateQueries({ queryKey: conversationKeys.list() });
+      queryClient.resetQueries({ queryKey: ["conversations", "infinite"] });
       toast.success("Conversation renamed");
       onOpenChange(false);
     },
@@ -56,7 +50,7 @@ export function RenameDialog({ conversation, open, onOpenChange }: RenameDialogP
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent onClick={(e) => e.stopPropagation()}>
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Rename Conversation</DialogTitle>
           <DialogDescription>

@@ -4,7 +4,7 @@ import { Item, ItemContent, ItemTitle } from "@/components/ui/item";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import type { ConversationType } from "@/lib/db/schema";
-import { ConversationActions } from "./ConversationActions";
+import { ConversationActions } from "@/features/common/components";
 
 interface ConversationItemProps {
   conversation: ConversationType;
@@ -29,9 +29,10 @@ export function ConversationItem({ conversation, isActive }: ConversationItemPro
         </ItemContent>
       </Item>
 
-      <div className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover/conversation-item:opacity-100 transition-opacity">
-        <ConversationActions conversation={conversation} />
-      </div>
+      <ConversationActions
+        conversation={conversation}
+        className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover/conversation-item:opacity-100 transition-opacity"
+      />
     </div>
   );
 }
