@@ -4,7 +4,8 @@ import { getUserSession } from "@/lib/getUser";
 
 export async function POST(request: Request) {
   try {
-    const { limit, cursor, query } = await request.json();
+    const { limit, cursor: rawCursor, query } = await request.json();
+    const cursor = rawCursor ? new Date(rawCursor) : undefined;
     const userSession = await getUserSession(request.headers);
     const conversations = await findConversationsByUserId(
       userSession.session.userId,

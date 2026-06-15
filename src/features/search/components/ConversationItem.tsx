@@ -1,37 +1,61 @@
 "use client";
 
-import { Item, ItemContent, ItemTitle } from "@/components/ui/item";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import type { ConversationType } from "@/lib/db/schema";
 import { ConversationActions } from "@/features/common/components";
+import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { formatDistanceToNow } from "date-fns";
 
 interface ConversationItemProps {
   conversation: ConversationType;
   isActive: boolean;
 }
 
-export function ConversationItem({ conversation, isActive }: ConversationItemProps) {
+export function ConversationItem({
+  conversation,
+  isActive,
+}: ConversationItemProps) {
+  const [actionsOpen, setActionsOpen] = useState(false);
+  const isHighlighted = isActive || actionsOpen;
+
   return (
-    <div className="relative group/conversation-item">
-      <Item
-        variant={isActive ? "muted" : "default"}
+    <div className="group/item relative flex items-center w-full rounded-lg">
+      <Link
+        href={`/chat/${conversation.id}`}
         className={cn(
-          "group-hover/conversation-item:bg-sidebar-accent group-hover/conversation-item:text-sidebar-accent-foreground cursor-pointer transition-all duration-200",
-          isActive && "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+          "flex-1 min-w-0 rounded-lg py-2 pl-3 pr-9 text-foreground",
+          "group-hover/item:bg-sidebar-accent",
+          isHighlighted && "bg-sidebar-accent",
         )}
-        render={<Link href={`/chat/${conversation.id}`} />}
       >
-        <ItemContent>
-          <ItemTitle className="text-sm font-sans truncate">
-            {conversation.title}
-          </ItemTitle>
-        </ItemContent>
-      </Item>
+        <span className="flex flex-col gap-0.5">
+          <span className="flex items-center gap-2">
+            <span className="truncate">{conversation.title}</span>
+            {conversation.isShared && (
+              <Badge
+                variant="default"
+                className="shrink-0 text-xs px-1.5 py-0"
+              >
+                Shared
+              </Badge>
+            )}
+          </span>
+          <span className="text-xs text-muted-foreground">
+            {formatDistanceToNow(conversation.updatedAt, { addSuffix: true })}
+          </span>
+        </span>
+      </Link>
 
       <ConversationActions
         conversation={conversation}
-        className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover/conversation-item:opacity-100 transition-opacity"
+        onOpenChange={setActionsOpen}
+        className={cn(
+          "absolute right-3 z-10",
+          "opacity-0 group-hover/item:opacity-100",
+          isHighlighted && "opacity-100",
+        )}
       />
     </div>
   );

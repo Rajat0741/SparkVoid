@@ -15,11 +15,13 @@ import { useConversationActions } from "@/features/common/hooks/use-conversation
 interface ConversationActionsProps {
   conversation: ConversationType;
   className?: string;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export function ConversationActions({
   conversation,
   className,
+  onOpenChange,
 }: ConversationActionsProps) {
   const {
     isRenameOpen,
@@ -41,7 +43,7 @@ export function ConversationActions({
 
   return (
     <div className={className}>
-      <DropdownMenu>
+      <DropdownMenu onOpenChange={onOpenChange}>
         <DropdownMenuTrigger
           onClick={(e) => e.stopPropagation()}
           className="flex items-center justify-center h-6 w-6 rounded hover:bg-sidebar-accent-foreground/10 active:bg-sidebar-accent-foreground/10 cursor-pointer focus-visible:outline-hidden data-popup-open:bg-sidebar-accent-foreground/10"

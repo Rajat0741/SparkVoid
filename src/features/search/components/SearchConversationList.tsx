@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
-import { ItemGroup } from "@/components/ui/item";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { getConversationQuery } from "@/features/common/queries/get-conversations-query";
@@ -18,25 +17,19 @@ interface SearchConversationListProps {
 export function SearchConversationList({
   search,
 }: SearchConversationListProps) {
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-  } = useInfiniteQuery({
-    queryKey: conversationKeys.infinite({ search }),
-    queryFn: async ({ pageParam }) => {
-      const cursor = pageParam as Date | undefined;
-      return getConversationQuery(PAGE_SIZE, cursor, search);
-    },
-    initialPageParam: undefined as Date | undefined,
-    getNextPageParam: (lastPage) => {
-      if (!lastPage || lastPage.length < PAGE_SIZE) return undefined;
-      // Use the updatedAt of the last item as the cursor
-      return lastPage[lastPage.length - 1]?.updatedAt;
-    },
-  });
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
+    useInfiniteQuery({
+      queryKey: conversationKeys.infinite({ search }),
+      queryFn: async ({ pageParam }) => {
+        const cursor = pageParam as Date | undefined;
+        return getConversationQuery(PAGE_SIZE, cursor, search);
+      },
+      initialPageParam: undefined as Date | undefined,
+      getNextPageParam: (lastPage) => {
+        if (!lastPage || lastPage.length < PAGE_SIZE) return undefined;
+        return lastPage[lastPage.length - 1]?.updatedAt;
+      },
+    });
 
   const conversations = data?.pages.flat() ?? [];
 
@@ -52,6 +45,7 @@ export function SearchConversationList({
     return <ConversationListSkeleton />;
   }
 
+  // Empty state
   if (conversations.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center flex-1 text-center py-16 px-4">
@@ -63,8 +57,8 @@ export function SearchConversationList({
   }
 
   return (
-    <div className="flex overflow-y-auto px-4 py-3">
-      <ItemGroup className="gap-1">
+    <div className="flex flex-col overflow-y-auto px-4">
+      <div className="w-full">
         {conversations.map((conv) => (
           <ConversationItem
             key={conv.id}
@@ -72,10 +66,10 @@ export function SearchConversationList({
             conversation={conv}
           />
         ))}
-      </ItemGroup>
+      </div>
 
       {/* Intersection observer sentinel */}
-      <div ref={sentinelRef} className="py-2 flex items-center justify-center">
+      <div ref={sentinelRef} className="py-8 flex items-center justify-center">
         {isFetchingNextPage && (
           <div className="flex gap-2">
             {[...Array(3)].map((_, i) => (
