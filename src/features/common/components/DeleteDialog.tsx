@@ -57,7 +57,7 @@ export function DeleteDialog({ conversation, open, onOpenChange }: DeleteDialogP
             Are you sure you want to delete this conversation? This action cannot be undone.
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter className="gap-2 sm:gap-0">
+        <DialogFooter className="gap-2">
           <DialogClose
             render={
               <Button type="button" variant="outline" disabled={isExecuting} />

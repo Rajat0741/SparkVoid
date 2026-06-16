@@ -1,10 +1,15 @@
 import { AppError } from "@/utils/app-error";
-import { prepareChatRequest } from "@/features/chat/pipeline/preparation/prepare-chat-request";
 import { streamAIResponse } from "@/features/chat/pipeline/streaming/stream-ai-response";
+import { parseRequest } from "@/features/chat/pipeline/parseRequest";
+import { createConversation } from "@/features/chat/pipeline/createConversation";
+import { prepareMessages } from "@/features/chat/pipeline/prepareMessages";
 
 export async function POST(request: Request) {
   try {
-    const { messages, conversationId } = await prepareChatRequest(request);
+    const { message, conversationId } = await parseRequest(request);
+    const { userId } = await createConversation(request, conversationId);
+    const { messages } = await prepareMessages(userId, conversationId, message);
+
     return await streamAIResponse(messages, conversationId);
   } catch (error) {
     console.error("API error:", error);

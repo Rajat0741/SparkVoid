@@ -57,7 +57,7 @@ export function RenameDialog({ conversation, open, onOpenChange }: RenameDialogP
             Enter a new name for this conversation.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4 py-2">
+        <form id="rename-form" onSubmit={handleSubmit} className="space-y-4 py-2">
           <Input
             value={newTitle}
             onChange={(e) => setNewTitle(e.target.value)}
@@ -65,19 +65,19 @@ export function RenameDialog({ conversation, open, onOpenChange }: RenameDialogP
             disabled={isExecuting}
             autoFocus
           />
-          <DialogFooter>
-            <DialogClose
-              render={
-                <Button type="button" variant="outline" disabled={isExecuting} />
-              }
-            >
-              Cancel
-            </DialogClose>
-            <Button type="submit" disabled={isExecuting || !newTitle.trim()}>
-              {isExecuting ? "Saving..." : "Save"}
-            </Button>
-          </DialogFooter>
         </form>
+        <DialogFooter>
+          <DialogClose
+            render={
+              <Button type="button" variant="outline" disabled={isExecuting} />
+            }
+          >
+            Cancel
+          </DialogClose>
+          <Button type="submit" form="rename-form" disabled={isExecuting || !newTitle.trim()}>
+            {isExecuting ? "Saving..." : "Save"}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
