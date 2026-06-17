@@ -72,11 +72,9 @@ function groupParts(parts: MessagePart[]): PartGroup[] {
 function MessageItem({
   message,
   isStreaming,
-  status,
 }: {
   message: CustomUIMessage;
   isStreaming: boolean;
-  status?: ChatStatus;
 }) {
   const groups = groupParts(message.parts);
   return (
@@ -101,7 +99,7 @@ function MessageItem({
         )}
       </MessageContent>
       
-      <MessageActionsGroup message={message} status={status} />
+      <MessageActionsGroup message={message} isStreaming={isStreaming} />
     </Message>
   );
 }
@@ -118,7 +116,7 @@ interface MessageUIProps {
 /** Renders the full conversation message list. */
 export default function MessageUI({ messages, status }: MessageUIProps) {
   return (
-    <>
+    <div className="[&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5">
       {messages.map((message, idx) => {
         const isStreaming = status === "streaming" && idx === messages.length - 1;
         return (
@@ -126,7 +124,6 @@ export default function MessageUI({ messages, status }: MessageUIProps) {
             key={message.id}
             message={message}
             isStreaming={isStreaming}
-            status={status}
           />
         );
       })}
@@ -139,6 +136,6 @@ export default function MessageUI({ messages, status }: MessageUIProps) {
           </MessageContent>
         </Message>
       )}
-    </>
+    </div>
   );
 }

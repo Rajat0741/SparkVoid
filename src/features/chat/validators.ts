@@ -14,6 +14,7 @@ export const CustomUIMessageSchema = z.object({
 export const RequestSchema = z.object({
   conversationId: z.string(),
   message: CustomUIMessageSchema,
+  model: z.enum(["spark", "void"]).optional(),
 });
 
 export type RequestSchemaType = z.infer<typeof RequestSchema>;

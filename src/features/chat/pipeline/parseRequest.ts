@@ -17,8 +17,6 @@ export const parseRequest = async (request: Request) => {
     throw new AppError(parsed.error.message, 400);
   }
 
-  // AI sdk do not exports UIMessage schema, so zod cannot be used to validate the message shape. 
-  // We use the AI SDK's runtime validator instead.
   const message = await validateUIMessages({
     messages: [parsed.data.message],
   });
@@ -26,5 +24,6 @@ export const parseRequest = async (request: Request) => {
   return {
     conversationId: parsed.data.conversationId,
     message: message[0] as CustomUIMessage,
+    model: parsed.data.model as "spark" | "void" | undefined,
   };
 }

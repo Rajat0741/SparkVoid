@@ -6,7 +6,6 @@ import {
   GoogleGenerativeAIProviderOptions,
 } from "@ai-sdk/google";
 import { tavilySearch } from "@tavily/ai-sdk";
-import { webSearch } from "@exalabs/ai-sdk";
 import {
   convertToModelMessages,
   generateId,
@@ -51,9 +50,6 @@ export async function streamAIResponse(
     tools: {
       ...tools,
       weatherTool,
-      webSearch: webSearch({
-        type: "neural",
-      }),
       tavilySearch: tavilySearch({
         searchDepth: "advanced",
         includeAnswer: true,

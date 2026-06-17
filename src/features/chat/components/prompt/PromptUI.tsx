@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   PromptInput,
   PromptInputBody,
@@ -18,6 +19,8 @@ interface PromptUIProps {
 export default function PromptUI({ className }: PromptUIProps) {
   const conversationId = useChatContext((s) => s.conversationId);
   const sendMessage = useChatContext((s) => s.sendMessage);
+  const [textInput, setTextInput] = useState("");
+  const [selectedModel, setSelectedModel] = useState("spark");
   const {
     uploadedFiles,
     uploadStates,
@@ -34,8 +37,7 @@ export default function PromptUI({ className }: PromptUIProps) {
     if (submitIsBlocked) {
       return
     }
-      
-    // Replace base64 data URLs from PromptInput with ImageKit URLs
+
     const fileParts: FileUIPart[] = [...uploadedFiles.values()].map(
       (uploaded) => ({
         type: "file" as const,
@@ -45,7 +47,12 @@ export default function PromptUI({ className }: PromptUIProps) {
       }),
     );
 
-    await sendMessage({ text: message.text, files: fileParts });
+    setTextInput("");
+
+    await sendMessage(
+      { text: message.text, files: fileParts },
+      { body: { model: selectedModel } },
+    );
     clearUploads();
   };
 
@@ -68,9 +75,16 @@ export default function PromptUI({ className }: PromptUIProps) {
       >
         <PromptUIHeader uploadStates={uploadStates} />
         <PromptInputBody>
-          <PromptInputTextarea placeholder="How can I help you today?" />
+          <PromptInputTextarea
+            placeholder="How can I help you today?"
+            onChange={(e) => setTextInput(e.currentTarget.value)}
+          />
         </PromptInputBody>
-        <PromptUIFooter uploadInProgress={uploadInProgress} />
+        <PromptUIFooter
+          uploadInProgress={uploadInProgress}
+          textInput={textInput}
+          selectedModel={selectedModel}
+          onSelectModel={setSelectedModel} />
       </PromptInput>
     </div>
   );
