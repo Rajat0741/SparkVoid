@@ -2,15 +2,13 @@ import { stepCountIs, ToolLoopAgent } from "ai";
 import { GoogleGenerativeAIProviderOptions } from "@ai-sdk/google";
 import { weatherTool } from "@/lib/tools/get-weather";
 import { tavilySearch } from "@tavily/ai-sdk";
-import { FirecrawlTools } from "firecrawl-aisdk";
+import { firecrawlTools } from "@/lib/tools/firecrawl";
 import { google } from "./providerInstance";
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const { systemPrompt, ...firecrawlTools } = FirecrawlTools();
+import { Void_Prompt } from "../prompts";
 
 export const Void = new ToolLoopAgent({
   model: google("gemini-3.1-flash-lite"),
-  instructions: "You are a helpful assistant.",
+  instructions: Void_Prompt(),
   providerOptions: {
     google: {
       thinkingConfig: {
@@ -21,12 +19,13 @@ export const Void = new ToolLoopAgent({
   },
   tools: {
     weather: weatherTool,
-    tavilySearch: tavilySearch({
+    tavilyWebSearch: tavilySearch({
       searchDepth: "advanced",
       includeAnswer: true,
       maxResults: 8,
     }),
     Scrape: firecrawlTools.scrape,
+    web_search: firecrawlTools.search,
   },
   stopWhen: stepCountIs(12),
 });

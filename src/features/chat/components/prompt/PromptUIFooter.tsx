@@ -9,12 +9,13 @@ import {
 } from "@/components/ai-elements/prompt-input";
 import { useChatContext } from "@/features/chat/components/layout/ChatProvider";
 import { ModelSelect } from "./ModelSelect";
+import type { ModelId } from "@/features/chat/validators";
 
 interface PromptUIFooterProps {
   uploadInProgress: boolean;
   textInput: string;
-  selectedModel: string;
-  onSelectModel: (model: string) => void;
+  selectedModel: ModelId;
+  onSelectModel: (model: ModelId) => void;
 }
 
 export function PromptUIFooter({
@@ -28,7 +29,6 @@ export function PromptUIFooter({
 
   return (
     <PromptInputFooter>
-      <div className="flex items-center gap-1">
         <PromptInputActionMenu>
           <PromptInputActionMenuTrigger />
           <PromptInputActionMenuContent>
@@ -36,13 +36,14 @@ export function PromptUIFooter({
             <PromptInputActionAddScreenshot className="w-full" />
           </PromptInputActionMenuContent>
         </PromptInputActionMenu>
+      <div className="ml-auto flex items-center gap-2">
         <ModelSelect value={selectedModel} onChange={onSelectModel} />
+        <PromptInputSubmit
+          disabled={!textInput.trim() || uploadInProgress || status === "submitted"}
+          status={status}
+          onStop={stop}
+        />
       </div>
-      <PromptInputSubmit
-        disabled={!textInput.trim() || uploadInProgress || status === "submitted"}
-        status={status}
-        onStop={stop}
-      />
     </PromptInputFooter>
   );
 }

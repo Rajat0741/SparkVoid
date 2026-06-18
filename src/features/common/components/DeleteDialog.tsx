@@ -37,6 +37,7 @@ export function DeleteDialog({ conversation, open, onOpenChange }: DeleteDialogP
       onOpenChange(false);
       if (pathname === `/chat/${conversation.id}`) {
         router.push("/chat");
+        router.refresh();
       }
     },
     onError: () => {

@@ -20,7 +20,8 @@ export default function PromptUI({ className }: PromptUIProps) {
   const conversationId = useChatContext((s) => s.conversationId);
   const sendMessage = useChatContext((s) => s.sendMessage);
   const [textInput, setTextInput] = useState("");
-  const [selectedModel, setSelectedModel] = useState("spark");
+  const selectedModel = useChatContext((s) => s.modelId);
+  const setSelectedModel = useChatContext((s) => s.setModelId);
   const {
     uploadedFiles,
     uploadStates,

@@ -4,11 +4,12 @@ import { CustomUIMessage, MetadataType } from "@/types";
 import { insertMessage, updateConversationTimestamp } from "@/lib/db/queries";
 import { Spark } from "../models/Spark";
 import { Void } from "../models/Void";
+import { ModelId } from "../validators";
 
 export const streamAIResponse = async (
   messages: CustomUIMessage[],
   conversationId: string,
-  model?: "spark" | "void",
+  model?: ModelId,
 ): Promise<Response> => {
 
   const agent = model === "void" ? Void : Spark;

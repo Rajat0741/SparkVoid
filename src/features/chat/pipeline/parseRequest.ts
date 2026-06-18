@@ -24,6 +24,6 @@ export const parseRequest = async (request: Request) => {
   return {
     conversationId: parsed.data.conversationId,
     message: message[0] as CustomUIMessage,
-    model: parsed.data.model as "spark" | "void" | undefined,
+    model: parsed.data.model,
   };
 }

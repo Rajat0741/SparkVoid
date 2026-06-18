@@ -11,6 +11,8 @@ export const CustomUIMessageSchema = z.object({
   metadata: MetadataSchema.optional(),
 });
 
+export type ModelId = "spark" | "void";
+
 export const RequestSchema = z.object({
   conversationId: z.string(),
   message: CustomUIMessageSchema,

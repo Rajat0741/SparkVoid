@@ -9,6 +9,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { getConversationQueryOptions } from "@/features/common/queries/get-conversations-query";
 import { createChatStore, type ChatState, type ChatStore } from "@/features/chat/stores/chat-store";
 import type { CustomUIMessage } from "@/types";
+import type { ModelId } from "@/features/chat/validators";
 
 // ---------------------------------------------------------------------------
 // Context — holds the *store reference*, never the data.
@@ -67,10 +68,11 @@ export function ChatProvider({
       messages: initialMessages,
       transport: new DefaultChatTransport({
         api: "/api/chat",
-        prepareSendMessagesRequest: ({ id, messages: msgs }) => ({
+        prepareSendMessagesRequest: ({ id, messages: msgs, body }) => ({
           body: {
             conversationId: id,
             message: msgs.at(-1),
+            model: (body as { model?: ModelId })?.model,
           },
         }),
       }),
