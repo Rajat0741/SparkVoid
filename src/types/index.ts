@@ -3,6 +3,7 @@ import { UIDataTypes, UITools } from "ai";
 
 export interface MetadataType {
     tokens?: number;
+    model?: "spark" | "void";
 }
 
 // Custom UIMessage type with custom metadata, UIDataTypes and UITools schemas

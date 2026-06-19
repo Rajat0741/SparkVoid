@@ -52,7 +52,7 @@ export async function findConversationsByUserId(
       search ? ilike(conversations.title, `%${search}%`) : undefined,
       cursor ? lt(conversations.updatedAt, cursor) : undefined
     ))
-    .orderBy(desc(conversations.updatedAt))
+    .orderBy(desc(conversations.isPinned), desc(conversations.updatedAt))
     .limit(limit)
 }
 
@@ -82,6 +82,16 @@ export async function updateConversationTimestamp(
   await db
     .update(conversations)
     .set({ updatedAt: new Date() })
+    .where(eq(conversations.id, conversationId));
+}
+
+export async function updateConversationPinned(
+  conversationId: string,
+  isPinned: boolean,
+): Promise<void> {
+  await db
+    .update(conversations)
+    .set({ isPinned })
     .where(eq(conversations.id, conversationId));
 }
 

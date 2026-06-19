@@ -1,14 +1,16 @@
 "use client";
 
+import React from "react";
 import { MoreHorizontal } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import type { ConversationType } from "@/lib/db/schema";
-import { conversationActionItems } from "@/features/common/conversation-actions";
+import { getConversationActionItems } from "@/features/common/conversation-actions";
 import { RenameDialog, ShareDialog, DeleteDialog } from "@/features/common/components";
 import { useConversationActions } from "@/features/common/hooks/use-conversation-actions";
 
@@ -33,36 +35,38 @@ export function ConversationActions({
     onRename,
     onShare,
     onDelete,
-  } = useConversationActions();
+    onTogglePin,
+  } = useConversationActions(conversation);
 
-  const dialogHandlers: Record<string, () => void> = {
+  const actionHandlers: Record<string, () => void> = {
+    pin: onTogglePin,
     rename: onRename,
     share: onShare,
     delete: onDelete,
   };
 
+  const conversationActionItems = getConversationActionItems(conversation);
+
   return (
     <div className={className}>
       <DropdownMenu onOpenChange={onOpenChange}>
         <DropdownMenuTrigger
-          onClick={(e) => e.stopPropagation()}
           className="flex items-center justify-center h-6 w-6 rounded hover:bg-sidebar-accent-foreground/10 active:bg-sidebar-accent-foreground/10 cursor-pointer focus-visible:outline-hidden data-popup-open:bg-sidebar-accent-foreground/10"
         >
           <MoreHorizontal className="h-4 w-4" />
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
+        <DropdownMenuContent align="start" side="right">
           {conversationActionItems.map((item) => (
-            <DropdownMenuItem
-              key={item.key}
-              variant={item.variant}
-              onClick={(e) => {
-                e.stopPropagation();
-                dialogHandlers[item.key]();
-              }}
-            >
-              <item.icon className="mr-2 h-4 w-4" />
-              {item.label}
-            </DropdownMenuItem>
+            <React.Fragment key={item.key}>
+              {item.separatorBefore && <DropdownMenuSeparator />}
+              <DropdownMenuItem
+                variant={item.variant}
+                onClick={() => actionHandlers[item.key]()}
+              >
+                <item.icon className="h-4 w-4" />
+                {item.label}
+              </DropdownMenuItem>
+            </React.Fragment>
           ))}
         </DropdownMenuContent>
       </DropdownMenu>

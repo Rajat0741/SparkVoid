@@ -4,6 +4,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import type { ConversationType } from "@/lib/db/schema";
 import { ConversationActions } from "@/features/common/components";
+import { Pin } from "lucide-react";
 import { useState } from "react";
 
 interface ConversationItemProps {
@@ -23,12 +24,15 @@ export function ConversationItem({
       <Link
         href={`/chat/${conversation.id}`}
         className={cn(
-          "block truncate rounded-lg py-2 pl-3 pr-8 text-sm text-muted-foreground",
+          "flex items-center gap-1.5 rounded-lg py-2 pl-3 pr-8 text-sm text-muted-foreground",
           "group-hover/item:bg-sidebar-accent group-hover/item:text-foreground",
           isHighlighted && "bg-sidebar-accent text-foreground",
         )}
       >
-        {conversation.title}
+        {conversation.isPinned && (
+          <Pin className="size-3 shrink-0 text-muted-foreground/50" />
+        )}
+        <span className="truncate">{conversation.title}</span>
       </Link>
 
       <ConversationActions

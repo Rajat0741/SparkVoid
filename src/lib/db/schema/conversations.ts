@@ -7,6 +7,7 @@ export const conversations = pgTable('conversations', {
   userId:    text('user_id').notNull(),
   title:     text('title').notNull(),
   isShared:  boolean('is_shared').notNull().default(false),
+  isPinned:  boolean('is_pinned').notNull().default(false),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });

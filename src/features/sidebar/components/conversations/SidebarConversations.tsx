@@ -8,6 +8,7 @@ import { getConversationQueryOptions } from "@/features/common/queries/get-conve
 import { ConversationItem } from "./ConversationItem";
 import Link from "next/link";
 import { CircleEllipsis } from "lucide-react";
+import type { ConversationType } from "@/lib/db/schema";
 
 export function SidebarConversations() {
   const { state } = useSidebar();
@@ -20,31 +21,64 @@ export function SidebarConversations() {
     return null;
   }
 
+  const pinned = conversations.filter((c) => c.isPinned);
+  const recent = conversations.filter((c) => !c.isPinned);
+
   return (
     <div className="flex-1 flex flex-col min-h-0 border-t">
-      <span className="px-5 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider font-sans">
-        Recents
-      </span>
-
       <div className="flex-1 overflow-y-auto px-2">
         {isLoading ? (
           <ConversationLoading />
         ) : conversations.length === 0 ? (
           <ConversationEmpty />
         ) : (
-          <ItemGroup className="gap-1 mb-2">
-            {conversations.map((conv) => (
-              <ConversationItem
-                key={conv.id}
-                conversation={conv}
-                isActive={pathname === `/chat/${conv.id}`}
-              />
-            ))}
+          <>
+            <ConversationSection
+              title="Pinned"
+              items={pinned}
+              pathname={pathname}
+            />
+            <ConversationSection
+              title="Recents"
+              items={recent}
+              pathname={pathname}
+            />
             {conversations.length > 10 && <ViewAll />}
-          </ItemGroup>
+          </>
         )}
       </div>
     </div>
+  );
+}
+
+interface ConversationSectionProps {
+  title: string;
+  items: ConversationType[];
+  pathname: string;
+}
+
+function ConversationSection({
+  title,
+  items,
+  pathname,
+}: ConversationSectionProps) {
+  if (items.length === 0) return null;
+
+  return (
+    <>
+      <span className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider font-sans">
+        {title}
+      </span>
+      <ItemGroup className="gap-1 mb-2">
+        {items.map((conv) => (
+          <ConversationItem
+            key={conv.id}
+            conversation={conv}
+            isActive={pathname === `/chat/${conv.id}`}
+          />
+        ))}
+      </ItemGroup>
+    </>
   );
 }
 
