@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import { findConversationById } from "@/lib/db/queries";
-import ChatHeader from "@/features/chat/components/layout/ChatHeader";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -15,10 +14,5 @@ export default async function ChatLayout({ children, params }: LayoutProps) {
     notFound();
   }
 
-  return (
-    <div className="flex flex-col size-full">
-      <ChatHeader conversationId={id} />
-      {children}
-    </div>
-  );
+  return <>{children}</>;
 }

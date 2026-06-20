@@ -4,6 +4,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import type { ConversationType } from "@/lib/db/schema";
 import { ConversationActions } from "@/features/common/components";
+import { Pin } from "lucide-react";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
@@ -32,6 +33,9 @@ export function ConversationItem({
       >
         <span className="flex flex-col gap-0.5">
           <span className="flex items-center gap-2">
+            {conversation.isPinned && (
+              <Pin className="size-3 shrink-0 text-muted-foreground/50" />
+            )}
             <span className="truncate">{conversation.title}</span>
             {conversation.isShared && (
               <Badge

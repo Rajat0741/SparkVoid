@@ -18,12 +18,16 @@ interface ConversationActionsProps {
   conversation: ConversationType;
   className?: string;
   onOpenChange?: (open: boolean) => void;
+  align?: "start" | "center" | "end";
+  side?: "top" | "right" | "bottom" | "left";
 }
 
 export function ConversationActions({
   conversation,
   className,
   onOpenChange,
+  align = "start",
+  side = "right",
 }: ConversationActionsProps) {
   const {
     isRenameOpen,
@@ -55,7 +59,7 @@ export function ConversationActions({
         >
           <MoreHorizontal className="h-4 w-4" />
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" side="right">
+        <DropdownMenuContent align={align} side={side}>
           {conversationActionItems.map((item) => (
             <React.Fragment key={item.key}>
               {item.separatorBefore && <DropdownMenuSeparator />}

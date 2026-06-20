@@ -4,11 +4,11 @@ import { weatherTool } from "@/lib/tools/get-weather";
 import { tavilySearch } from "@tavily/ai-sdk";
 import { firecrawlTools } from "@/lib/tools/firecrawl";
 import { google } from "./providerInstance";
-import { Void_Prompt } from "../prompts";
+import { VOID_PROMPT } from "../prompts";
 
 export const Void = new ToolLoopAgent({
   model: google("gemini-3.1-flash-lite"),
-  instructions: Void_Prompt(),
+  instructions: VOID_PROMPT(),
   providerOptions: {
     google: {
       thinkingConfig: {
@@ -20,7 +20,7 @@ export const Void = new ToolLoopAgent({
   tools: {
     weather: weatherTool,
     tavilyWebSearch: tavilySearch({
-      searchDepth: "advanced",
+      searchDepth: "basic",
       includeAnswer: true,
       maxResults: 8,
     }),

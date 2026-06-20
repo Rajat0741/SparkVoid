@@ -24,7 +24,8 @@ export const streamAIResponse = async (
     messageMetadata: ({ part }) => {
       if (part.type === "finish") {
         const meta: MetadataType = {
-          tokens: part.totalUsage.totalTokens ?? 0,
+          inputTokens: (part.totalUsage?.inputTokens ?? 0),
+          outputTokens: part.totalUsage?.outputTokenDetails?.textTokens ?? 0,
           model: model ?? "spark",
         };
         return meta;

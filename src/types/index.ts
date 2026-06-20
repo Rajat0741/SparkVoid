@@ -2,8 +2,9 @@ import { type UIMessage, type UseChatHelpers } from "@ai-sdk/react";
 import { UIDataTypes, UITools } from "ai";
 
 export interface MetadataType {
-    tokens?: number;
-    model?: "spark" | "void";
+  inputTokens?: number;
+  outputTokens?: number;
+  model?: "spark" | "void";
 }
 
 // Custom UIMessage type with custom metadata, UIDataTypes and UITools schemas
