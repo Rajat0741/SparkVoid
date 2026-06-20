@@ -37,6 +37,7 @@ export function ShareDialog({ conversation, open, onOpenChange }: ShareDialogPro
 
   const { execute, isExecuting } = useAction(shareConversationAction, {
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: conversationKeys.detail(conversation.id) });
       queryClient.invalidateQueries({ queryKey: conversationKeys.list() });
       queryClient.resetQueries({ queryKey: ["conversations", "infinite"] });
       toast.success(

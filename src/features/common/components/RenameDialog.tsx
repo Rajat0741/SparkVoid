@@ -31,6 +31,7 @@ export function RenameDialog({ conversation, open, onOpenChange }: RenameDialogP
 
   const { execute, isExecuting } = useAction(renameConversationAction, {
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: conversationKeys.detail(conversation.id) });
       queryClient.invalidateQueries({ queryKey: conversationKeys.list() });
       queryClient.resetQueries({ queryKey: ["conversations", "infinite"] });
       toast.success("Conversation renamed");

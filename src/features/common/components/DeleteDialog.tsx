@@ -31,6 +31,7 @@ export function DeleteDialog({ conversation, open, onOpenChange }: DeleteDialogP
 
   const { execute, isExecuting } = useAction(deleteConversationAction, {
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: conversationKeys.detail(conversation.id) });
       queryClient.invalidateQueries({ queryKey: conversationKeys.list() });
       queryClient.resetQueries({ queryKey: ["conversations", "infinite"] });
       toast.success("Conversation deleted");
