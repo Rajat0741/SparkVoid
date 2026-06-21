@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircleIcon } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 import {
   ChainOfThought,
   ChainOfThoughtHeader,
@@ -10,7 +10,8 @@ import {
 import { ReasoningStep } from "./ReasoningStep";
 import { SearchStep } from "./SearchStep";
 import { ScrapStep } from "./ScrapStep";
-import { InteractStep } from "./InteractStep";
+import { TavilyStep } from "./TavilyStep";
+import { WeatherStep } from "./WeatherStep";
 import { GenericToolStep } from "./GenericToolStep";
 import { resolveTitle, allStepsComplete } from "./helpers";
 import { isReasoningUIPart, isToolUIPart } from "./helpers";
@@ -33,9 +34,11 @@ interface ExtendedThinkingProps {
  *   - GenericToolStep — any other tool call
  */
 const getToolType = (name: string) => {
-  if (name.includes("search")) return "search";
-  if (name.includes("scrap") || name.includes("scrape")) return "scrape";
-  if (name.includes("interact")) return "interact";
+  const n = name.toLowerCase();
+  if (n.includes("tavily")) return "tavily";
+  if (n.includes("search")) return "search";
+  if (n.includes("scrap") || n.includes("scrape")) return "scrape";
+  if (n.includes("weather")) return "weather";
   return "generic";
 };
 
@@ -86,8 +89,10 @@ export default function ExtendedThinking({
                 return <SearchStep key={key} part={part} status={status} />;
               case "scrape":
                 return <ScrapStep key={key} part={part} status={status} />;
-              case "interact":
-                return <InteractStep key={key} part={part} status={status} />;
+              case "tavily":
+                return <TavilyStep key={key} part={part} status={status} />;
+              case "weather":
+                return <WeatherStep key={key} part={part} status={status} />;
               default:
                 return <GenericToolStep key={key} part={part} status={status} />
             }
@@ -99,7 +104,7 @@ export default function ExtendedThinking({
         {/* "Done" row appears once every step has finished */}
         {isDone && (
           <ChainOfThoughtStep
-            icon={CheckCircleIcon}
+            icon={<CheckCircle className="size-4" />}
             label={
               <span className="font-medium text-muted-foreground">Done</span>
             }

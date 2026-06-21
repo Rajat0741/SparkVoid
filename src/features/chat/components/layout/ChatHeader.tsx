@@ -1,6 +1,5 @@
 "use client";
 
-import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { LanguageModelUsage } from "ai";
 import { ConversationActions } from "@/features/common/components";
@@ -27,30 +26,12 @@ export default function ChatHeader() {
     getConversationDetailQueryOptions(conversationId),
   );
 
-  const { totalTokens, inputTokens, outputTokens } =
-    useMemo(() => {
-      let input = 0;
-      let output = 0;
-
-      for (const msg of messages) {
-        if (msg.role === "user") {
-          const text = msg.parts
-            .filter((p): p is { type: "text"; text: string } => p.type === "text")
-            .map((p) => p.text)
-            .join(" ");
-          input += Math.ceil(text.length / 4);
-        } else if (msg.role === "assistant" && msg.metadata) {
-          const meta = msg.metadata as Record<string, number | undefined>;
-          output += meta.outputTokens ?? 0;
-        }
-      }
-
-      return {
-        totalTokens: input + output,
-        inputTokens: input,
-        outputTokens: output,
-      };
-    }, [messages]);
+  const lastMsg = messages.at(-1);
+  const inputTokens =
+    lastMsg?.role === "assistant" ? lastMsg.metadata?.inputTokens ?? 0 : 0;
+  const outputTokens =
+    lastMsg?.role === "assistant" ? lastMsg.metadata?.outputTokens ?? 0 : 0;
+  const totalTokens = inputTokens + outputTokens;
 
   if (messageCount === 0) return null;
 
@@ -85,6 +66,7 @@ export default function ChatHeader() {
           <ContextContent align="end" className="min-w-44 pb-3">
             <ContextContentHeader />
             <ContextContentBody className="space-y-1">
+              <p className="text-xs font-medium text-muted-foreground">Last Turn Context</p>
               <ContextInputUsage />
               <ContextOutputUsage />
             </ContextContentBody>

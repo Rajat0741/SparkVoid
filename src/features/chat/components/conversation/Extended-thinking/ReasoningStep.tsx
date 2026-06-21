@@ -13,7 +13,7 @@ interface ReasoningStepProps {
 /** Renders the model's raw thinking text inside a collapsible step row. */
 export function ReasoningStep({ part, status }: ReasoningStepProps) {
   return (
-    <ChainOfThoughtStep label={null} icon={CircleDot} status={status}>
+    <ChainOfThoughtStep label={null} icon={<CircleDot className="size-4" />} status={status}>
       {part.text && <MessageResponse>{part.text}</MessageResponse>}
     </ChainOfThoughtStep>
   );

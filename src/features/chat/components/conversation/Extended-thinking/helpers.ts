@@ -1,17 +1,23 @@
 import type { ToolUIPart, DynamicToolUIPart, ReasoningUIPart } from "ai";
 import { isReasoningUIPart, isToolUIPart } from "ai";
 import type { MessagePart } from "@/types";
+import type { SearchParams } from "firecrawl-aisdk";
 
 // Re-export the union type used across all step components
 export type ToolPart = ToolUIPart | DynamicToolUIPart;
 
 export type StepStatus = "active" | "complete";
 
+// Mirrors SearchResultWeb from @mendable/firecrawl-js.
+// SearchData["web"] is not re-exported by firecrawl-aisdk, so we define this explicitly.
 export interface SearchResult {
-  url?: string;
-  link?: string;
+  url: string;
   title?: string;
+  description?: string;
 }
+
+export type { SearchParams };
+
 
 // ---------------------------------------------------------------------------
 // resolveTitle
@@ -31,6 +37,11 @@ export function resolveTitle(
   const isRunning = (p: ToolPart) =>
     p.state !== "output-available" && p.state !== "output-error";
 
+  const isTavilyTool = (p: ToolPart) => {
+    const name = "toolName" in p ? p.toolName : p.type;
+    return name.includes("tavily");
+  };
+
   const isSearchTool = (p: ToolPart) => {
     const name = "toolName" in p ? p.toolName : p.type;
     return name.includes("search");
@@ -41,20 +52,23 @@ export function resolveTitle(
     return name.includes("scrap") || name.includes("scrape");
   };
 
-  const isInteractTool = (p: ToolPart) => {
+  const isWeatherTool = (p: ToolPart) => {
     const name = "toolName" in p ? p.toolName : p.type;
-    return name.includes("interact");
+    return name.includes("weather");
   };
 
+  if (toolParts.some((p) => isTavilyTool(p) && isRunning(p)))
+    return "Searching the web...";
   if (toolParts.some((p) => isSearchTool(p) && isRunning(p)))
     return "Searching the web...";
   if (toolParts.some((p) => isScrapTool(p) && isRunning(p)))
     return "Reading web page...";
-  if (toolParts.some((p) => isInteractTool(p) && isRunning(p)))
-    return "Interacting with Website...";
+  if (toolParts.some((p) => isWeatherTool(p) && isRunning(p)))
+    return "Getting weather...";
+  if (toolParts.some(isTavilyTool)) return "Searched the web";
   if (toolParts.some(isSearchTool)) return "Searched the web";
   if (toolParts.some(isScrapTool)) return "Scraped website";
-  if (toolParts.some(isInteractTool)) return "Interacted with Website";
+  if (toolParts.some(isWeatherTool)) return "Got weather";
   if (toolParts.some(isRunning)) return "Running tools...";
   if (toolParts.length > 0) return "Used tools";
   if (isStreaming) return "Thinking...";

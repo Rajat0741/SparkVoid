@@ -1,7 +1,6 @@
 import { stepCountIs, ToolLoopAgent } from "ai";
 import { GoogleGenerativeAIProviderOptions } from "@ai-sdk/google";
 import { weatherTool } from "@/lib/tools/get-weather";
-import { tavilySearch } from "@tavily/ai-sdk";
 import { firecrawlTools } from "@/lib/tools/firecrawl";
 import { google } from "./providerInstance";
 import { VOID_PROMPT } from "../prompts";
@@ -19,11 +18,6 @@ export const Void = new ToolLoopAgent({
   },
   tools: {
     weather: weatherTool,
-    tavilyWebSearch: tavilySearch({
-      searchDepth: "basic",
-      includeAnswer: true,
-      maxResults: 8,
-    }),
     Scrape: firecrawlTools.scrape,
     web_search: firecrawlTools.search,
   },

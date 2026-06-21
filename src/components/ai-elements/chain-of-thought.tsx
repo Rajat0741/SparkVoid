@@ -8,7 +8,6 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
-import type { LucideIcon } from "lucide-react";
 import { BrainIcon, ChevronDownIcon, DotIcon } from "lucide-react";
 import type { ComponentProps, ReactNode } from "react";
 import { createContext, memo, useContext, useMemo } from "react";
@@ -101,7 +100,8 @@ export const ChainOfThoughtHeader = memo(
 );
 
 export type ChainOfThoughtStepProps = ComponentProps<"div"> & {
-  icon?: LucideIcon;
+  icon?: ReactNode;
+  statusIcon?: ReactNode;
   label: ReactNode;
   description?: ReactNode;
   status?: "complete" | "active" | "pending";
@@ -116,7 +116,8 @@ const stepStatusStyles = {
 export const ChainOfThoughtStep = memo(
   ({
     className,
-    icon: Icon = DotIcon,
+    icon = <DotIcon className="size-4" />,
+    statusIcon,
     label,
     description,
     status = "complete",
@@ -133,11 +134,14 @@ export const ChainOfThoughtStep = memo(
       {...props}
     >
       <div className="relative mt-0.5">
-        <Icon className="size-4" />
+        {icon}
         <div className="absolute top-7 bottom-0 left-1/2 -mx-px w-px bg-border" />
       </div>
       <div className={`flex-1 ${label ? "space-y-2 mt-0.5" : "space-y-0.5"} overflow-hidden`}>
-        <div>{label}</div>
+        <div className="flex items-start gap-1.5">
+          <div className="min-w-0">{label}</div>
+          {statusIcon && <div className="shrink-0">{statusIcon}</div>}
+        </div>
         {description && (
           <div className="text-muted-foreground text-xs">{description}</div>
         )}
