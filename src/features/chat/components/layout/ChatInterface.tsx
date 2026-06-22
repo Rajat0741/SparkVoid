@@ -1,7 +1,6 @@
 "use client";
 
 import NewChatView from "./NewChatView";
-import ChatHeader from "./ChatHeader";
 import ChatUI from "@/features/chat/components/conversation/ChatUI";
 import PromptUI from "@/features/chat/components/prompt/PromptUI";
 import { ChatProvider, useChatContext } from "./ChatProvider";
@@ -19,7 +18,7 @@ function ChatContent() {
       <div className="flex-1 min-h-0 w-full relative">
         <ChatUI />
       </div>
-      <PromptUI className="w-full max-w-3xl mx-auto" />
+      <PromptUI className="w-full max-w-3xl mx-auto px-2 md:px-0" />
     </div>
   );
 }
@@ -35,7 +34,6 @@ export default function ChatInterface({
 }: ChatInterfaceProps) {
   return (
     <ChatProvider conversationId={conversationId} initialMessages={initialMessages}>
-      <ChatHeader />
       <ChatContent />
     </ChatProvider>
   );

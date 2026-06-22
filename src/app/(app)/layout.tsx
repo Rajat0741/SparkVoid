@@ -2,7 +2,8 @@ import { getUserSession } from "@/lib/getUser";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/features/sidebar/components/AppSidebar";
+import { AppSidebar } from "@/features/layout/components/AppSidebar";
+import { AppHeader } from "@/features/layout/components/AppHeader";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 export default async function ChatLayout({ children }: { children: React.ReactNode }){
@@ -23,6 +24,7 @@ export default async function ChatLayout({ children }: { children: React.ReactNo
       <TooltipProvider>
         <AppSidebar user={session.user} />
         <SidebarInset className="flex flex-col h-screen overflow-hidden">
+          <AppHeader />
           {children}
         </SidebarInset>
       </TooltipProvider>

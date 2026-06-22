@@ -128,8 +128,11 @@ export default function MessageUI({ messages, status }: MessageUIProps) {
         );
       })}
 
-      {/* Inline spinner — visible only while waiting for the first chunk */}
-      {status === "submitted" && (
+      {/* Placeholder while waiting for assistant content */}
+      {(
+        status === "submitted" ||
+        (status === "streaming" && !messages.at(-1)?.parts?.some(p => p.type !== "step-start"))
+      ) && (
         <Message from="assistant">
           <MessageContent>
             <Loader2 size={16} className="animate-spin text-muted-foreground" />

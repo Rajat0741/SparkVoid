@@ -6,6 +6,7 @@ import type { ConversationType } from "@/lib/db/schema";
 import { ConversationActions } from "@/features/common/components";
 import { Pin } from "lucide-react";
 import { useState } from "react";
+import { useSidebar } from "@/components/ui/sidebar";
 
 interface ConversationItemProps {
   conversation: ConversationType;
@@ -17,12 +18,14 @@ export function ConversationItem({
   isActive,
 }: ConversationItemProps) {
   const [actionsOpen, setActionsOpen] = useState(false);
+  const { isMobile, setOpenMobile } = useSidebar();
   const isHighlighted = isActive || actionsOpen;
 
   return (
     <div className="group/item relative w-full">
       <Link
         href={`/chat/${conversation.id}`}
+        onClick={() => isMobile && setOpenMobile(false)}
         className={cn(
           "flex items-center gap-1.5 rounded-lg py-2 pl-3 pr-8 text-sm text-muted-foreground",
           "group-hover/item:bg-sidebar-accent group-hover/item:text-foreground",
@@ -37,7 +40,8 @@ export function ConversationItem({
 
       <ConversationActions
         conversation={conversation}
-        className={cn("absolute right-2 top-1/2 z-10 -translate-y-1/2 opacity-0 group-hover/item:opacity-100",
+        className={cn(
+          "absolute right-2 top-1/2 z-10 -translate-y-1/2 md:opacity-0 md:group-hover/item:opacity-100",
           isHighlighted && "opacity-100"
         )}
         onOpenChange={setActionsOpen}

@@ -12,17 +12,17 @@ const actionItems = [
 ];
 
 export function SidebarMenuActions() {
-  const { state, isMobile } = useSidebar();
+  const { state, isMobile, setOpenMobile } = useSidebar();
   const isCollapsed = state === "collapsed";
 
   return (
-    <ItemGroup className="px-2 py-2 gap-1">
+    <ItemGroup className="p-2 gap-1">
       {actionItems.map((item) => {
         const itemComp = (
           <Item
             key={item.title}
             className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground cursor-pointer transition-all duration-200 group-data-[collapsible=icon]:p-2 group-data-[collapsible=icon]:justify-center"
-            render={<Link href={item.url} />}
+            render={<Link href={item.url} onClick={() => isMobile && setOpenMobile(false)} />}
           >
             <ItemMedia variant="icon" className="group-data-[collapsible=icon]:m-0">
               <item.icon className="size-4 shrink-0" />

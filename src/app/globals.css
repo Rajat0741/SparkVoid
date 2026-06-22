@@ -1,9 +1,11 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "katex/dist/katex.min.css";
 
 /* AI Elements MessageResponse (Streamdown) */
 @source "../node_modules/streamdown/dist/*.js";
+@source "../node_modules/@streamdown/math/dist/*.js";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -160,4 +162,29 @@
   &::-webkit-scrollbar {
     display: none;
   }
+}
+
+/* Streamdown code block: move actions to top-right */
+[data-streamdown="code-block"] {
+  position: relative;
+}
+
+[data-streamdown="code-block"] > :nth-child(2):not([data-streamdown]) {
+  position: absolute !important;
+  top: 0.5rem;
+  right: 0.5rem;
+}
+
+/* Streamdown syntax highlighting token colors (fallback) */
+.text-\[var\(--sdm-c\,inherit\)\] {
+  color: var(--sdm-c, inherit);
+}
+.dark .dark\:text-\[var\(--shiki-dark\,var\(--sdm-c\,inherit\)\)\] {
+  color: var(--shiki-dark, var(--sdm-c, inherit));
+}
+.bg-\[var\(--sdm-tbg\)\] {
+  background-color: var(--sdm-tbg);
+}
+.dark .dark\:bg-\[var\(--shiki-dark-bg\,var\(--sdm-tbg\)\)\] {
+  background-color: var(--shiki-dark-bg, var(--sdm-tbg));
 }

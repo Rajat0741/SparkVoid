@@ -57,7 +57,7 @@ export function ConversationItem({
         onOpenChange={setActionsOpen}
         className={cn(
           "absolute right-3 z-10",
-          "opacity-0 group-hover/item:opacity-100",
+          "md:opacity-0 md:group-hover/item:opacity-100",
           isHighlighted && "opacity-100",
         )}
       />

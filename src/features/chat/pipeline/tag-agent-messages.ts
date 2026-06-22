@@ -12,7 +12,7 @@ export function tagAgentMessages(messages: CustomUIMessage[]): CustomUIMessage[]
     return {
       ...msg,
       parts: [
-        { type: "text", text: `[${AGENT_LABELS[agent]}] ` },
+        { type: "text", text: `⟦${AGENT_LABELS[agent]}⟧ ` },
         ...msg.parts,
       ],
     };
@@ -21,7 +21,7 @@ export function tagAgentMessages(messages: CustomUIMessage[]): CustomUIMessage[]
 
 export const agentAwarenessNote = [
   "This conversation may include turns from two assistants: Spark (fast, conversational) and Void (deep research).",
-  "Past assistant messages are prefixed with [Spark] or [Void] to show who responded —",
+  "Past assistant messages are prefixed with ⟦Spark⟧ or ⟦Void⟧ to show who responded —",
   "this is system-added context, not something either assistant wrote.",
   "Never ever include this prefix in your own output.",
 ].join(" ");
