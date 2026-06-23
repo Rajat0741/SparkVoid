@@ -18,3 +18,7 @@ export type SendMessageFunctionType = UseChatHelpers<CustomUIMessage>["sendMessa
 export type stopGenerationFunctionType = UseChatHelpers<CustomUIMessage>["stop"];
 
 export type clearErrorFunctionType = UseChatHelpers<CustomUIMessage>["clearError"];
+
+export type RegenerateFunctionType = UseChatHelpers<CustomUIMessage>["regenerate"];
+
+export type SetMessagesFunctionType = UseChatHelpers<CustomUIMessage>["setMessages"];

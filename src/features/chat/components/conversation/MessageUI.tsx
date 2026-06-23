@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/tooltip";
 import type { ModelId } from "@/features/chat/validators";
 import type { CustomUIMessage, MessagePart } from "@/types";
-import { Loader2 } from "lucide-react";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -67,6 +66,16 @@ function groupParts(parts: MessagePart[]): PartGroup[] {
 // Sub-components
 // ---------------------------------------------------------------------------
 
+function TypingIndicator() {
+  return (
+    <div className="flex items-center gap-1 h-6 px-1 text-muted-foreground mt-1 mb-1">
+      <div className="w-1.5 h-1.5 rounded-full bg-current animate-bounce [animation-delay:-0.3s]" />
+      <div className="w-1.5 h-1.5 rounded-full bg-current animate-bounce [animation-delay:-0.15s]" />
+      <div className="w-1.5 h-1.5 rounded-full bg-current animate-bounce" />
+    </div>
+  );
+}
+
 function ModelBadge({ modelKey }: { modelKey: ModelId }) {
   const config = MODEL_CONFIGS[modelKey];
   if (!config) return null;
@@ -110,25 +119,29 @@ function MessageItem({
         )}
         <div className="flex min-w-0 flex-1 flex-col gap-2">
           <MessageContent>
-        {groups.map((group, idx) =>
-          group.type === "steps" ? (
-            <ExtendedThinking
-              key={`${message.id}-group-${idx}`}
-              messageId={message.id}
-              stepParts={group.parts}
-              isStreaming={isStreaming && idx === groups.length - 1}
-            />
-          ) : (
-            <MessageTextGroup
-              key={`${message.id}-group-${idx}`}
-              parts={group.parts}
-              groupKey={`${message.id}-group-${idx}`}
-            />
-          )
-        )}
-      </MessageContent>
-      
-      <MessageActionsGroup message={message} isStreaming={isStreaming} />
+            {groups.length === 0 && isStreaming && message.role === "assistant" ? (
+              <TypingIndicator />
+            ) : (
+              groups.map((group, idx) =>
+                group.type === "steps" ? (
+                  <ExtendedThinking
+                    key={`${message.id}-group-${idx}`}
+                    messageId={message.id}
+                    stepParts={group.parts}
+                    isStreaming={isStreaming && idx === groups.length - 1}
+                  />
+                ) : (
+                  <MessageTextGroup
+                    key={`${message.id}-group-${idx}`}
+                    parts={group.parts}
+                    groupKey={`${message.id}-group-${idx}`}
+                  />
+                )
+              )
+            )}
+          </MessageContent>
+          
+          <MessageActionsGroup message={message} isStreaming={isStreaming} />
         </div>
       </div>
     </Message>
@@ -160,13 +173,10 @@ export default function MessageUI({ messages, status }: MessageUIProps) {
       })}
 
       {/* Placeholder while waiting for assistant content */}
-      {(
-        status === "submitted" ||
-        (status === "streaming" && !messages.at(-1)?.parts?.some(p => p.type !== "step-start"))
-      ) && (
+      {status === "submitted" && (
         <Message from="assistant">
           <MessageContent>
-            <Loader2 size={16} className="animate-spin text-muted-foreground" />
+            <TypingIndicator />
           </MessageContent>
         </Message>
       )}

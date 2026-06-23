@@ -62,7 +62,7 @@ export function ChatProvider({
   const pathname = usePathname();
   const queryClient = useQueryClient();
 
-  const { messages, sendMessage, status, error, stop, clearError } =
+  const { messages, sendMessage, status, error, stop, clearError, regenerate, setMessages } =
     useChat<CustomUIMessage>({
       id: conversationId,
       messages: initialMessages,
@@ -104,6 +104,8 @@ export function ChatProvider({
       sendMessage: handleSendMessage,
       stop,
       clearError,
+      regenerate,
+      setMessages,
     }),
   );
 
@@ -119,6 +121,8 @@ export function ChatProvider({
       sendMessage: handleSendMessage,
       stop,
       clearError,
+      regenerate,
+      setMessages,
     });
   });
 

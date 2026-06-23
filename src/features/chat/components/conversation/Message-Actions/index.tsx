@@ -3,6 +3,7 @@
 import { MessageActions as MessageActionsContainer } from "@/components/ai-elements/message";
 import type { CustomUIMessage } from "@/types";
 import { ClipboardButton } from "./ClipboardButton";
+import { RegenerateButton } from "./RegenerateButton";
 
 interface MessageActionsProps {
   message: CustomUIMessage;
@@ -19,6 +20,7 @@ export default function MessageActions({
     <MessageActionsContainer
       className={message.role === "user" ? "justify-end" : ""}
     >
+      <RegenerateButton message={message} />
       <ClipboardButton message={message} />
     </MessageActionsContainer>
   );

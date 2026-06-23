@@ -5,6 +5,8 @@ import type {
   CustomUIMessage,
   SendMessageFunctionType,
   stopGenerationFunctionType,
+  RegenerateFunctionType,
+  SetMessagesFunctionType,
 } from "@/types";
 import type { ModelId } from "@/features/chat/validators";
 
@@ -21,6 +23,8 @@ export interface ChatState {
   sendMessage: SendMessageFunctionType;
   stop: stopGenerationFunctionType;
   clearError: clearErrorFunctionType;
+  regenerate: RegenerateFunctionType;
+  setMessages: SetMessagesFunctionType;
   setModelId: (modelId: ModelId) => void;
 }
 
