@@ -7,7 +7,7 @@ import { prepareMessages } from "@/features/chat/pipeline/prepareMessages";
 export async function POST(request: Request) {
   try {
     const { message, conversationId, model } = await parseRequest(request);
-    const { userId } = await createConversation(request, conversationId);
+    const { userId } = await createConversation(request, conversationId, message);
     const { messages } = await prepareMessages(userId, conversationId, message);
 
     return await streamAIResponse(messages, conversationId, model);

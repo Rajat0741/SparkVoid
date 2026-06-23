@@ -1,12 +1,19 @@
 import { stepCountIs, ToolLoopAgent } from "ai";
 import { GoogleGenerativeAIProviderOptions } from "@ai-sdk/google";
 import { weatherTool } from "@/lib/tools/get-weather";
-import { google } from "./providerInstance";
+import { google, googleTwo } from "./providerInstance";
 import { SPARK_PROMPT } from "../prompts";
 import { tavilySearch } from "@tavily/ai-sdk";
 
+import { createFallback } from "ai-fallback";
+
 export const Spark = new ToolLoopAgent({
-  model: google("gemini-3.1-flash-lite"),
+  model: createFallback({
+    models: [
+      google("gemini-3.1-flash-lite"),
+      googleTwo("gemini-3.1-flash-lite"),
+    ],
+  }),
   instructions: SPARK_PROMPT(),
   providerOptions:{
     google: {

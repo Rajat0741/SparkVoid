@@ -16,8 +16,7 @@ export const prepareMessages = async (
   conversationId: string,
   message: CustomUIMessage,
 ): Promise<PreparedMessages> => {
-  const conversationHistory =
-    await findMessagesByConversationId(conversationId);
+  const conversationHistory = await findMessagesByConversationId(conversationId);
   const messages = toUIMessage(conversationHistory);
 
   messages.push(message);
