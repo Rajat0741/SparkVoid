@@ -8,6 +8,14 @@ import {
 import ExtendedThinking from "./Extended-thinking";
 import { MessageTextGroup } from "./MessageTextGroup";
 import MessageActionsGroup from "./Message-Actions";
+import { MODEL_CONFIGS } from "@/features/chat/models/model-config";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import type { ModelId } from "@/features/chat/validators";
 import type { CustomUIMessage, MessagePart } from "@/types";
 import { Loader2 } from "lucide-react";
 
@@ -56,8 +64,25 @@ function groupParts(parts: MessagePart[]): PartGroup[] {
 }
 
 // ---------------------------------------------------------------------------
-// Sub-component
+// Sub-components
 // ---------------------------------------------------------------------------
+
+function ModelBadge({ modelKey }: { modelKey: ModelId }) {
+  const config = MODEL_CONFIGS[modelKey];
+  if (!config) return null;
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger render={<span />}>
+          <div className="mt-0.5 shrink-0">{config.icon}</div>
+        </TooltipTrigger>
+        <TooltipContent side="top">
+          <p>{config.label}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
 
 /**
  * Renders all groups belonging to a single chat message.
@@ -79,8 +104,12 @@ function MessageItem({
   const groups = groupParts(message.parts);
   return (
     <Message from={message.role} key={message.id}>
-      
-      <MessageContent>
+      <div className="flex w-full items-start gap-2">
+        {message.role === "assistant" && message.metadata?.model && (
+          <ModelBadge modelKey={message.metadata.model} />
+        )}
+        <div className="flex min-w-0 flex-1 flex-col gap-2">
+          <MessageContent>
         {groups.map((group, idx) =>
           group.type === "steps" ? (
             <ExtendedThinking
@@ -100,6 +129,8 @@ function MessageItem({
       </MessageContent>
       
       <MessageActionsGroup message={message} isStreaming={isStreaming} />
+        </div>
+      </div>
     </Message>
   );
 }

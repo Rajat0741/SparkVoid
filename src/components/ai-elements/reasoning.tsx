@@ -206,6 +206,21 @@ export type ReasoningContentProps = ComponentProps<
 
 const streamdownPlugins = { cjk, code, math, mermaid };
 
+const streamdownComponents = {
+  a: ({ className, href, ...props }: ComponentProps<"a">) => (
+    <a
+      className={cn(
+        "break-all text-blue-600 underline underline-offset-4 hover:text-blue-500 visited:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 dark:visited:text-blue-400",
+        className
+      )}
+      href={href}
+      rel="noreferrer noopener"
+      target="_blank"
+      {...props}
+    />
+  ),
+};
+
 export const ReasoningContent = memo(
   ({ className, children, ...props }: ReasoningContentProps) => (
     <CollapsibleContent
@@ -216,7 +231,13 @@ export const ReasoningContent = memo(
       )}
       {...props}
     >
-      <Streamdown plugins={streamdownPlugins}>{children}</Streamdown>
+      <Streamdown
+        components={streamdownComponents}
+        linkSafety={{ enabled: false }}
+        plugins={streamdownPlugins}
+      >
+        {children}
+      </Streamdown>
     </CollapsibleContent>
   )
 );

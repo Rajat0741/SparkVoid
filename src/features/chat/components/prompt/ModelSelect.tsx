@@ -7,28 +7,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { SparklesIcon, GlobeIcon } from "lucide-react";
+import { MODEL_CONFIGS } from "@/features/chat/models/model-config";
 import type { ModelId } from "@/features/chat/validators";
-
-const MODELS: {
-  value: ModelId;
-  label: string;
-  description: string;
-  icon: React.ReactNode;
-}[] = [
-  {
-    value: "spark",
-    label: "Spark",
-    description: "Fast everyday answers",
-    icon: <SparklesIcon className="size-3.5" />,
-  },
-  {
-    value: "void",
-    label: "Void",
-    description: "Search & scraping tools",
-    icon: <GlobeIcon className="size-3.5" />,
-  },
-];
 
 interface ModelSelectProps {
   value: ModelId;
@@ -36,7 +16,7 @@ interface ModelSelectProps {
 }
 
 export function ModelSelect({ value, onChange }: ModelSelectProps) {
-  const selected = MODELS.find((m) => m.value === value);
+  const selected = MODEL_CONFIGS[value];
 
   const handleChange = (next: ModelId | null) => {
     if (next !== null) onChange(next);
@@ -44,12 +24,12 @@ export function ModelSelect({ value, onChange }: ModelSelectProps) {
 
   return (
       <Select value={value} onValueChange={handleChange}>
-        <SelectTrigger className="border-0">
+        <SelectTrigger className="border-2">
           {selected?.icon}
           <SelectValue placeholder="Model" />
         </SelectTrigger>
         <SelectContent align="start" side="bottom" alignItemWithTrigger={false} >
-            {MODELS.map((m) => (
+            {Object.values(MODEL_CONFIGS).map((m) => (
               <SelectItem key={m.value} value={m.value} className="min-w-full p-3 pr-10">
                 <div className="flex items-start gap-2">
                   <span className="mt-0.5">{m.icon}</span>

@@ -1,6 +1,6 @@
-import { convertToModelMessages, smoothStream } from "ai";
+import { convertToModelMessages } from "ai";
 import { generateId } from "better-auth";
-import { CustomUIMessage, MetadataType } from "@/types";
+import { type CustomUIMessage, type MetadataType } from "@/types";
 import { insertMessage, updateConversationTimestamp } from "@/lib/db/queries";
 import { tagAgentMessages } from "./tag-agent-messages";
 import { Spark } from "../models/Spark";
@@ -24,6 +24,9 @@ export const streamAIResponse = async (
   return (await result).toUIMessageStreamResponse({
     generateMessageId: generateId,
     messageMetadata: ({ part }) => {
+      if (part.type === "start") {
+        return { model: model ?? "spark" };
+      }
       if (part.type === "finish") {
         const meta: MetadataType = {
           inputTokens: (part.totalUsage?.inputTokens ?? 0),

@@ -1,8 +1,7 @@
 "use client";
 
-import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
-import { LogOut, Sun, Moon, ChevronUp } from "lucide-react";
+import { LogOut, ChevronUp } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { SidebarFooter, useSidebar } from "@/components/ui/sidebar";
 import {
@@ -28,7 +27,6 @@ interface UserFooterProps {
 
 export function SidebarUserFooter({ user }: UserFooterProps) {
   const { state } = useSidebar();
-  const { theme, setTheme } = useTheme();
   const router = useRouter();
   const isCollapsed = state === "collapsed";
 
@@ -40,10 +38,6 @@ export function SidebarUserFooter({ user }: UserFooterProps) {
         },
       },
     });
-  };
-
-  const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
   };
 
   return (
@@ -104,23 +98,6 @@ export function SidebarUserFooter({ user }: UserFooterProps) {
               </div>
             </DropdownMenuLabel>
           </DropdownMenuGroup>
-
-          <DropdownMenuSeparator />
-
-          {/* Toggle Theme Menu Item */}
-          <DropdownMenuItem onClick={toggleTheme} className="cursor-pointer">
-            {theme === "dark" ? (
-              <>
-                <Sun className="size-4 mr-2" />
-                <span>Light Mode</span>
-              </>
-            ) : (
-              <>
-                <Moon className="size-4 mr-2" />
-                <span>Dark Mode</span>
-              </>
-            )}
-          </DropdownMenuItem>
 
           <DropdownMenuSeparator />
 

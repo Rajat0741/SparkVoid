@@ -6,7 +6,10 @@ import { ThemeProvider } from "@/components/theme-provider";
 import QueryProvider from "@/lib/providers/QueryProvider";
 import { Toaster } from "@/components/ui/sonner";
 
-const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-sans" });
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,14 +47,13 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col text-base">
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="dark"
           disableTransitionOnChange
         >
           <QueryProvider>
-  {children}
-  <Toaster />
-</QueryProvider>
+            {children}
+            <Toaster />
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>
