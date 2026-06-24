@@ -16,7 +16,7 @@ export const messages = pgTable('messages', {
   parts:          jsonb('parts').notNull().default([]).$type<UIMessagePart<UIDataTypes, UITools>[]>(),
   createdAt:      timestamp('created_at').notNull().defaultNow(),
 }, (t) => [
-  index('messages_conversation_id_idx').on(t.conversationId),
+  index('messages_conv_created_idx').on(t.conversationId, t.createdAt),
 ]);
 
 export const messagesInsertSchema = createInsertSchema(messages);

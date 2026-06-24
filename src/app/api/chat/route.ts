@@ -1,14 +1,27 @@
 import { AppError } from "@/utils/app-error";
 import { streamAIResponse } from "@/features/chat/pipeline/stream-response";
 import { parseRequest } from "@/features/chat/pipeline/parseRequest";
+import { fetchHistory } from "@/features/chat/pipeline/fetchHistory";
 import { createConversation } from "@/features/chat/pipeline/createConversation";
-import { prepareMessages } from "@/features/chat/pipeline/prepareMessages";
+import { saveMessage } from "@/features/chat/pipeline/saveMessage";
+import { prepareMessage } from "@/features/chat/pipeline/prepareMessage";
+import { getUserSession } from "@/lib/getUser";
 
 export async function POST(request: Request) {
   try {
+    
     const { message, conversationId, model } = await parseRequest(request);
-    const { userId } = await createConversation(request, conversationId, message);
-    const { messages } = await prepareMessages(userId, conversationId, message);
+    const history = await fetchHistory(conversationId);
+    
+    const userId = (await getUserSession(request.headers)).user.id;
+
+    if (history.length === 0) {
+      await createConversation(userId, conversationId, message);
+    }
+
+    await saveMessage(userId, conversationId, message);
+
+    const messages = prepareMessage(history, message);
 
     return await streamAIResponse(messages, conversationId, model);
   } catch (error) {

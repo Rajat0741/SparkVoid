@@ -20,8 +20,9 @@ export function tagAgentMessages(messages: CustomUIMessage[]): CustomUIMessage[]
 }
 
 export const agentAwarenessNote = [
-  "This conversation may include turns from two assistants: Spark (fast, conversational) and Void (deep research).",
-  "Past assistant messages are prefixed with ⟦Spark⟧ or ⟦Void⟧ to show who responded —",
-  "this is system-added context, not something either assistant wrote.",
-  "Never ever include this prefix in your own output.",
+  "This conversation may include turns from two assistants: Spark and Void.",
+  "Past assistant messages are prefixed with ⟦Spark⟧ or ⟦Void⟧ — this is injected by the system, not written by the assistant.",
+  "IMPORTANT: You must NEVER begin your response with ⟦Spark⟧ or ⟦Void⟧ or any similar bracket prefix.",
+  "Incorrect: '⟦Spark⟧ Here is your answer...'",
+  "Correct: 'Here is your answer...'",
 ].join(" ");

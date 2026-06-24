@@ -2,7 +2,6 @@ import { convertToModelMessages } from "ai";
 import { generateId } from "better-auth";
 import { type CustomUIMessage, type MetadataType } from "@/types";
 import { insertMessage, updateConversationTimestamp } from "@/lib/db/queries";
-import { tagAgentMessages } from "./tag-agent-messages";
 import { Spark } from "../models/Spark";
 import { Void } from "../models/Void";
 import { ModelId } from "../validators";
@@ -15,10 +14,8 @@ export const streamAIResponse = async (
 
   const agent = model === "void" ? Void : Spark;
 
-  const taggedMessages = tagAgentMessages(messages);
-
   const result = agent.stream({
-    messages: await convertToModelMessages(taggedMessages),
+    messages: await convertToModelMessages(messages),
   });
 
   return (await result).toUIMessageStreamResponse({

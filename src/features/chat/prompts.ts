@@ -1,6 +1,6 @@
 import { firecrawlSystemPrompt } from "@/lib/tools/firecrawl";
 import { tavilySystemPrompt } from "@/lib/tools/tavily";
-import { agentAwarenessNote } from "./pipeline/tag-agent-messages";
+import { agentAwarenessNote } from "./tag-agent-messages";
 
 const currentDateTime = () =>
   `Current date and time: ${new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })} IST`;

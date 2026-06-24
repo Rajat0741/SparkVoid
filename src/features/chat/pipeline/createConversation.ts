@@ -1,6 +1,5 @@
-import { getUserSession } from "@/lib/getUser";
 import { NewConversationType } from "@/lib/db/schema";
-import { insertConversation, findMessagesByConversationId, updateConversationTitle } from "@/lib/db/queries";
+import { insertConversation, updateConversationTitle } from "@/lib/db/queries";
 import { generateText } from "ai";
 import { google } from "@/features/chat/models/providerInstance";
 import { CustomUIMessage } from "@/types";
@@ -8,8 +7,9 @@ import { CustomUIMessage } from "@/types";
 const generateConversationTitle = async (conversationId: string, messageText: string) => {
   try {
     const { text } = await generateText({
-      model: google("gemma-4-31b-it"),
+      model: google("gemma-4-26b-a4b-it"),
       prompt: `Generate a concise, one-line title for a conversation starting with this message. Return ONLY the title text without quotes or punctuation.\n\nMessage:\n${messageText}`,
+      maxOutputTokens: 100,
     });
 
     const title = text.trim();
@@ -21,28 +21,27 @@ const generateConversationTitle = async (conversationId: string, messageText: st
   }
 };
 
-export const createConversation = async (request: Request, conversationId: string, message: CustomUIMessage): Promise<{ userId: string }> => {
-    const userSession = await getUserSession(request.headers);
+export const createConversation = async (
+  userId: string,
+  conversationId: string,
+  message: CustomUIMessage,
+): Promise<void> => {
 
-    const history = await findMessagesByConversationId(conversationId);
+  const messageText = message.parts
+    .filter((part) => part.type === "text")
+    .map((part) => ("text" in part && typeof part.text === "string" ? part.text : ""))
+    .join(" ");
 
-    if (history.length === 0) {
-        const newConversationData: NewConversationType = {
-            id: conversationId,
-            title: "New Conversation",
-            userId: userSession.user.id,
-        };
+  const title = messageText.split(" ").slice(0, 6).join(" ") + (messageText.split(" ").length > 6 ? "..." : "");
+  
+  const newConversationData: NewConversationType = {
+    id: conversationId,
+    title,
+    userId,
+  };
 
-        await insertConversation(newConversationData);
+  await insertConversation(newConversationData);
 
-        const messageText = message.parts
-          .filter((part) => part.type === "text")
-          .map((part) => ("text" in part && typeof part.text === "string" ? part.text : ""))
-          .join(" ");
-
-        // Fire and forget
-        generateConversationTitle(conversationId, messageText).catch(console.error);
-    }
-
-    return { userId: userSession.user.id };
+  // Fire and forget
+  generateConversationTitle(conversationId, messageText).catch(console.error);
 };
