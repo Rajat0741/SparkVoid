@@ -7,9 +7,9 @@ import { CustomUIMessage } from "@/types";
 const generateConversationTitle = async (conversationId: string, messageText: string) => {
   try {
     const { text } = await generateText({
-      model: google("gemma-4-26b-a4b-it"),
+      model: google("gemma-4-31b-it"),
       prompt: `Generate a concise, one-line title for a conversation starting with this message. Return ONLY the title text without quotes or punctuation.\n\nMessage:\n${messageText}`,
-      maxOutputTokens: 100,
+      maxOutputTokens: 200,
     });
 
     const title = text.trim();

@@ -18,7 +18,7 @@ export default function ChatUI() {
   const clearError = useChatContext((s) => s.clearError);
 
   return (
-    <div className="w-full mx-auto p-6 relative size-full">
+    <div className="w-full mx-auto relative size-full">
       <div className="flex flex-col h-full">
         <Conversation>
           <ConversationContent>

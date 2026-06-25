@@ -113,41 +113,40 @@ function MessageItem({
   readOnly?: boolean;
 }) {
   const groups = groupParts(message.parts);
+  const modelBadge = message.role === "assistant" && message.metadata?.model
+    ? <ModelBadge modelKey={message.metadata.model} />
+    : null;
+
   return (
-    <Message from={message.role} key={message.id}>
-      <div className="flex w-full items-start gap-2">
-        {message.role === "assistant" && message.metadata?.model && (
-          <ModelBadge modelKey={message.metadata.model} />
-        )}
-        <div className="flex min-w-0 flex-1 flex-col gap-2">
-          <MessageContent>
-            {groups.length === 0 && isStreaming && message.role === "assistant" ? (
-              <TypingIndicator />
-            ) : (
-              groups.map((group, idx) =>
-                group.type === "steps" ? (
-                  <ExtendedThinking
-                    key={`${message.id}-group-${idx}`}
-                    messageId={message.id}
-                    stepParts={group.parts}
-                    isStreaming={isStreaming && idx === groups.length - 1}
-                  />
-                ) : (
-                  <MessageTextGroup
-                    key={`${message.id}-group-${idx}`}
-                    parts={group.parts}
-                    groupKey={`${message.id}-group-${idx}`}
-                  />
-                )
+    <Message from={message.role}>
+      <div className="flex items-start gap-2">
+        {modelBadge}
+        <MessageContent>
+          {groups.length === 0 && isStreaming && message.role === "assistant" ? (
+            <TypingIndicator />
+          ) : (
+            groups.map((group, idx) =>
+              group.type === "steps" ? (
+                <ExtendedThinking
+                  key={`${message.id}-group-${idx}`}
+                  messageId={message.id}
+                  stepParts={group.parts}
+                  isStreaming={isStreaming && idx === groups.length - 1}
+                />
+              ) : (
+                <MessageTextGroup
+                  key={`${message.id}-group-${idx}`}
+                  parts={group.parts}
+                  groupKey={`${message.id}-group-${idx}`}
+                />
               )
-            )}
-          </MessageContent>
-          
-          {!readOnly && (
-            <MessageActionsGroup message={message} isStreaming={isStreaming} />
+            )
           )}
-        </div>
+        </MessageContent>
       </div>
+      {!readOnly && (
+        <MessageActionsGroup message={message} isStreaming={isStreaming} />
+      )}
     </Message>
   );
 }
@@ -168,7 +167,7 @@ interface MessageUIProps {
 /** Renders the full conversation message list. */
 export default function MessageUI({ messages, status, readOnly = false }: MessageUIProps) {
   return (
-    <div className="[&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5">
+    <div className="flex flex-col gap-4 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5">
       {messages.map((message, idx) => {
         const isStreaming = status === "streaming" && idx === messages.length - 1;
         return (
