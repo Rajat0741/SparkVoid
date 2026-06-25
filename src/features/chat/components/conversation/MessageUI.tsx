@@ -106,9 +106,11 @@ function ModelBadge({ modelKey }: { modelKey: ModelId }) {
 function MessageItem({
   message,
   isStreaming,
+  readOnly = false,
 }: {
   message: CustomUIMessage;
   isStreaming: boolean;
+  readOnly?: boolean;
 }) {
   const groups = groupParts(message.parts);
   return (
@@ -141,7 +143,9 @@ function MessageItem({
             )}
           </MessageContent>
           
-          <MessageActionsGroup message={message} isStreaming={isStreaming} />
+          {!readOnly && (
+            <MessageActionsGroup message={message} isStreaming={isStreaming} />
+          )}
         </div>
       </div>
     </Message>
@@ -155,10 +159,14 @@ function MessageItem({
 interface MessageUIProps {
   messages: CustomUIMessage[];
   status?: ChatStatus;
+  /** When true, hides all interactive message actions (copy, regenerate, etc.).
+   *  Use this for read-only views such as shared conversation pages where
+   *  no ChatProvider is present. */
+  readOnly?: boolean;
 }
 
 /** Renders the full conversation message list. */
-export default function MessageUI({ messages, status }: MessageUIProps) {
+export default function MessageUI({ messages, status, readOnly = false }: MessageUIProps) {
   return (
     <div className="[&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5">
       {messages.map((message, idx) => {
@@ -168,6 +176,7 @@ export default function MessageUI({ messages, status }: MessageUIProps) {
             key={message.id}
             message={message}
             isStreaming={isStreaming}
+            readOnly={readOnly}
           />
         );
       })}

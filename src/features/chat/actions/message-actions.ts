@@ -1,12 +1,13 @@
 "use server";
 
 import { authActionClient } from "@/lib/safe-action";
-import { findConversationById, deleteMessagesByIds } from "@/lib/db/queries";
-import { db } from "@/lib/db";
-import { attachments } from "@/lib/db/schema";
-import { and, eq, inArray } from "drizzle-orm";
-import { imagekit } from "@/lib/imagekit";
+import {
+  findConversationById,
+  deleteMessagesByIds,
+  findAttachmentsByMessageIds,
+} from "@/lib/db/queries";
 import { AppError } from "@/utils/app-error";
+import { deleteUnreferencedAttachments } from "@/lib/imagekit";
 import z from "zod";
 
 const deleteMessagesSchema = z.object({
@@ -17,7 +18,7 @@ const deleteMessagesSchema = z.object({
 export const deleteMessagesAction = authActionClient
   .inputSchema(deleteMessagesSchema)
   .action(async ({ parsedInput: { conversationId, messageIds }, ctx }) => {
-    // 1. Verify conversation exists and belongs to the user
+
     const conversation = await findConversationById(conversationId);
     if (!conversation) {
       throw new AppError("Conversation not found", 404);
@@ -30,27 +31,13 @@ export const deleteMessagesAction = authActionClient
       return { success: true };
     }
 
-    // 2. Fetch attachments associated with these messages
-    const relatedAttachments = await db
-      .select()
-      .from(attachments)
-      .where(
-        and(
-          eq(attachments.conversationId, conversationId),
-          inArray(attachments.messageId, messageIds),
-        ),
-      );
+    const relatedAttachments = await findAttachmentsByMessageIds(conversationId, messageIds);
 
-    // 3. Delete from ImageKit
-    for (const att of relatedAttachments) {
-      try {
-        await imagekit.files.delete(att.imagekitFileId);
-      } catch (error) {
-        console.error(`Failed to delete ImageKit attachment ${att.id}:`, error);
-      }
+    if (relatedAttachments.length > 0) {
+      const excludedAttachmentIds = relatedAttachments.map((a) => a.id);
+      await deleteUnreferencedAttachments(relatedAttachments, excludedAttachmentIds);
     }
 
-    // 4. Delete the messages (attachments in DB will cascade delete)
     await deleteMessagesByIds(conversationId, messageIds);
 
     return { success: true };

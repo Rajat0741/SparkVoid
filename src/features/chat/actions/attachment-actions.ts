@@ -7,8 +7,7 @@ import {
   deleteAttachmentById,
 } from "@/lib/db/queries";
 import { AppError } from "@/utils/app-error";
-import { imagekit } from "@/lib/imagekit";
-import { NotFoundError } from "@imagekit/nodejs";
+import { deleteUnreferencedAttachments } from "@/lib/imagekit";
 import z from "zod";
 
 // ---------------------------------------------------------------------------
@@ -69,15 +68,7 @@ export const deleteAttachmentAction = authActionClient
       throw new AppError("Attachment not found", 404);
     }
 
-    // Delete from ImageKit via the Node.js SDK
-    try {
-      await imagekit.files.delete(attachment.imagekitFileId);
-    } catch (error) {
-      // A 404 from ImageKit is fine — the file may already be gone
-      if (!(error instanceof NotFoundError)) {
-        throw new AppError("Failed to delete file from ImageKit", 502);
-      }
-    }
+    await deleteUnreferencedAttachments([attachment], [attachmentId]);
 
     await deleteAttachmentById(attachmentId);
     return { deleted: true };

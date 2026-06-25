@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { attachments, AttachmentType, NewAttachmentType } from "@/lib/db/schema";
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, notInArray, sql } from "drizzle-orm";
 
 export async function insertAttachment(
   data: NewAttachmentType,
@@ -21,14 +21,6 @@ export async function findAttachmentByIdAndUser(
   return result ?? null;
 }
 
-export async function findAttachmentFileIdsByConversationId(
-  conversationId: string,
-): Promise<{ imagekitFileId: string }[]> {
-  return db
-    .select({ imagekitFileId: attachments.imagekitFileId })
-    .from(attachments)
-    .where(eq(attachments.conversationId, conversationId));
-}
 
 export async function linkPendingAttachments(
   userId: string,
@@ -51,4 +43,54 @@ export async function linkPendingAttachments(
 
 export async function deleteAttachmentById(attachmentId: string): Promise<void> {
   await db.delete(attachments).where(eq(attachments.id, attachmentId));
+}
+
+export async function findAttachmentsByConversationId(
+  conversationId: string,
+): Promise<AttachmentType[]> {
+  return db
+    .select()
+    .from(attachments)
+    .where(eq(attachments.conversationId, conversationId));
+}
+
+export async function findAttachmentsByMessageIds(
+  conversationId: string,
+  messageIds: string[],
+): Promise<AttachmentType[]> {
+  if (messageIds.length === 0) return [];
+  return db
+    .select()
+    .from(attachments)
+    .where(
+      and(
+        eq(attachments.conversationId, conversationId),
+        inArray(attachments.messageId, messageIds),
+      ),
+    );
+}
+
+export async function countDuplicateFileReferences(
+  imagekitFileId: string,
+  excludedAttachmentIds: string[],
+): Promise<number> {
+  const [result] = await db
+    .select({ count: sql<string>`count(*)` })
+    .from(attachments)
+    .where(
+      and(
+        eq(attachments.imagekitFileId, imagekitFileId),
+        excludedAttachmentIds.length > 0
+          ? notInArray(attachments.id, excludedAttachmentIds)
+          : undefined,
+      ),
+    );
+  return Number(result?.count ?? 0);
+}
+
+export async function insertAttachmentBatch(
+  data: NewAttachmentType[],
+): Promise<AttachmentType[]> {
+  if (data.length === 0) return [];
+  return db.insert(attachments).values(data).returning();
 }

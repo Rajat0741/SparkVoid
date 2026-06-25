@@ -26,6 +26,8 @@ export const attachments = pgTable(
     index('attachments_conversation_status_idx').on(t.conversationId, t.status),
     index('attachments_message_status_idx').on(t.messageId, t.status),
     index('attachments_user_status_idx').on(t.userId, t.status),
+    index('attachments_imagekit_file_id_idx').on(t.imagekitFileId),
+    index('attachments_url_idx').on(t.url),
   ]
 );
 

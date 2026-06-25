@@ -4,10 +4,10 @@ import { authActionClient } from "@/lib/safe-action";
 import {
   findConversationById,
   deleteConversationById,
-  findAttachmentFileIdsByConversationId,
+  findAttachmentsByConversationId,
 } from "@/lib/db/queries";
 import { AppError } from "@/utils/app-error";
-import { imagekit } from "@/lib/imagekit";
+import { deleteUnreferencedAttachments } from "@/lib/imagekit";
 import z from "zod";
 
 const deleteConversationSchema = z.object({
@@ -26,29 +26,11 @@ export const deleteConversationAction = authActionClient
       throw new AppError("Unauthorized to delete this conversation", 403);
     }
 
-    const conversationAttachments =
-      await findAttachmentFileIdsByConversationId(conversationId);
+    const conversationAttachments = await findAttachmentsByConversationId(conversationId);
 
     if (conversationAttachments.length > 0) {
-      await Promise.all(
-        conversationAttachments.map(async (a) => {
-          try {
-            await imagekit.files.delete(a.imagekitFileId);
-          } catch (error) {
-            const isNotFound =
-              error &&
-              typeof error === "object" &&
-              ("status" in error ? error.status === 404 : false);
-
-            if (!isNotFound) {
-              console.error(
-                `Failed to delete file ${a.imagekitFileId} from ImageKit:`,
-                error,
-              );
-            }
-          }
-        }),
-      );
+      const excludedAttachmentIds = conversationAttachments.map((a) => a.id);
+      await deleteUnreferencedAttachments(conversationAttachments, excludedAttachmentIds);
     }
 
     await deleteConversationById(conversationId);
