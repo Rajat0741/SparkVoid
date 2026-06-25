@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { LogOut, ChevronUp } from "lucide-react";
+import { LogOut, ChevronUp, Settings, Bug } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { SidebarFooter, useSidebar } from "@/components/ui/sidebar";
 import {
@@ -97,6 +97,26 @@ export function SidebarUserFooter({ user }: UserFooterProps) {
                 </p>
               </div>
             </DropdownMenuLabel>
+          </DropdownMenuGroup>
+
+          <DropdownMenuSeparator />
+
+          <DropdownMenuGroup>
+            <DropdownMenuItem
+              onClick={() => router.push("/settings")}
+              className="cursor-pointer"
+            >
+              <Settings className="size-4 mr-2" />
+              <span>Settings</span>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem
+              onClick={() => window.open("https://github.com/Rajat0741/SparkVoid/issues/new", "_blank")}
+              className="cursor-pointer"
+            >
+              <Bug className="size-4 mr-2" />
+              <span>Report a bug</span>
+            </DropdownMenuItem>
           </DropdownMenuGroup>
 
           <DropdownMenuSeparator />
