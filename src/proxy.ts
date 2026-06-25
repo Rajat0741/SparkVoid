@@ -2,7 +2,11 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function proxy(request: NextRequest) {
-  const sessionToken = request.cookies.get("better-auth.session_token");
+  const isProd = process.env.NODE_ENV === "production";
+  const sessionCookieName = isProd
+    ? "__Secure-better-auth.session_token"
+    : "better-auth.session_token";
+  const sessionToken = request.cookies.get(sessionCookieName);
   const { pathname } = request.nextUrl;
 
   // Protect chat routes
