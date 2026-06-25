@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SparkVoid AI
 
-## Getting Started
+SparkVoid is a modern, high-performance web AI workspace that blends search, web scraping, and semantic retrieval into a unified conversation. The application is built using Next.js 16 (App Router), React 19, Tailwind CSS v4, and Neon serverless PostgreSQL, powered by the Vercel AI SDK and Google Gemini models.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 🚀 Key Features
+
+*   **Dual AI Agent Modes**: Toggle between **Spark** (Tavily search-enabled, fast 5-step loop agent) and **Void** (Firecrawl-enabled scraping & deep-search 12-step loop agent).
+*   **Extended Thinking**: Full real-time thought chains streaming from Google Gemini models.
+*   **Rich UI Markdown Renderer**: Render complex outputs including **LaTex/Math Equations** (via KaTeX), **Mermaid Diagrams**, and **Syntax Highlighted Code** (via Shiki).
+*   **Conversational Search**: Client-side, debounced search across all conversation histories.
+*   **Image Uploads**: Drag and drop image attachments processed instantly using ImageKit.
+*   **OAuth & Google One-Tap**: Seamless sign-in experiences built with Better Auth.
+*   **Data Controls**: Clean management panel to wipe chat histories securely.
+
+For a full breakdown of platform features, see **FEATURES.md** .
+
+---
+
+## 🛠️ Technology Stack
+
+*   **Frontend**: Next.js 16, React 19, Tailwind CSS v4, Motion (Framer Motion v12), Zustand, TanStack React Query.
+*   **AI Engine**: Vercel AI SDK (`ai`, `@ai-sdk/google`), `@tavily/ai-sdk`, `firecrawl-aisdk`.
+*   **Database**: PostgreSQL (Neon Database), Drizzle ORM.
+*   **Auth**: Better Auth (with Google OAuth and Google One-Tap credentials).
+*   **Asset Management**: ImageKit NodeJS/Next SDK.
+*   **Rendering**: Streamdown (`@streamdown/code`, `@streamdown/math`, `@streamdown/mermaid`), KaTeX, Shiki.
+
+---
+
+## ⚙️ Project Structure
+
+```text
+src/
+├── app/               # Next.js App Router (Layouts, Pages, APIs)
+│   ├── (app)/         # Main application views (chat, search, settings)
+│   ├── login/         # Auth pages (with One-Tap and Google Sign-In)
+│   └── globals.css    # Tailwind CSS v4 imports & custom design tokens
+├── components/        # Shared presentation components (auth, theme-provider)
+├── features/          # Domain-driven features
+│   ├── chat/          # Chat UI, state stores, pipelines, and agents
+│   ├── search/        # Search views and debounced listing logic
+│   └── settings/      # Settings components and clean database actions
+├── hooks/             # Custom React hooks
+├── lib/               # Shared libraries (auth, db connection, utilities)
+└── types/             # Global TypeScript type definitions
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🏁 Getting Started
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Prerequisites
+*   Node.js (v20+ recommended)
+*   `pnpm` package manager
 
-## Learn More
+### 1. Install Dependencies
+```bash
+pnpm install
+```
 
-To learn more about Next.js, take a look at the following resources:
+### 2. Configure Environment Variables
+Copy `.env.example` to `.env.local` (or `.env`):
+```bash
+cp .env.example .env.local
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Fill in the required configuration:
+- **Database**: `DATABASE_URL` (Neon PostgreSQL connection string)
+- **AI Keys**: `GOOGLE_API_KEY`, `TAVILY_API_KEY`, `FIRECRAWL_API_KEY`
+- **Auth**: `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL` (e.g., `http://localhost:3000`), `GOOGLE_CLIENT_SECRET`, `NEXT_PUBLIC_GOOGLE_CLIENT_ID`
+- **Image Uploads**: `IMAGEKIT_PUBLIC_KEY`, `IMAGEKIT_PRIVATE_KEY`, `IMAGEKIT_ENDPOINT`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 3. Push Database Schema
+Ensure your database tables are initialized using Drizzle Kit:
+```bash
+pnpm drizzle-kit push
+```
 
-## Deploy on Vercel
+### 4. Run the Development Server
+```bash
+pnpm run dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Open [http://localhost:3000](http://localhost:3000) with your browser to experience SparkVoid.

@@ -175,6 +175,17 @@
   right: 0.5rem;
 }
 
+/* Streamdown mermaid block: move actions to top-right (same pattern as code-block) */
+[data-streamdown="mermaid-block"] {
+  position: relative;
+}
+
+[data-streamdown="mermaid-block"] > :nth-child(2):not([data-streamdown]) {
+  position: absolute !important;
+  top: 0.5rem;
+  right: 0.5rem;
+}
+
 /* Streamdown syntax highlighting token colors (fallback) */
 .text-\[var\(--sdm-c\,inherit\)\] {
   color: var(--sdm-c, inherit);

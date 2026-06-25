@@ -72,6 +72,7 @@ export default function PromptUI({ className }: PromptUIProps) {
         onFileRemoved={handleFileRemoved}
         multiple
         maxFiles={5}
+        accept="image/*"
         onError={handlePromptInputError}
       >
         <PromptUIHeader uploadStates={uploadStates} />

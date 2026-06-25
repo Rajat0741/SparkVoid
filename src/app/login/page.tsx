@@ -12,31 +12,38 @@ export default function SignInPage() {
 
   return (
     <div className="relative flex min-h-dvh flex-col items-center justify-center overflow-hidden bg-background px-4">
+      {/* Grid */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,oklch(0.7_0.15_280/0.08),transparent_60%)] dark:bg-[radial-gradient(ellipse_at_top,oklch(0.55_0.2_280/0.18),transparent_60%)]"
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] bg-[size:48px_48px] opacity-40"
+      />
+
+      {/* Violet glow — top center */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-0 h-[500px] w-[700px] -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_top,oklch(0.55_0.22_292/0.28),transparent_70%)] blur-3xl"
       />
 
       <OneTapPrompt onSuccess={() => router.push("/chat")} />
 
       <motion.div
-        initial={{ opacity: 0, y: 8 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, ease: "easeOut" }}
-        className="relative z-10 w-full max-w-sm rounded-xl border bg-card p-8 shadow-sm"
+        className="relative z-10 w-full max-w-sm rounded-xl border border-border bg-card/80 p-8 shadow-lg backdrop-blur"
       >
         <div className="flex flex-col items-center gap-8 text-center">
           <div className="flex items-center gap-2">
-            <Sparkles className="size-5 shrink-0 text-amber-500 animate-pulse" />
-            <h1
-              className="text-2xl font-bold tracking-tight text-foreground"
-              style={{ fontFamily: "var(--font-sans)" }}
-            >
-              SparkVoid AI
+            <Sparkles className="size-4 shrink-0 text-amber-400" aria-hidden />
+            <h1 className="text-xl font-bold tracking-tight text-foreground">
+              SparkVoid
             </h1>
           </div>
 
-          <div className="flex w-full flex-col items-center gap-3">
+          <div className="flex w-full flex-col gap-2">
+            <p className="text-sm text-muted-foreground">
+              Sign in to continue
+            </p>
             <GoogleSignInButton callbackURL="/chat" />
           </div>
         </div>
@@ -45,7 +52,7 @@ export default function SignInPage() {
       <p className="relative z-10 mt-6 text-xs text-muted-foreground">
         <Link
           href="/"
-          className="underline underline-offset-2 hover:text-foreground"
+          className="underline underline-offset-2 hover:text-foreground transition-colors"
         >
           Back to home
         </Link>

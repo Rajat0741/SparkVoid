@@ -29,9 +29,17 @@ export function AttachmentsMessage({ parts, groupKey }: AttachmentsMessageProps)
           url: file.url,
         };
         return (
-          <Attachment key={data.id} className="cursor-pointer" data={data}>
-            <AttachmentPreview />
-          </Attachment>
+          <a
+            key={data.id}
+            href={data.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block cursor-pointer hover:opacity-90 transition-opacity"
+          >
+            <Attachment className="cursor-pointer" data={data}>
+              <AttachmentPreview />
+            </Attachment>
+          </a>
         );
       })}
     </Attachments>

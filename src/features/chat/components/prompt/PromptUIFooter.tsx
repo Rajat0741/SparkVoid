@@ -32,7 +32,7 @@ export function PromptUIFooter({
         <PromptInputActionMenu>
           <PromptInputActionMenuTrigger />
           <PromptInputActionMenuContent>
-            <PromptInputActionAddAttachments className="w-full"/>
+            <PromptInputActionAddAttachments className="w-full" label="Add images" />
             <PromptInputActionAddScreenshot className="w-full" />
           </PromptInputActionMenuContent>
         </PromptInputActionMenu>
