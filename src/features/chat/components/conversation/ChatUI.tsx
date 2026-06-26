@@ -21,7 +21,7 @@ export default function ChatUI() {
     <div className="w-full mx-auto relative size-full">
       <div className="flex flex-col h-full">
         <Conversation>
-          <ConversationContent>
+          <ConversationContent className="max-w-215 w-full mx-auto">
             {messages.length === 0 ? (
               <ConversationEmptyState
                 icon={<MessageSquare className="size-12" />}

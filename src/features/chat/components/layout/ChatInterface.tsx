@@ -14,7 +14,7 @@ function ChatContent() {
   }
 
   return (
-    <div className="flex flex-col size-full max-w-215 mx-auto pb-4 overflow-hidden">
+    <div className="flex flex-col size-full pb-4 overflow-hidden">
       <div className="flex-1 min-h-0 w-full relative">
         <ChatUI />
       </div>
