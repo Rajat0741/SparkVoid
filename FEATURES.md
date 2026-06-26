@@ -1,15 +1,15 @@
 # Features of SparkVoid
 
-## 🤖 Dual AI Agent Architecture (ToolLoopAgent)
+## 🤖 Dual AI Agent Architecture
 SparkVoid uses a dual-agent workspace powered by the Vercel AI SDK and Google Gemini models. You can switch between two specialized personalities:
 
 *   **Spark**
-    *   **Core Engine**: Gemini 3.1 Flash Lite.
+    *   **LLM**: Gemini 3.1 Flash Lite.
     *   **Max Turns**: Up to 5 loop steps per query.
     *   **Integration**: Equipped with **Tavily Web Search** and **Weather** tools.
     *   **Profile**: Fast, search-driven answers with real-time web querying.
 *   **Void**
-    *   **Core Engine**: Gemini 3.1 Flash Lite.
+    *   **LLM**: Gemini 3.1 Flash Lite.
     *   **Max Turns**: Up to 12 loop steps per query.
     *   **Integration**: Equipped with **Firecrawl Web Search**, **Firecrawl Scraping**, and **Weather** tools.
     *   **Profile**: Deep research workspace capable of traversing and scraping pages for rich context.
