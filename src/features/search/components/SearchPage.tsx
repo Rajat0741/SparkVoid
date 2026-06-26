@@ -24,7 +24,7 @@ export function SearchPage() {
   return (
     <div className="flex flex-col h-full w-full max-w-215 mx-auto bg-background">
       {/* {header} */}
-      <div className="flex flex-col gap-4 p-6 mt-14">
+      <div className="flex flex-col gap-4 p-6">
         <h1 className="text-2xl font-semibold">Chats</h1>
         <div className="relative flex items-center">
           <Search className="absolute left-3 top-1/2 h-3 w-3 -translate-y-1/2 text-muted-foreground pointer-events-none" />
