@@ -22,13 +22,13 @@ export function SidebarHeaderBrand() {
           className={cn(
             "flex items-center gap-2 outline-none select-none transition-all duration-200",
             isCollapsed
-              ? "opacity-100 group-hover/brand:opacity-0 pointer-events-auto justify-center w-full"
-              : "opacity-100 pointer-events-auto",
+              ? "group-hover/brand:opacity-0 justify-center w-full"
+              : "",
           )}
         >
           <Sparkles className="size-5 shrink-0 text-amber-500 animate-pulse" />
           {!isCollapsed && (
-            <span className="font-bold tracking-tight text-foreground text-base font-sans">
+            <span className="font-bold tracking-tight text-foreground text-base">
               SparkVoid
             </span>
           )}

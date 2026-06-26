@@ -26,16 +26,14 @@ interface UserFooterProps {
 }
 
 export function SidebarUserFooter({ user }: UserFooterProps) {
-  const { state } = useSidebar();
+  const { state, isMobile, setOpenMobile } = useSidebar();
   const router = useRouter();
   const isCollapsed = state === "collapsed";
 
   const handleLogout = async () => {
     await authClient.signOut({
       fetchOptions: {
-        onSuccess: () => {
-          router.push("/login");
-        },
+        onSuccess: () => router.push("/login"),
       },
     });
   };
@@ -48,7 +46,7 @@ export function SidebarUserFooter({ user }: UserFooterProps) {
             <button
               className={cn(
                 "flex w-full items-center gap-2 rounded-lg p-2 text-left text-sm hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200 outline-none cursor-pointer",
-                isCollapsed ? "justify-center p-1" : "",
+                isCollapsed && "justify-center p-1",
               )}
             >
               {user.image ? (
@@ -64,7 +62,6 @@ export function SidebarUserFooter({ user }: UserFooterProps) {
                   {user.name.charAt(0).toUpperCase()}
                 </div>
               )}
-
               {!isCollapsed && (
                 <>
                   <div className="flex flex-col flex-1 min-w-0">
@@ -90,45 +87,48 @@ export function SidebarUserFooter({ user }: UserFooterProps) {
         >
           <DropdownMenuGroup>
             <DropdownMenuLabel className="font-normal">
-              <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium leading-none">{user.name}</p>
-                <p className="text-xs leading-none text-muted-foreground truncate">
-                  {user.email}
-                </p>
-              </div>
+              <p className="text-sm font-medium leading-none">{user.name}</p>
+              <p className="text-xs leading-none text-muted-foreground truncate mt-1">
+                {user.email}
+              </p>
             </DropdownMenuLabel>
           </DropdownMenuGroup>
-
+          
           <DropdownMenuSeparator />
 
-          <DropdownMenuGroup>
-            <DropdownMenuItem
-              onClick={() => router.push("/settings")}
-              className="cursor-pointer"
-            >
-              <Settings className="size-4 mr-2" />
-              <span>Settings</span>
-            </DropdownMenuItem>
-
-            <DropdownMenuItem
-              onClick={() => window.open("https://github.com/Rajat0741/SparkVoid/issues/new", "_blank")}
-              className="cursor-pointer"
-            >
-              <Bug className="size-4 mr-2" />
-              <span>Report a bug</span>
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-
-          <DropdownMenuSeparator />
-
-          {/* Logout Menu Item */}
           <DropdownMenuItem
-            onClick={handleLogout}
+            className="cursor-pointer"
+            onClick={() =>
+              window.open(
+                "https://github.com/Rajat0741/SparkVoid/issues/new",
+                "_blank",
+              )
+            }
+          >
+            <Bug className="size-4 mr-2" />
+            Report a bug
+          </DropdownMenuItem>
+
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => {
+              router.push("/settings");
+              if (isMobile) setOpenMobile(false);
+            }}
+          >
+            <Settings className="size-4 mr-2" />
+            Settings
+          </DropdownMenuItem>
+
+          <DropdownMenuSeparator />
+
+          <DropdownMenuItem
             variant="destructive"
             className="cursor-pointer"
+            onClick={handleLogout}
           >
             <LogOut className="size-4 mr-2" />
-            <span>Log out</span>
+            Log out
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

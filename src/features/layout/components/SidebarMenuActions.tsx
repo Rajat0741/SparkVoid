@@ -1,5 +1,6 @@
 "use client";
 
+import { Fragment } from "react";
 import { SquarePen, BookSearch } from "lucide-react";
 import Link from "next/link";
 import { Item, ItemMedia, ItemContent, ItemTitle, ItemGroup } from "@/components/ui/item";
@@ -18,17 +19,24 @@ export function SidebarMenuActions() {
   return (
     <ItemGroup className="p-2 gap-1">
       {actionItems.map((item) => {
-        const itemComp = (
+        const content = (
           <Item
-            key={item.title}
             className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground cursor-pointer transition-all duration-200 group-data-[collapsible=icon]:p-2 group-data-[collapsible=icon]:justify-center"
-            render={<Link href={item.url} onClick={() => isMobile && setOpenMobile(false)} />}
+            render={
+              <Link
+                href={item.url}
+                onClick={() => isMobile && setOpenMobile(false)}
+              />
+            }
           >
-            <ItemMedia variant="icon" className="group-data-[collapsible=icon]:m-0">
+            <ItemMedia
+              variant="icon"
+              className="group-data-[collapsible=icon]:m-0"
+            >
               <item.icon className="size-4 shrink-0" />
             </ItemMedia>
             <ItemContent className="group-data-[collapsible=icon]:hidden">
-              <ItemTitle className="text-sm font-sans">{item.title}</ItemTitle>
+              <ItemTitle className="text-base">{item.title}</ItemTitle>
             </ItemContent>
           </Item>
         );
@@ -36,9 +44,7 @@ export function SidebarMenuActions() {
         if (isCollapsed && !isMobile) {
           return (
             <Tooltip key={item.title}>
-              <TooltipTrigger>
-                {itemComp}
-              </TooltipTrigger>
+              <TooltipTrigger>{content}</TooltipTrigger>
               <TooltipContent side="right" align="center">
                 {item.title}
               </TooltipContent>
@@ -46,7 +52,7 @@ export function SidebarMenuActions() {
           );
         }
 
-        return itemComp;
+        return <Fragment key={item.title}>{content}</Fragment>;
       })}
     </ItemGroup>
   );

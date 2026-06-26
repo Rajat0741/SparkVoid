@@ -23,7 +23,7 @@ export default async function ChatLayout({ children }: { children: React.ReactNo
     <SidebarProvider>
       <TooltipProvider>
         <AppSidebar user={session.user} />
-        <SidebarInset className="flex flex-col h-screen overflow-hidden">
+        <SidebarInset className="flex flex-col h-dvh overflow-hidden">
           <AppHeader />
           {children}
         </SidebarInset>
