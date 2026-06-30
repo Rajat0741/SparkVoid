@@ -1,7 +1,7 @@
 "use client";
 
 import { ItemGroup } from "@/components/ui/item";
-import { useSidebar } from "@/components/ui/sidebar";
+import { useSidebar, SidebarMenuSkeleton } from "@/components/ui/sidebar";
 import { usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { getConversationQueryOptions } from "@/features/common/queries/get-conversations-query";
@@ -96,8 +96,10 @@ function ViewAll() {
 
 function ConversationLoading() {
   return (
-    <div className="flex flex-col items-center justify-center h-20 text-center px-4">
-      <p className="text-xs text-muted-foreground font-sans">Loading...</p>
+    <div className="space-y-2 py-2">
+      {[...Array(5)].map((_, i) => (
+        <SidebarMenuSkeleton key={i} showIcon />
+      ))}
     </div>
   );
 }
