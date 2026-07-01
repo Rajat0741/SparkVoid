@@ -15,10 +15,6 @@ export default async function ChatLayout({ children }: { children: React.ReactNo
     redirect("/login");
   }
 
-  if (!session || !session.user) {
-    redirect("/login");
-  }
-
   return (
     <SidebarProvider>
       <TooltipProvider>

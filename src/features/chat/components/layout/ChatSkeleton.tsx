@@ -7,7 +7,7 @@ export default function ChatSkeleton() {
       <div className="flex-1 min-h-0 w-full overflow-y-auto px-4 py-6 space-y-6 max-w-3xl mx-auto">
         {/* Left message (Assistant) */}
         <div className="flex items-start gap-4">
-          <Skeleton className="h-8 w-8 rounded-full flex-shrink-0" />
+          <Skeleton className="h-8 w-8 rounded-full shrink-0" />
           <div className="space-y-2 flex-1">
             <Skeleton className="h-4 w-1/4" />
             <Skeleton className="h-4 w-5/6" />
@@ -26,7 +26,7 @@ export default function ChatSkeleton() {
 
         {/* Left message (Assistant) with extended thought/response */}
         <div className="flex items-start gap-4">
-          <Skeleton className="h-8 w-8 rounded-full flex-shrink-0" />
+          <Skeleton className="h-8 w-8 rounded-full shrink-0" />
           <div className="space-y-2 flex-1">
             <Skeleton className="h-4 w-1/4" />
             <Skeleton className="h-6 w-1/3 rounded" />
