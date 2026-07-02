@@ -43,7 +43,7 @@ import { cn } from "@/lib/utils";
 import type { ChatStatus, FileUIPart, SourceDocumentUIPart } from "ai";
 import type { BaseUIEvent } from "@base-ui/react/types";
 import {
-  CornerDownLeftIcon,
+    ArrowUp,
   ImageIcon,
   Monitor,
   PlusIcon,
@@ -1247,7 +1247,7 @@ export const PromptInputSubmit = ({
 }: PromptInputSubmitProps) => {
   const isGenerating = status === "submitted" || status === "streaming";
 
-  let Icon = <CornerDownLeftIcon className="size-4" />;
+  let Icon = <ArrowUp className="size-4" />;
 
   if (status === "submitted") {
     Icon = <Spinner />;

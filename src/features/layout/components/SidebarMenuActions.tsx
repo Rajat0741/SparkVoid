@@ -1,11 +1,14 @@
 "use client";
 
-import { Fragment } from "react";
 import { SquarePen, BookSearch } from "lucide-react";
 import Link from "next/link";
-import { Item, ItemMedia, ItemContent, ItemTitle, ItemGroup } from "@/components/ui/item";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { useSidebar } from "@/components/ui/sidebar";
+import {
+  SidebarGroup,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  useSidebar,
+} from "@/components/ui/sidebar";
 
 const actionItems = [
   { title: "New chat", url: "/chat", icon: SquarePen },
@@ -13,47 +16,28 @@ const actionItems = [
 ];
 
 export function SidebarMenuActions() {
-  const { state, isMobile, setOpenMobile } = useSidebar();
-  const isCollapsed = state === "collapsed";
+  const { isMobile, setOpenMobile } = useSidebar();
 
   return (
-    <ItemGroup className="p-2 gap-1">
-      {actionItems.map((item) => {
-        const content = (
-          <Item
-            className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground cursor-pointer transition-all duration-200 group-data-[collapsible=icon]:p-2 group-data-[collapsible=icon]:justify-center"
-            render={
-              <Link
-                href={item.url}
-                onClick={() => isMobile && setOpenMobile(false)}
-              />
-            }
-          >
-            <ItemMedia
-              variant="icon"
-              className="group-data-[collapsible=icon]:m-0"
+    <SidebarGroup>
+      <SidebarMenu>
+        {actionItems.map((item) => (
+          <SidebarMenuItem key={item.title}>
+            <SidebarMenuButton
+              tooltip={item.title}
+              render={
+                <Link
+                  href={item.url}
+                  onClick={() => isMobile && setOpenMobile(false)}
+                />
+              }
             >
-              <item.icon className="size-4 shrink-0" />
-            </ItemMedia>
-            <ItemContent className="group-data-[collapsible=icon]:hidden">
-              <ItemTitle className="text-base">{item.title}</ItemTitle>
-            </ItemContent>
-          </Item>
-        );
-
-        if (isCollapsed && !isMobile) {
-          return (
-            <Tooltip key={item.title}>
-              <TooltipTrigger>{content}</TooltipTrigger>
-              <TooltipContent side="right" align="center">
-                {item.title}
-              </TooltipContent>
-            </Tooltip>
-          );
-        }
-
-        return <Fragment key={item.title}>{content}</Fragment>;
-      })}
-    </ItemGroup>
+              <item.icon/>
+              <span>{item.title}</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        ))}
+      </SidebarMenu>
+    </SidebarGroup>
   );
 }

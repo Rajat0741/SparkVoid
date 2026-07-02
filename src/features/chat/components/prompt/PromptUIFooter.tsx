@@ -42,6 +42,7 @@ export function PromptUIFooter({
           disabled={!textInput.trim() || uploadInProgress || status === "submitted"}
           status={status}
           onStop={stop}
+          
         />
       </div>
     </PromptInputFooter>

@@ -97,7 +97,7 @@ function ViewAll() {
 function ConversationLoading() {
   return (
     <div className="space-y-2 py-2">
-      {[...Array(5)].map((_, i) => (
+      {[...Array(12)].map((_, i) => (
         <SidebarMenuSkeleton key={i} showIcon />
       ))}
     </div>
