@@ -5,6 +5,9 @@ import { admin, oneTap } from "better-auth/plugins";
 import { user, account, session, verification } from "./db/schema";
 import { dash } from "@better-auth/infra";
 
+const dashApiKey = process.env.BETTER_AUTH_API_KEY;
+console.log("DASH KEY SET:", !!dashApiKey, dashApiKey?.length);
+
 export const auth = betterAuth({
   appName: "SparkVoid",
   database: drizzleAdapter(db, {
@@ -20,7 +23,7 @@ export const auth = betterAuth({
   plugins: [
     oneTap(),
     dash({
-      apiKey: process.env.BETTER_AUTH_API_KEY,
+      apiKey: dashApiKey,
     }),
     admin(),
   ],
