@@ -1,11 +1,12 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "./db";
-import { oneTap } from "better-auth/plugins"; 
+import { admin, oneTap } from "better-auth/plugins"; 
 import { user,account, session, verification } from "./db/schema";
 import { dash } from "@better-auth/infra";
 
 export const auth = betterAuth({
+    appName: "SparkVoid",
     database: drizzleAdapter(db, {
         provider: "pg",
         schema: { user, account, session, verification },
@@ -18,6 +19,7 @@ export const auth = betterAuth({
     },
     plugins: [
         oneTap(),
-        dash()
+        dash(),
+        admin()
     ]
 });
