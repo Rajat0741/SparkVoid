@@ -1,31 +1,38 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
-import { OneTapPrompt } from "@/components/auth/one-tap-prompt";
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
 import { motion } from "motion/react";
 
 export default function Home() {
+  const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
+
+  useEffect(() => {
+    if (!session && !isPending) {
+      authClient.oneTap({
+        fetchOptions: {
+          onSuccess: () => router.push("/chat"),
+        },
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPending]);
 
   return (
     <div className="relative flex min-h-dvh flex-col overflow-hidden bg-background">
-      {/* Subtle grid */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] bg-[size:48px_48px] opacity-40"
       />
-
-      {/* Violet glow — top center */}
       <div
         aria-hidden
-        className="pointer-events-none absolute left-1/2 top-0 h-[480px] w-[720px] -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_top,oklch(0.55_0.22_292/0.22),transparent_70%)] blur-3xl"
+        className="pointer-events-none absolute left-1/2 top-0 h-120 w-180 -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_top,oklch(0.55_0.22_292/0.22),transparent_70%)] blur-3xl"
       />
 
-      {!session && !isPending && <OneTapPrompt />}
-
-      {/* Nav */}
       <header className="relative z-10 flex items-center justify-between px-8 py-6">
         <div className="flex items-center gap-2">
           <Sparkles className="size-4 text-amber-400" aria-hidden />
@@ -33,15 +40,8 @@ export default function Home() {
             SparkVoid
           </span>
         </div>
-        <Link
-          href="/login"
-          className="rounded-lg border border-border bg-card/60 px-4 py-1.5 text-sm font-medium text-foreground backdrop-blur transition-colors hover:bg-muted"
-        >
-          Sign in
-        </Link>
       </header>
 
-      {/* Hero */}
       <main className="relative z-10 flex flex-1 flex-col items-center justify-center px-6 pb-24 pt-12 text-center">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -79,7 +79,6 @@ export default function Home() {
           </div>
         </motion.div>
 
-        {/* Capability pills */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

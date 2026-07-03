@@ -66,7 +66,7 @@ function ConversationSection({
 
   return (
     <>
-      <div className="px-3 pb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider font-sans">
+      <div className="px-3 pb-2 text-xs  text-muted-foreground uppercase tracking-wider font-sans">
         {title}
       </div>
       <ItemGroup className="gap-1 mb-2">

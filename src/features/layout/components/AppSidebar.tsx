@@ -1,6 +1,6 @@
 "use client";
 
-import { Sidebar, SidebarContent } from "@/components/ui/sidebar";
+import { Sidebar, SidebarContent, SidebarHeader } from "@/components/ui/sidebar";
 import { SidebarHeaderBrand } from "./SidebarHeaderBrand";
 import { SidebarMenuActions } from "./SidebarMenuActions";
 import { SidebarConversations } from "./conversations/SidebarConversations";
@@ -18,7 +18,9 @@ interface AppSidebarProps {
 export function AppSidebar({ user }: AppSidebarProps) {
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeaderBrand />
+      <SidebarHeader className="pb-0">
+        <SidebarHeaderBrand />
+      </SidebarHeader>
       <SidebarContent>
         <SidebarMenuActions />
         <SidebarConversations />

@@ -19,8 +19,8 @@ export function SidebarMenuActions() {
   const { isMobile, setOpenMobile } = useSidebar();
 
   return (
-    <SidebarGroup>
-      <SidebarMenu>
+    <SidebarGroup className="pt-0">
+      <SidebarMenu className="gap-2">
         {actionItems.map((item) => (
           <SidebarMenuItem key={item.title}>
             <SidebarMenuButton
@@ -29,11 +29,12 @@ export function SidebarMenuActions() {
                 <Link
                   href={item.url}
                   onClick={() => isMobile && setOpenMobile(false)}
+                  className="[&_svg]:size-4.5 text-muted-foreground hover:text-sidebar-foreground"
                 />
               }
             >
               <item.icon/>
-              <span>{item.title}</span>
+              <span className="text-base">{item.title}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         ))}

@@ -5,11 +5,13 @@ import { admin, oneTap } from "better-auth/plugins";
 import { user, account, session, verification } from "./db/schema";
 import { dash, sentinel } from "@better-auth/infra";
 
-const dashApiKey = process.env.BETTER_AUTH_API_KEY;
-console.log("DASH KEY SET:", !!dashApiKey, dashApiKey?.length);
-
 export const auth = betterAuth({
   appName: "SparkVoid",
+  advanced: {
+    ipAddress: {
+      ipAddressHeaders: ["x-vercel-forwarded-for", "x-forwarded-for"],
+    }
+  },
   database: drizzleAdapter(db, {
     provider: "pg",
     schema: { user, account, session, verification },
@@ -23,7 +25,7 @@ export const auth = betterAuth({
   plugins: [
     oneTap(),
     dash({
-      apiKey: dashApiKey,
+      apiKey: process.env.BETTER_AUTH_API_KEY,
     }),
     admin(),
     sentinel(),

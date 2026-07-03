@@ -9,16 +9,19 @@ export function proxy(request: NextRequest) {
   const sessionToken = request.cookies.get(sessionCookieName);
   const { pathname } = request.nextUrl;
 
-  // Protect chat routes
-  if (pathname.startsWith("/chat")) {
+  // Protect chat, search, and settings routes
+  if (
+    pathname.startsWith("/chat") ||
+    pathname === "/search" ||
+    pathname === "/settings"
+  ) {
     if (!sessionToken) {
-      // Redirect unauthenticated users to login page
       return NextResponse.redirect(new URL("/login", request.url));
     }
   }
 
-  // Redirect logged-in users trying to access login page to chat page
-  if (pathname === "/login") {
+  // Redirect authenticated users visiting home or login to chat
+  if (pathname === "/" || pathname === "/login") {
     if (sessionToken) {
       return NextResponse.redirect(new URL("/chat", request.url));
     }
@@ -28,5 +31,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/chat/:path*", "/login", "/settings"],
+  matcher: ["/", "/chat/:path*", "/login", "/search", "/settings"],
 };
