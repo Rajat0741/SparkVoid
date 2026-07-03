@@ -1,7 +1,8 @@
 import { z } from "zod";
 
 const MetadataSchema = z.object({
-  tokens: z.number().optional(),
+  totalTokens: z.number().optional(),
+  model: z.enum(["spark", "void"]).optional(),
 });
 
 export const CustomUIMessageSchema = z.object({

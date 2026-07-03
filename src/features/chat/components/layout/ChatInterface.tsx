@@ -1,6 +1,5 @@
 "use client";
 
-import NewChatView from "./NewChatView";
 import ChatUI from "@/features/chat/components/conversation/ChatUI";
 import PromptUI from "@/features/chat/components/prompt/PromptUI";
 import { ChatProvider, useChatContext } from "./ChatProvider";
@@ -10,7 +9,25 @@ function ChatContent() {
   const messageCount = useChatContext((s) => s.messages.length);
 
   if (messageCount === 0) {
-    return <NewChatView />;
+    return (
+      <div className="flex flex-col items-center md:justify-center md:gap-10 flex-1 w-full max-w-2xl mx-auto px-4 pt-16 pb-4 md:py-0 h-full">
+        {/* Mobile Header */}
+        <div className="flex-1 flex items-center justify-center w-full md:hidden">
+          <h1 className="text-3xl text-foreground select-none text-center">
+            What do you want to know?
+          </h1>
+        </div>
+
+        {/* Desktop Header */}
+        <h1
+          className="hidden md:block text-5xl text-foreground select-none"
+          aria-label="SparkVoid"
+        >
+          sparkvoid
+        </h1>
+        <PromptUI className="w-full" />
+      </div>
+    );
   }
 
   return (

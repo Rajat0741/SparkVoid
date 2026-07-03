@@ -2,8 +2,7 @@ import { type UIMessage, type UseChatHelpers } from "@ai-sdk/react";
 import { UIDataTypes, UITools } from "ai";
 
 export interface MetadataType {
-  inputTokens?: number;
-  outputTokens?: number;
+  totalTokens?: number;
   model?: "spark" | "void";
 }
 
