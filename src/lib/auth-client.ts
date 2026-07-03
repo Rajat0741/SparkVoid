@@ -1,5 +1,6 @@
 import { createAuthClient } from "better-auth/react"; // make sure to import from better-auth/react
-import { oneTapClient, adminClient } from "better-auth/client/plugins";
+import { oneTapClient, adminClient,  } from "better-auth/client/plugins";
+import { sentinelClient } from "@better-auth/infra/client";
 
 export const authClient = createAuthClient({
   plugins: [
@@ -14,6 +15,9 @@ export const authClient = createAuthClient({
         baseDelay: 1000,
         maxAttempts: 3,
       },
+    }),
+    sentinelClient({
+      identifyUrl: process.env.NEXT_PUBLIC_BETTER_AUTH_IDENTIFY_URL,
     }),
     adminClient(),
   ],

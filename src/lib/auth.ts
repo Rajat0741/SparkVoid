@@ -3,7 +3,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "./db";
 import { admin, oneTap } from "better-auth/plugins";
 import { user, account, session, verification } from "./db/schema";
-import { dash } from "@better-auth/infra";
+import { dash, sentinel } from "@better-auth/infra";
 
 const dashApiKey = process.env.BETTER_AUTH_API_KEY;
 console.log("DASH KEY SET:", !!dashApiKey, dashApiKey?.length);
@@ -26,5 +26,6 @@ export const auth = betterAuth({
       apiKey: dashApiKey,
     }),
     admin(),
+    sentinel(),
   ],
 });
