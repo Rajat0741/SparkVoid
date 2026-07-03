@@ -1,5 +1,5 @@
 import { createAuthClient } from "better-auth/react"; // make sure to import from better-auth/react
-import { oneTapClient } from "better-auth/client/plugins";
+import { oneTapClient, adminClient } from "better-auth/client/plugins";
 
 export const authClient = createAuthClient({
   plugins: [
@@ -15,5 +15,6 @@ export const authClient = createAuthClient({
         maxAttempts: 3,
       },
     }),
+    adminClient(),
   ],
 });
