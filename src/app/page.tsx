@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
+import { OneTapPrompt } from "@/components/auth/one-tap-prompt";
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
 import { motion } from "motion/react";
@@ -12,15 +13,8 @@ export default function Home() {
   const { data: session, isPending } = authClient.useSession();
 
   useEffect(() => {
-    if (!session && !isPending) {
-      authClient.oneTap({
-        fetchOptions: {
-          onSuccess: () => router.push("/chat"),
-        },
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPending]);
+    if (session) router.replace("/chat");
+  }, [session, router]);
 
   return (
     <div className="relative flex min-h-dvh flex-col overflow-hidden bg-background">
@@ -32,6 +26,8 @@ export default function Home() {
         aria-hidden
         className="pointer-events-none absolute left-1/2 top-0 h-120 w-180 -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_top,oklch(0.55_0.22_292/0.22),transparent_70%)] blur-3xl"
       />
+
+      {!session && !isPending && <OneTapPrompt />}
 
       <header className="relative z-10 flex items-center justify-between px-8 py-6">
         <div className="flex items-center gap-2">

@@ -5,6 +5,7 @@ import { Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { OneTapPrompt } from "@/components/auth/one-tap-prompt";
 import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
 import { authClient } from "@/lib/auth-client";
 
@@ -15,15 +16,6 @@ export default function SignInPage() {
   useEffect(() => {
     if (session) router.replace("/chat");
   }, [session, router]);
-
-  useEffect(() => {
-    authClient.oneTap({
-      fetchOptions: {
-        onSuccess: () => router.push("/chat"),
-      },
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   if (isPending || session) return null;
 
@@ -37,6 +29,8 @@ export default function SignInPage() {
         aria-hidden
         className="pointer-events-none absolute left-1/2 top-0 h-125 w-175 -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_top,oklch(0.55_0.22_292/0.28),transparent_70%)] blur-3xl"
       />
+
+      <OneTapPrompt />
 
       <motion.div
         initial={{ opacity: 0, y: 10 }}
