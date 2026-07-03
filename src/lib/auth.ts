@@ -3,6 +3,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "./db";
 import { oneTap } from "better-auth/plugins"; 
 import { user,account, session, verification } from "./db/schema";
+import { dash } from "@better-auth/infra";
 
 export const auth = betterAuth({
     database: drizzleAdapter(db, {
@@ -17,5 +18,6 @@ export const auth = betterAuth({
     },
     plugins: [
         oneTap(),
+        dash()
     ]
 });
