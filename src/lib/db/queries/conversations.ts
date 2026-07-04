@@ -62,7 +62,7 @@ export async function updateConversationTitle(
 ): Promise<void> {
   await db
     .update(conversations)
-    .set({ title })
+    .set({ title, updatedAt: new Date() })
     .where(eq(conversations.id, conversationId));
 }
 

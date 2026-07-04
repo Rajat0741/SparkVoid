@@ -27,9 +27,7 @@ export function AppHeader() {
         </span>
       </div>
       {conversation && (
-        <div className="flex items-center gap-1">
-          <ConversationActions conversation={conversation} side="bottom" />
-        </div>
+        <ConversationActions conversation={conversation} side="bottom" align="end" />
       )}
     </header>
   );
