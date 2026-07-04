@@ -41,7 +41,7 @@ interface ConversationActionsProps {
 
 
 const TRIGGER_CLASS =
-  "flex items-center justify-center size-6 rounded-md hover:bg-sidebar-accent-foreground/10 active:bg-sidebar-accent-foreground/10 cursor-pointer focus-visible:outline-hidden data-popup-open:bg-sidebar-accent-foreground/10 ";
+  "flex items-center justify-center w-7 h-8 rounded-md hover:bg-sidebar-accent-foreground/10 active:bg-sidebar-accent-foreground/10 cursor-pointer focus-visible:outline-hidden data-popup-open:bg-sidebar-accent-foreground/10 ";
 
 function formatDate(date: Date | string) {
   return format(new Date(date), "MMM d, yyyy");
@@ -127,7 +127,7 @@ export function ConversationActions({
                         "text-destructive hover:bg-destructive/10 active:bg-destructive/15",
                     )}
                   >
-                    <item.icon className="h-4 w-4 shrink-0" />
+                    <item.icon className="h-5 w-4 object-contain shrink-0" />
                     {item.label}
                   </DrawerClose>
                 </React.Fragment>

@@ -26,9 +26,9 @@ export function ConversationItem({
       <Link
         href={`/chat/${conversation.id}`}
         className={cn(
-          "flex-1 min-w-0 rounded-lg py-2 pl-3 pr-9 text-foreground",
-          "group-hover/item:bg-sidebar-accent",
-          isHighlighted && "bg-sidebar-accent",
+          "flex-1 min-w-0 rounded-lg py-2 pl-3 pr-9 text-accent-foreground",
+          "group-hover/item:bg-accent group-hover/item:text-muted-foreground",
+          isHighlighted && "bg-accent text-muted-foreground",
         )}
       >
         <span className="flex flex-col gap-0.5">
