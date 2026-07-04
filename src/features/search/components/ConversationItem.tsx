@@ -34,7 +34,7 @@ export function ConversationItem({
         <span className="flex flex-col gap-0.5">
           <span className="flex items-center gap-2">
             {conversation.isPinned && (
-              <Pin className="size-3 shrink-0 text-muted-foreground/50" />
+              <Pin className="size-4 shrink-0 text-muted-foreground fill-muted-foreground" />
             )}
             <span className="truncate">{conversation.title}</span>
             {conversation.isShared && (

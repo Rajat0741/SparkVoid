@@ -94,14 +94,14 @@ export function ConversationActions({
         <Drawer open={isControlled ? open : undefined} onOpenChange={onOpenChange} showSwipeHandle>
           {!isControlled && (
             <DrawerTrigger className={cn(TRIGGER_CLASS, className)}>
-              <MoreVertical className="h-4 w-4" />
+              <MoreVertical className="size-5" />
             </DrawerTrigger>
           )}
           <DrawerContent className={"pb-6 pt-1 px-2 text-base"}>
             <DrawerHeader className="pb-3 border-b">
               <div className="flex w-full items-center justify-between">
                 <div className="flex flex-col text-left min-w-0">
-                  <DrawerTitle className="truncate text-sm">
+                  <DrawerTitle className="text-base">
                     {conversation.title ?? "Conversation"}
                   </DrawerTitle>
                   <span className="text-xs text-muted-foreground truncate">
@@ -110,8 +110,8 @@ export function ConversationActions({
                     {conversation.isShared && " · Shared"}
                   </span>
                 </div>
-                <DrawerClose className="flex h-7 w-7 items-center justify-center rounded-md active:bg-accent/80 cursor-pointer shrink-0">
-                  <XIcon className="h-4 w-4" />
+                <DrawerClose className="flex size-6 items-center justify-center rounded-md active:bg-accent/80 cursor-pointer shrink-0">
+                  <XIcon className="size-5" />
                 </DrawerClose>
               </div>
             </DrawerHeader>
@@ -127,8 +127,8 @@ export function ConversationActions({
                         "text-destructive hover:bg-destructive/10 active:bg-destructive/15",
                     )}
                   >
-                    <item.icon className="h-5 w-4 object-contain shrink-0" />
-                    {item.label}
+                    <item.icon className={cn("size-5 object-contain shrink-0", item.key === "pin" && "fill-current")} />
+                    <span className="text-base">{item.label}</span>
                   </DrawerClose>
                 </React.Fragment>
               ))}
@@ -144,7 +144,7 @@ export function ConversationActions({
     <>
       <DropdownMenu onOpenChange={onOpenChange}>
         <DropdownMenuTrigger className={cn(TRIGGER_CLASS, className)}>
-          <MoreVertical className="h-4 w-4" />
+          <MoreVertical className="size-4" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align={align} side={side}>
           {items.map((item) => (
@@ -153,9 +153,10 @@ export function ConversationActions({
               <DropdownMenuItem
                 variant={item.variant}
                 onClick={() => handlers[item.key]()}
+                className={"gap-2"}
               >
-                <item.icon className="h-4 w-4" strokeWidth={1.75} />
-                {item.label}
+                <item.icon className={cn("size-5", item.key === "pin" && "fill-current")} strokeWidth={1.75} />
+                <span className="text-base">{item.label}</span>
               </DropdownMenuItem>
             </React.Fragment>
           ))}

@@ -44,6 +44,7 @@ export const ChainOfThought = memo(
   }: ChainOfThoughtProps) => {
     const [isOpen, setIsOpen] = useControllableState({
       defaultProp: defaultOpen,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       onChange: (val) => onOpenChange?.(val, {} as any),
       prop: open,
     });
