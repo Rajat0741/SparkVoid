@@ -55,10 +55,10 @@ export function SidebarUserFooter({ user }: UserFooterProps) {
                   alt={user.name}
                   width={24}
                   height={24}
-                  className="rounded-full shrink-0 border border-border"
+                  className="rounded-full shrink-0"
                 />
               ) : (
-                <div className="size-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs shrink-0 border border-border">
+                <div className="size-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs shrink-0">
                   {user.name.charAt(0).toUpperCase()}
                 </div>
               )}
@@ -83,7 +83,7 @@ export function SidebarUserFooter({ user }: UserFooterProps) {
           align={isCollapsed ? "center" : "end"}
           side={isCollapsed ? "right" : "top"}
           sideOffset={8}
-          className="w-56"
+          className="min-w-56 py-2"
         >
           <DropdownMenuGroup>
             <DropdownMenuLabel className="font-normal">

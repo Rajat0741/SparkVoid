@@ -29,12 +29,14 @@ export function SidebarMenuActions() {
                 <Link
                   href={item.url}
                   onClick={() => isMobile && setOpenMobile(false)}
-                  className="[&_svg]:size-4.5 text-muted-foreground hover:text-sidebar-foreground"
+                  className="[&_svg]:size-4.5 text-sidebar-foreground"
                 />
               }
             >
-              <item.icon/>
-              <span className="text-base">{item.title}</span>
+              <item.icon className="group-hover/menu-button:text-muted-foreground transition-colors" />
+              <span className="text-base group-hover/menu-button:text-muted-foreground transition-colors">
+                {item.title}
+              </span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         ))}

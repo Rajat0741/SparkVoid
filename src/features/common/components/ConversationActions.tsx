@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { MoreHorizontal, XIcon } from "lucide-react";
+import { MoreVertical, XIcon } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -41,7 +41,7 @@ interface ConversationActionsProps {
 
 
 const TRIGGER_CLASS =
-  "flex items-center justify-center h-6 w-6 rounded hover:bg-sidebar-accent-foreground/10 active:bg-sidebar-accent-foreground/10 cursor-pointer focus-visible:outline-hidden data-popup-open:bg-sidebar-accent-foreground/10";
+  "flex items-center justify-center size-6 rounded-md hover:bg-sidebar-accent-foreground/10 active:bg-sidebar-accent-foreground/10 cursor-pointer focus-visible:outline-hidden data-popup-open:bg-sidebar-accent-foreground/10 ";
 
 function formatDate(date: Date | string) {
   return format(new Date(date), "MMM d, yyyy");
@@ -94,10 +94,10 @@ export function ConversationActions({
         <Drawer open={isControlled ? open : undefined} onOpenChange={onOpenChange} showSwipeHandle>
           {!isControlled && (
             <DrawerTrigger className={cn(TRIGGER_CLASS, className)}>
-              <MoreHorizontal className="h-4 w-4" />
+              <MoreVertical className="h-4 w-4" />
             </DrawerTrigger>
           )}
-          <DrawerContent>
+          <DrawerContent className={"pb-6 pt-1 px-2 text-base"}>
             <DrawerHeader className="pb-3 border-b">
               <div className="flex w-full items-center justify-between">
                 <div className="flex flex-col text-left min-w-0">
@@ -144,7 +144,7 @@ export function ConversationActions({
     <>
       <DropdownMenu onOpenChange={onOpenChange}>
         <DropdownMenuTrigger className={cn(TRIGGER_CLASS, className)}>
-          <MoreHorizontal className="h-4 w-4" />
+          <MoreVertical className="h-4 w-4" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align={align} side={side}>
           {items.map((item) => (

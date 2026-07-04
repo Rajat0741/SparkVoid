@@ -66,7 +66,7 @@ function ConversationSection({
 
   return (
     <>
-      <div className="px-3 pb-2 text-xs  text-muted-foreground uppercase tracking-wider font-sans">
+      <div className="px-3 pb-2 text-xs text-sidebar-foreground uppercase tracking-wider">
         {title}
       </div>
       <ItemGroup className="gap-1 mb-2">
@@ -107,7 +107,7 @@ function ConversationLoading() {
 function ConversationEmpty() {
   return (
     <div className="flex flex-col items-center justify-center h-20 text-center px-4">
-      <p className="text-xs text-muted-foreground font-sans">No conversations found</p>
+      <p className="text-xs text-sidebar-foreground font-sans">No conversations found</p>
     </div>
   );
 }

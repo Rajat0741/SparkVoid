@@ -8,8 +8,6 @@ import { Pin } from "lucide-react";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
-import { useLongPress } from "use-long-press";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ConversationItemProps {
   conversation: ConversationType;
@@ -20,28 +18,11 @@ export function ConversationItem({
   conversation,
   isActive,
 }: ConversationItemProps) {
-  const [drawerOpen, setDrawerOpen] = useState(false);
   const [actionsOpen, setActionsOpen] = useState(false);
-  const isMobile = useIsMobile();
-  const isHighlighted = isActive || actionsOpen || drawerOpen;
-
-  const bind = useLongPress(() => {
-    if (!isMobile) return;
-    setDrawerOpen(true);
-  }, {
-    threshold: 500,
-    cancelOnMovement: true,
-    onFinish: (event) => {
-      if (isMobile) event.preventDefault();
-    },
-  });
+  const isHighlighted = isActive || actionsOpen;
 
   return (
-    <div
-      className="group/item relative flex items-center w-full rounded-lg select-none"
-      style={{ WebkitTouchCallout: "none" }}
-      {...bind()}
-    >
+    <div className="group/item relative flex items-center w-full rounded-lg">
       <Link
         href={`/chat/${conversation.id}`}
         className={cn(
@@ -73,12 +54,11 @@ export function ConversationItem({
 
       <ConversationActions
         conversation={conversation}
-        open={isMobile ? drawerOpen : undefined}
-        onOpenChange={isMobile ? setDrawerOpen : setActionsOpen}
         className={cn(
           "absolute right-3 z-10 md:opacity-0 md:group-hover/item:opacity-100",
-          isHighlighted && !isMobile && "opacity-100"
+          isHighlighted && "opacity-100"
         )}
+        onOpenChange={setActionsOpen}
       />
     </div>
   );

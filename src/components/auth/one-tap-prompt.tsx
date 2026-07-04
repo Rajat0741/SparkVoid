@@ -15,7 +15,11 @@ export function OneTapPrompt({ onSuccess }: OneTapPromptProps = {}) {
     authClient.oneTap({
       fetchOptions: {
         onSuccess: () => {
-          onSuccess?.() ?? router.push("/chat");
+          if (onSuccess) {
+            onSuccess();
+          } else {
+            router.push("/chat");
+          }
         },
       },
     });
