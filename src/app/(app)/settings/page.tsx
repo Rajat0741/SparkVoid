@@ -1,20 +1,17 @@
-import { DeleteHistorySection } from "@/features/settings/components/DeleteHistorySection";
+import { UsageSection } from "@/features/settings/components/UsageSection";
 
-export default function SettingsPage() {
+export default async function SettingsPage() {
   return (
-    <div className="flex-1 overflow-y-auto">
-      <div className="max-w-2xl p-4">
+    <div className="flex justify-center w-full">
+      <div className="w-full max-w-2xl p-4">
         <h1 className="text-xl font-semibold mb-1">Settings</h1>
-        <p className="text-sm text-muted-foreground mb-8">
+        <p className="text-sm text-muted-foreground mb-6 border-b pb-2 border-foreground">
           Manage your account and data.
         </p>
 
-        <section>
-          <h2 className="text-base font-medium text-muted-foreground uppercase tracking-wider mb-3">
-            Data
-          </h2>
-          <DeleteHistorySection />
-        </section>
+        <div className="flex flex-col gap-8">
+          <UsageSection />
+        </div>
       </div>
     </div>
   );

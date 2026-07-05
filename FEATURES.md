@@ -60,5 +60,5 @@ SparkVoid uses a dual-agent workspace powered by the Vercel AI SDK and Google Ge
 
 ---
 
-## ⚙️ User Settings
-*   **History Controls**: Action to delete entire conversation history safely from the database.
+## ⚙️ User Settings & Usage
+*   **Token Usage Tracking**: Displays real-time daily token consumption with progress bars and reset countdowns in IST.

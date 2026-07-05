@@ -23,10 +23,12 @@ export default function MessageActions({
       >
         <RegenerateButton message={message} />
         <ClipboardButton message={message} />
-        <span className="text-sm capitalize">
-          &middot;{" "}
-          { message.role === "assistant" ? message.metadata?.model : null}
-        </span>
+        {message.role === "assistant" && message.metadata?.model && (
+          <span className="capitalize">
+            &middot;{" "}
+            {message.metadata.model}
+          </span>
+        )}
       </MessageActionsContainer>
     </>
   );

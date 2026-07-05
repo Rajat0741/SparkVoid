@@ -6,14 +6,22 @@ import { createConversation } from "@/features/chat/pipeline/createConversation"
 import { saveMessage } from "@/features/chat/pipeline/saveMessage";
 import { prepareMessage } from "@/features/chat/pipeline/prepareMessage";
 import { getUserSession } from "@/lib/getUser";
+import { checkUserQuota } from "@/features/chat/pipeline/checkUserQuota";
 
 export async function POST(request: Request) {
   try {
     
-    const { message, conversationId, model } = await parseRequest(request);
-    const history = await fetchHistory(conversationId);
-    
-    const userId = (await getUserSession(request.headers)).user.id;
+    const [parsedRequest, session] = await Promise.all([
+      parseRequest(request),
+      getUserSession(request.headers),
+    ]);
+    const userId = session.user.id;
+    const { conversationId, model, message } = parsedRequest;
+
+    const [, history] = await Promise.all([
+      checkUserQuota(userId),
+      fetchHistory(conversationId),
+    ]);
 
     if (history.length === 0) {
       await createConversation(userId, conversationId, message);
@@ -23,14 +31,14 @@ export async function POST(request: Request) {
 
     const messages = prepareMessage(history, message);
 
-    return await streamAIResponse(messages, conversationId, model);
+    return await streamAIResponse(messages, conversationId, model, userId);
   } catch (error) {
     console.error("API error:", error);
 
     if (error instanceof AppError) {
-      return Response.json({ error: error.message }, { status: error.statusCode });
+      return new Response(error.message, { status: error.statusCode });
     }
 
-    return Response.json({ error: "Internal server error" }, { status: 500 });
+    return new Response("Internal server error", { status: 500 });
   }
 }

@@ -95,6 +95,3 @@ export async function insertAttachmentBatch(
   return db.insert(attachments).values(data).returning();
 }
 
-export async function findAttachmentsByUserId(userId: string): Promise<AttachmentType[]> {
-  return db.select().from(attachments).where(eq(attachments.userId, userId));
-}

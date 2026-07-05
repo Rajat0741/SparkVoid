@@ -99,6 +99,3 @@ export async function deleteConversationById(conversationId: string): Promise<vo
   await db.delete(conversations).where(eq(conversations.id, conversationId));
 }
 
-export async function deleteAllConversationsByUserId(userId: string): Promise<void> {
-  await db.delete(conversations).where(eq(conversations.userId, userId));
-}

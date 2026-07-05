@@ -22,13 +22,21 @@ export default function Home() {
 
       {!session && !isPending && <OneTapPrompt />}
 
-      <header className="relative z-10 flex items-center justify-between px-8 py-6">
+      <header className="relative z-10 flex items-center justify-between px-8 py-6 max-w-7xl mx-auto w-full">
         <div className="flex items-center gap-2">
           <Sparkles className="size-4 text-amber-400" aria-hidden />
           <span className="text-sm font-semibold tracking-tight text-foreground">
             SparkVoid
           </span>
         </div>
+        <nav className="flex items-center gap-6">
+          <Link
+            href="/pricing"
+            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Pricing
+          </Link>
+        </nav>
       </header>
 
       <main className="relative z-10 flex flex-1 flex-col items-center justify-center px-6 pb-24 pt-12 text-center">
