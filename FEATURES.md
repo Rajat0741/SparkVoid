@@ -1,64 +1,68 @@
 # Features of SparkVoid
 
 ## 🤖 Dual AI Agent Architecture
-SparkVoid uses a dual-agent workspace powered by the Vercel AI SDK and Google Gemini models. You can switch between two specialized personalities:
+Two specialized agents, switchable mid-conversation, each with its own model and tool access.
 
 *   **Spark**
-    *   **LLM**: Gemini 3.1 Flash Lite.
-    *   **Max Turns**: Up to 5 loop steps per query.
-    *   **Integration**: Equipped with **Tavily Web Search** and **Weather** tools.
-    *   **Profile**: Fast, search-driven answers with real-time web querying.
+    *   **LLM**: Gemini 3.1 Flash-Lite
+    *   **Max Turns**: 5 tool-loop steps per query
+    *   **Tools**: Tavily Web Search, Weather
+    *   **Profile**: Fast, conversational, real-time web lookups
 *   **Void**
-    *   **LLM**: Gemini 3.1 Flash Lite.
-    *   **Max Turns**: Up to 12 loop steps per query.
-    *   **Integration**: Equipped with **Firecrawl Web Search**, **Firecrawl Scraping**, and **Weather** tools.
-    *   **Profile**: Deep research workspace capable of traversing and scraping pages for rich context.
+    *   **LLM**: Gemini 3.1 Flash-Lite
+    *   **Max Turns**: 12 tool-loop steps per query
+    *   **Tools**: Firecrawl Search, Firecrawl Scrape, Weather
+    *   **Profile**: Deep research — multi-page traversal and scraping for grounded, longer-form answers
 
 ---
 
 ## 💬 Core Chat Interface
-*   **Dynamic Streaming**: Real-time response generation utilizing the Vercel AI SDK stream interfaces.
-*   **Extended Thinking Visibility**: Displays step-by-step reasoning/thought chains as the Gemini model works through a query.
-*   **Conversation History**: Full preservation of previous conversations, loaded dynamically.
-*   **Recent Chats Sidebar**: Collapsible navigation listing active/recent chat threads.
-*   **Conversation Search**: Debounced client-side title search to filter historical chats instantly.
-*   **Multi-Model Switching**: Seamlessly toggle between **Spark** and **Void** agent systems on the fly.
+*   **Streaming responses** via the Vercel AI SDK, token-by-token
+*   **Extended thinking visibility** — shows the model's reasoning as it works through tool calls
+*   **Persistent conversation history**, loaded on demand
+*   **Cursor-based infinite scroll** on the sidebar conversation list (TanStack Query)
+*   **Debounced client-side search** across conversation titles
+*   **Conversation actions** — pin, rename, share, delete (mobile drawer / desktop dropdown)
+*   **Skeleton loading states** across chat and navigation
+*   **Mobile-first responsive layout** with auto-collapsing sidebar
 
 ---
 
 ## 📎 Media & Attachments
-*   **Image Uploads**: Local image attachment capabilities integrated directly inside the prompt box.
-*   **Cloud Hosting**: Staged images are uploaded securely and hosted/optimized dynamically using **ImageKit CDN**.
-*   **Visual Previews**: Popover-based preview of attachment list in the prompt input before submission.
+*   **Inline image uploads** from the prompt box
+*   **ImageKit CDN hosting** with reference-counted cleanup (attachments are only deleted once no message references them)
+*   **Attachment preview popover** before send
 
 ---
 
-## 🎨 Advanced UI & Rendering (Streamdown)
-*   **Streamdown Parser**: Renders complex markdown structures gracefully, including:
-    *   **Syntax Highlighting**: Powered by **Shiki** for formatted code blocks.
-    *   **LaTeX / Math**: Native, client-side math equations powered by **KaTeX**.
-    *   **Mermaid Diagrams**: Fully rendered diagrams directly inside message containers.
-*   **Typography**: Clean visual layout using **Space Grotesk** for headings and **Geist** for body text.
-*   **Dynamic Animations**: Micro-interactions powered by `motion/react` (Framer Motion).
+## 🎨 Rendering (Streamdown)
+*   **Syntax highlighting** via Shiki
+*   **LaTeX/math** via KaTeX
+*   **Mermaid diagrams** rendered inline
+*   **JSX preview rendering** for generated component code
+*   Typography: Space Grotesk (headings) / Geist (body), Sky/Zinc theme
 
 ---
 
 ## 🔒 Authentication & Account Management
-*   **Better Auth Engine**: Secure authentication framework supporting full OAuth integration.
-*   **One-Tap Auth**: Seamless Google One-Tap Prompt overlay on the login and home page.
+*   **Better Auth** with Google OAuth + inline One Tap
+*   **Admin dashboard** via the Dash plugin (`@better-auth/infra`)
+*   **Sentinel plugin** — role checks, ban management, session impersonation, proxy/IP forwarding detection
+*   **Route-level middleware** protecting search, settings, and home routes; redirects authenticated users to the dashboard
 
 ---
 
 ## 💾 Database & Persistence
-*   **Neon Serverless**: Cloud-hosted serverless PostgreSQL database.
-*   **Drizzle ORM**: Type-safe query building and schema declarations.
-*   **Tables Persisted**:
-    *   `users`: Account settings and profiles.
-    *   `conversations`: Chat topics, timestamps, and relations.
-    *   `messages`: Individual user queries, assistant parts, and metadata.
-    *   `attachments`: Details on uploaded assets.
+Neon (serverless Postgres) + Drizzle ORM.
+
+*   `users` — accounts, roles, profile data
+*   `conversations` — chat metadata and relations
+*   `messages` — message content and parts (JSONB), per conversation
+*   `attachments` — uploaded asset references
+*   `user_usages` — daily token consumption, caps, reset timestamps
 
 ---
 
-## ⚙️ User Settings & Usage
-*   **Token Usage Tracking**: Displays real-time daily token consumption with progress bars and reset countdowns in IST.
+## ⚙️ Usage & Limits
+*   **Real-time token usage** display with progress bar and IST-based reset countdown
+*   **Server-side quota enforcement** on every API route, not just client-side display
