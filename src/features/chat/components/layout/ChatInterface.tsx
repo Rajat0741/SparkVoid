@@ -35,7 +35,7 @@ function ChatContent() {
       <div className="flex-1 min-h-0 w-full relative">
         <ChatUI />
       </div>
-      <PromptUI className="w-full max-w-3xl mx-auto px-2 md:px-0" />
+      <PromptUI className="w-full max-w-3xl mx-auto px-2" />
     </div>
   );
 }

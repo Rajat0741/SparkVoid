@@ -31,18 +31,18 @@ export function PromptUIFooter({
     <PromptInputFooter>
         <PromptInputActionMenu>
           <PromptInputActionMenuTrigger />
-          <PromptInputActionMenuContent>
-            <PromptInputActionAddAttachments className="w-full" label="Add images" />
-            <PromptInputActionAddScreenshot className="w-full" />
+          <PromptInputActionMenuContent className={"flex flex-col gap-1 border"}>
+            <PromptInputActionAddAttachments className="w-full text-base" label="Add images" />
+            <PromptInputActionAddScreenshot className="w-full text-base" />
           </PromptInputActionMenuContent>
         </PromptInputActionMenu>
-      <div className="ml-auto flex items-center gap-2">
+      <div className="ml-auto flex items-center gap-3">
         <ModelSelect value={selectedModel} onChange={onSelectModel} />
         <PromptInputSubmit
-          disabled={!textInput.trim() || uploadInProgress || status === "submitted"}
+          disabled={(!textInput.trim() && status === "ready") || uploadInProgress || status === "submitted"}
           status={status}
           onStop={stop}
-          
+          className={"size-9"}
         />
       </div>
     </PromptInputFooter>

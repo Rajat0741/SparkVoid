@@ -79,6 +79,10 @@ import {
 // Helpers
 // ============================================================================
 
+const isTouchDevice =
+  typeof window !== "undefined" &&
+  window.matchMedia("(pointer: coarse)").matches;
+
 const convertBlobUrlToDataUrl = async (url: string): Promise<string | null> => {
   try {
     const response = await fetch(url);
@@ -416,7 +420,7 @@ export type PromptInputActionAddAttachmentsProps = ComponentProps<
 };
 
 export const PromptInputActionAddAttachments = ({
-  label = "Add photos or files",
+  label = "Add photos",
   onClick,
   ...props
 }: PromptInputActionAddAttachmentsProps) => {
@@ -947,7 +951,7 @@ export const PromptInput = ({
         ref={formRef}
         {...props}
       >
-        <InputGroup className="overflow-hidden">{children}</InputGroup>
+        <InputGroup className="overflow-hidden rounded-2xl">{children}</InputGroup>
       </form>
     </>
   );
@@ -1005,6 +1009,9 @@ export const PromptInputTextarea = ({
           return;
         }
         if (e.shiftKey) {
+          return;
+        }
+        if (isTouchDevice) {
           return;
         }
         e.preventDefault();
@@ -1247,7 +1254,7 @@ export const PromptInputSubmit = ({
 }: PromptInputSubmitProps) => {
   const isGenerating = status === "submitted" || status === "streaming";
 
-  let Icon = <ArrowUp className="size-4" />;
+  let Icon = <ArrowUp className="size-5" />;
 
   if (status === "submitted") {
     Icon = <Spinner />;

@@ -80,6 +80,7 @@ export default function PromptUI({ className }: PromptUIProps) {
           <PromptInputTextarea
             placeholder="How can I help you today?"
             onChange={(e) => setTextInput(e.currentTarget.value)}
+            className="p-3 text-base"
           />
         </PromptInputBody>
         <PromptUIFooter

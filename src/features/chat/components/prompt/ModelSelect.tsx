@@ -24,9 +24,9 @@ export function ModelSelect({ value, onChange }: ModelSelectProps) {
 
   return (
       <Select value={value} onValueChange={handleChange}>
-        <SelectTrigger className="border-2">
+        <SelectTrigger className="border p-1">
           {selected?.icon}
-          <SelectValue placeholder="Model" />
+          <SelectValue placeholder="Model" className={"capitalize text-base"} />
         </SelectTrigger>
         <SelectContent align="start" side="bottom" alignItemWithTrigger={false} >
             {Object.values(MODEL_CONFIGS).map((m) => (
@@ -34,8 +34,8 @@ export function ModelSelect({ value, onChange }: ModelSelectProps) {
                 <div className="flex items-start gap-2">
                   <span className="mt-0.5">{m.icon}</span>
                   <div className="flex flex-col">
-                    <span className="text-sm font-medium leading-tight">{m.label}</span>
-                    <span className="text-muted-foreground text-xs leading-tight">
+                    <span className="text-sm">{m.label}</span>
+                    <span className="text-muted-foreground text-xs">
                       {m.description}
                     </span>
                   </div>

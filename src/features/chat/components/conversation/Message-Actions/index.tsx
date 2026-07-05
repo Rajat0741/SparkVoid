@@ -17,11 +17,17 @@ export default function MessageActions({
   if (isStreaming) return null;
 
   return (
-    <MessageActionsContainer
-      className={message.role === "user" ? "justify-end" : ""}
-    >
-      <RegenerateButton message={message} />
-      <ClipboardButton message={message} />
-    </MessageActionsContainer>
+    <>
+      <MessageActionsContainer
+        className={`min-w-full ${message.role === "user" ? "justify-end" : "md:ml-6"}`}
+      >
+        <RegenerateButton message={message} />
+        <ClipboardButton message={message} />
+        <span className="text-sm capitalize">
+          &middot;{" "}
+          { message.role === "assistant" ? message.metadata?.model : null}
+        </span>
+      </MessageActionsContainer>
+    </>
   );
 }

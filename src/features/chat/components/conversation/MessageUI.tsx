@@ -82,7 +82,7 @@ function ModelBadge({ modelKey }: { modelKey: ModelId }) {
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger render={<span />}>
+        <TooltipTrigger className="hidden md:block" render={<span />}>
           <div className="mt-0.5 shrink-0">{config.icon}</div>
         </TooltipTrigger>
         <TooltipContent side="top">
