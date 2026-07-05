@@ -3,19 +3,12 @@
 import { motion } from "motion/react";
 import { Sparkles } from "lucide-react";
 import Link from "next/link";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { OneTapPrompt } from "@/components/auth/one-tap-prompt";
 import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
 import { authClient } from "@/lib/auth-client";
 
 export default function SignInPage() {
-  const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
-
-  useEffect(() => {
-    if (session) router.replace("/chat");
-  }, [session, router]);
 
   if (isPending || session) return null;
 
@@ -23,7 +16,7 @@ export default function SignInPage() {
     <div className="relative flex min-h-dvh flex-col items-center justify-center overflow-hidden bg-background px-4">
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] bg-[size:48px_48px] opacity-40"
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] bg-size-[48px_48px] opacity-40"
       />
       <div
         aria-hidden

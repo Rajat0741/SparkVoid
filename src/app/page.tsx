@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { OneTapPrompt } from "@/components/auth/one-tap-prompt";
 import Link from "next/link";
@@ -9,18 +7,13 @@ import { Sparkles } from "lucide-react";
 import { motion } from "motion/react";
 
 export default function Home() {
-  const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
-
-  useEffect(() => {
-    if (session) router.replace("/chat");
-  }, [session, router]);
 
   return (
     <div className="relative flex min-h-dvh flex-col overflow-hidden bg-background">
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] bg-[size:48px_48px] opacity-40"
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] bg-size-[48px_48px] opacity-40"
       />
       <div
         aria-hidden
