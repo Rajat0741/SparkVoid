@@ -26,6 +26,9 @@ export const auth = betterAuth({
     oneTap(),
     dash({
       apiKey: process.env.BETTER_AUTH_API_KEY,
+      activityTracking: {
+        enabled: true,
+      }
     }),
     admin(),
     sentinel(),
