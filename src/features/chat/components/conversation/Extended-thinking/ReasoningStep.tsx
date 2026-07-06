@@ -1,7 +1,8 @@
 "use client";
 
 import { ChainOfThoughtStep } from "@/components/ai-elements/chain-of-thought";
-import type { ReasoningUIPart, StepStatus } from "./helpers";
+import type { StepStatus } from "./helpers";
+import type { ReasoningUIPart } from "ai";
 import { MessageResponse } from "@/components/ai-elements/message";
 import { CircleDot } from "lucide-react";
 
