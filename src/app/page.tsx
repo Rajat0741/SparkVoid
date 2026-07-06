@@ -1,7 +1,7 @@
 "use client";
 
 import { authClient } from "@/lib/auth-client";
-import { OneTapPrompt } from "@/components/auth/one-tap-prompt";
+import { OneTapPrompt } from "@/features/auth/components/one-tap-prompt";
 import Link from "next/link";
 import Image from "next/image";
 import { Sparkles } from "lucide-react";

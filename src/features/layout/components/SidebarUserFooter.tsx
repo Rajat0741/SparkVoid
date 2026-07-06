@@ -1,8 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { LogOut, ChevronUp, Settings, Bug } from "lucide-react";
-import { authClient } from "@/lib/auth-client";
+import { useAction } from "next-safe-action/hooks";
+import { LogOut, ChevronUp, Settings, Bug, Loader2 } from "lucide-react";
+import { logoutAction } from "@/features/auth/actions/logout-action";
 import { SidebarFooter, useSidebar } from "@/components/ui/sidebar";
 import {
   DropdownMenu,
@@ -30,13 +31,7 @@ export function SidebarUserFooter({ user }: UserFooterProps) {
   const router = useRouter();
   const isCollapsed = state === "collapsed";
 
-  const handleLogout = async () => {
-    await authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => router.push("/login"),
-      },
-    });
-  };
+  const { execute: handleLogout, isExecuting: isLoggingOut } = useAction(logoutAction);
 
   return (
     <SidebarFooter className="border-t">
@@ -125,10 +120,15 @@ export function SidebarUserFooter({ user }: UserFooterProps) {
           <DropdownMenuItem
             variant="destructive"
             className="cursor-pointer"
-            onClick={handleLogout}
+            disabled={isLoggingOut}
+            onClick={() => handleLogout()}
           >
-            <LogOut className="size-4 mr-2" />
-            Log out
+            {isLoggingOut ? (
+              <Loader2 className="size-4 mr-2 animate-spin" />
+            ) : (
+              <LogOut className="size-4 mr-2" />
+            )}
+            {isLoggingOut ? "Logging out..." : "Log out"}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

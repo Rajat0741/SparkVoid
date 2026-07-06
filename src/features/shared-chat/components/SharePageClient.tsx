@@ -8,7 +8,7 @@ import { useAction } from "next-safe-action/hooks";
 import { toast } from "sonner";
 import { BookmarkPlus, Loader2, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { OneTapPrompt } from "@/components/auth/one-tap-prompt";
+import { OneTapPrompt } from "@/features/auth/components/one-tap-prompt";
 import { importConversationAction } from "../actions/import-conversation-action";
 import { SignInDialog } from "./SignInDialog";
 import MessageUI from "@/features/chat/components/conversation/MessageUI";

@@ -3,8 +3,8 @@
 import { motion } from "motion/react";
 import Link from "next/link";
 import Image from "next/image";
-import { OneTapPrompt } from "@/components/auth/one-tap-prompt";
-import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
+import { OneTapPrompt } from "@/features/auth/components/one-tap-prompt";
+import { GoogleSignInButton } from "@/features/auth/components/google-sign-in-button";
 import { authClient } from "@/lib/auth-client";
 
 export default function SignInPage() {
