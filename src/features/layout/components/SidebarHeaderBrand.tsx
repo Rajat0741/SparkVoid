@@ -19,13 +19,14 @@ export function SidebarHeaderBrand() {
         <div className="flex h-12 items-center gap-2 px-2 group-data-[collapsible=icon]:hidden">
           <Link href="/" className="flex items-center gap-2">
             <Image src="/icon.svg" alt="SparkVoid Logo" width={20} height={20} className="size-5 shrink-0" />
-            <span className="font-semibold tracking-tight truncate">
+            <span className="font-semibold text-base tracking-tight truncate">
               SparkVoid
             </span>
           </Link>
-          <SidebarTrigger className="ml-auto size-8" />
+          <SidebarTrigger className="ml-auto" iconClassName="size-5 md:size-4.5" />
         </div>
 
+        {/* Collapsed state */ }
         <div className="hidden group-data-[collapsible=icon]:grid h-12 place-items-center group/brand">
           <Link
             href={isCollapsed ? "#" : "/"}
@@ -36,10 +37,12 @@ export function SidebarHeaderBrand() {
             aria-hidden={isCollapsed}
             tabIndex={isCollapsed ? -1 : 0}
           >
-            <Image src="/icon.svg" alt="SparkVoid Logo" width={20} height={20} className="size-5" />
+            <Image src="/icon.svg" alt="SparkVoid Logo" width={24} height={24} className="size-6" />
           </Link>
 
-          <SidebarTrigger className="col-start-1 row-start-1 size-8 opacity-0 transition-opacity group-hover/brand:opacity-100" />
+          <SidebarTrigger
+          iconClassName="size-4.5"
+          className="col-start-1 row-start-1 opacity-0 transition-opacity group-hover/brand:opacity-100" />
         </div>
       </SidebarMenuItem>
     </SidebarMenu>
