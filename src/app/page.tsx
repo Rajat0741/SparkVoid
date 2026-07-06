@@ -3,6 +3,7 @@
 import { authClient } from "@/lib/auth-client";
 import { OneTapPrompt } from "@/components/auth/one-tap-prompt";
 import Link from "next/link";
+import Image from "next/image";
 import { Sparkles } from "lucide-react";
 import { motion } from "motion/react";
 
@@ -24,8 +25,8 @@ export default function Home() {
 
       <header className="relative z-10 flex items-center justify-between px-8 py-6 max-w-7xl mx-auto w-full">
         <div className="flex items-center gap-2">
-          <Sparkles className="size-4 text-amber-400" aria-hidden />
-          <span className="text-sm font-semibold tracking-tight text-foreground">
+          <Image src="/icon.svg" alt="SparkVoid Logo" width={24} height={24} className="size-6 shrink-0" />
+          <span className="text-lg font-bold text-foreground">
             SparkVoid
           </span>
         </div>

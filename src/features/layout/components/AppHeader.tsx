@@ -2,14 +2,14 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
-import { useSidebar, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import { getConversationDetailQueryOptions } from "@/features/common/queries/get-conversation-detail-query";
 import { ConversationActions } from "@/features/common/components";
 
 export function AppHeader() {
   const pathname = usePathname();
-  const { isMobile } = useSidebar();
 
   const match = pathname.match(/^\/chat\/([^/]+)$/);
   const conversationId = match?.[1];
@@ -20,9 +20,10 @@ export function AppHeader() {
   });
 
   return (
-    <header className="sticky top-0 z-10 grid grid-cols-[1fr_auto_1fr] items-center backdrop-blur px-4 py-2 border-b">
-      <div className="flex items-center gap-2">
-        {isMobile && <SidebarTrigger />}
+    <header className="sticky top-0 z-10 flex justify-between items-center px-4 py-3 border-b">
+      <div className="flex items-center gap-2 md:invisible">
+        <SidebarTrigger className={"size-5"} />
+        <Image src="/icon.svg" alt="SparkVoid Logo" width={20} height={20} className="size-5 shrink-0" />
         <span className="font-bold tracking-tight text-foreground text-base">
           SparkVoid
         </span>

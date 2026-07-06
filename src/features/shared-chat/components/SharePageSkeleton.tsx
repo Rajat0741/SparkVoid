@@ -1,5 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { Sparkles } from "lucide-react";
+import Image from "next/image";
 
 export default function SharePageSkeleton() {
   return (
@@ -9,7 +9,7 @@ export default function SharePageSkeleton() {
         <div className="mx-auto flex h-14 w-full max-w-3xl items-center justify-between gap-4 px-4">
           <div className="group flex shrink-0 items-center gap-2">
             <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 ring-1 ring-primary/20">
-              <Sparkles className="h-3.5 w-3.5 text-primary" />
+              <Image src="/icon.svg" alt="SparkVoid Logo" width={20} height={20} className="h-5 w-5" />
             </span>
             <span className="tracking-tight font-semibold">SparkVoid</span>
           </div>

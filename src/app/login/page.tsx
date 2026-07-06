@@ -1,8 +1,8 @@
 "use client";
 
 import { motion } from "motion/react";
-import { Sparkles } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { OneTapPrompt } from "@/components/auth/one-tap-prompt";
 import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
 import { authClient } from "@/lib/auth-client";
@@ -33,8 +33,8 @@ export default function SignInPage() {
       >
         <div className="flex flex-col items-center gap-8 text-center">
           <div className="flex items-center gap-2">
-            <Sparkles className="size-4 shrink-0 text-amber-400" aria-hidden />
-            <h1 className="text-xl font-bold tracking-tight text-foreground">
+            <Image src="/icon.svg" alt="SparkVoid Logo" width={24} height={24} className="size-6 shrink-0" />
+            <h1 className="text-xl font-bold text-foreground">
               SparkVoid
             </h1>
           </div>

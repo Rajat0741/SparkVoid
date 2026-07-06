@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Sparkles, Check, ArrowLeft, Zap, Star } from "lucide-react";
+import Image from "next/image";
+import { Check, ArrowLeft, Zap, Star } from "lucide-react";
 import { motion } from "motion/react";
 
 export default function PricingPage() {
@@ -23,7 +24,7 @@ export default function PricingPage() {
           <span className="text-sm">Back to Home</span>
         </Link>
         <div className="flex items-center gap-2">
-          <Sparkles className="size-4 text-amber-400" aria-hidden />
+          <Image src="/icon.svg" alt="SparkVoid Logo" width={20} height={20} className="size-5 shrink-0" />
           <span className="text-sm font-semibold tracking-tight text-foreground">
             SparkVoid
           </span>

@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAction } from "next-safe-action/hooks";
 import { toast } from "sonner";
-import { BookmarkPlus, Loader2, LogIn, Sparkles } from "lucide-react";
+import { BookmarkPlus, Loader2, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { OneTapPrompt } from "@/components/auth/one-tap-prompt";
 import { importConversationAction } from "../actions/import-conversation-action";
@@ -70,7 +71,7 @@ function ShareHeader({ title, isAuthenticated, isImporting, onImport, onSignIn }
           className="group flex shrink-0 items-center gap-2 transition-opacity hover:opacity-80"
         >
           <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 ring-1 ring-primary/20 transition-all group-hover:bg-primary/15">
-            <Sparkles className="h-3.5 w-3.5 text-primary" />
+            <Image src="/icon.svg" alt="SparkVoid Logo" width={20} height={20} className="h-5 w-5" />
           </span>
           <span className="tracking-tight">SparkVoid</span>
         </Link>

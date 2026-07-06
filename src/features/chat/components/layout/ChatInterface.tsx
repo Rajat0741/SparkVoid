@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import ChatUI from "@/features/chat/components/conversation/ChatUI";
 import PromptUI from "@/features/chat/components/prompt/PromptUI";
 import { ChatProvider, useChatContext } from "./ChatProvider";
@@ -19,12 +20,15 @@ function ChatContent() {
         </div>
 
         {/* Desktop Header */}
-        <h1
-          className="hidden md:block text-5xl text-foreground select-none"
-          aria-label="SparkVoid"
-        >
-          sparkvoid
-        </h1>
+        <div className="hidden md:flex items-center gap-3 select-none">
+          <Image src="/icon.svg" alt="SparkVoid Logo" width={48} height={48} className="size-12 shrink-0" />
+          <h1
+            className="text-5xl text-foreground"
+            aria-label="SparkVoid"
+          >
+            SparkVoid
+          </h1>
+        </div>
         <PromptUI className="w-full" />
       </div>
     );
