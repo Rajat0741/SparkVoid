@@ -24,8 +24,8 @@ export const Spark = new ToolLoopAgent({
     } satisfies GoogleGenerativeAIProviderOptions
   },
   tools: {
-    weather: weatherTool,
-    tavilyWebSearch: tavilySearch({
+    "get-weather": weatherTool,
+    "web-search-tavily": tavilySearch({
       searchDepth: "advanced",
       includeAnswer: true,
       maxResults: 8,

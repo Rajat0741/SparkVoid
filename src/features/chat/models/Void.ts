@@ -24,9 +24,9 @@ export const Void = new ToolLoopAgent({
     } satisfies GoogleGenerativeAIProviderOptions
   },
   tools: {
-    weather: weatherTool,
-    Scrape: firecrawlTools.scrape,
-    web_search: firecrawlTools.search,
+    "get-weather": weatherTool,
+    "Scrape-firecrawl": firecrawlTools.scrape,
+    "web-search-firecrawl": firecrawlTools.search,
   },
   stopWhen: stepCountIs(12),
 });

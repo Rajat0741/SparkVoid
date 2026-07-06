@@ -1,4 +1,4 @@
-import type { ToolUIPart, DynamicToolUIPart, ReasoningUIPart } from "ai";
+import type { ToolUIPart, DynamicToolUIPart } from "ai";
 import { isReasoningUIPart, isToolUIPart } from "ai";
 import type { MessagePart } from "@/types";
 import type { SearchParams } from "firecrawl-aisdk";
@@ -18,6 +18,7 @@ export interface SearchResult {
 
 export type { SearchParams };
 
+import { TOOL_CONFIGS } from "./tool-configs";
 
 // ---------------------------------------------------------------------------
 // resolveTitle
@@ -37,38 +38,29 @@ export function resolveTitle(
   const isRunning = (p: ToolPart) =>
     p.state !== "output-available" && p.state !== "output-error";
 
-  const isTavilyTool = (p: ToolPart) => {
-    const name = "toolName" in p ? p.toolName : p.type;
-    return name.includes("tavily");
+  const getToolConfig = (p: ToolPart) => {
+    const name = ("toolName" in p ? p.toolName : p.type).toLowerCase();
+    return TOOL_CONFIGS.find((c) => name.includes(c.key));
   };
 
-  const isSearchTool = (p: ToolPart) => {
-    const name = "toolName" in p ? p.toolName : p.type;
-    return name.includes("search");
-  };
+  // Find if there's any active tool currently running that is in our config
+  for (const part of toolParts) {
+    if (isRunning(part)) {
+      const config = getToolConfig(part);
+      if (config) {
+        return config.runningTitle;
+      }
+    }
+  }
 
-  const isScrapTool = (p: ToolPart) => {
-    const name = "toolName" in p ? p.toolName : p.type;
-    return name.includes("scrap") || name.includes("scrape");
-  };
+  // Find if there's any completed tool in our config
+  for (const part of toolParts) {
+    const config = getToolConfig(part);
+    if (config) {
+      return config.completedTitle;
+    }
+  }
 
-  const isWeatherTool = (p: ToolPart) => {
-    const name = "toolName" in p ? p.toolName : p.type;
-    return name.includes("weather");
-  };
-
-  if (toolParts.some((p) => isTavilyTool(p) && isRunning(p)))
-    return "Searching the web...";
-  if (toolParts.some((p) => isSearchTool(p) && isRunning(p)))
-    return "Searching the web...";
-  if (toolParts.some((p) => isScrapTool(p) && isRunning(p)))
-    return "Reading web page...";
-  if (toolParts.some((p) => isWeatherTool(p) && isRunning(p)))
-    return "Getting weather...";
-  if (toolParts.some(isTavilyTool)) return "Searched the web";
-  if (toolParts.some(isSearchTool)) return "Searched the web";
-  if (toolParts.some(isScrapTool)) return "Scraped website";
-  if (toolParts.some(isWeatherTool)) return "Got weather";
   if (toolParts.some(isRunning)) return "Running tools...";
   if (toolParts.length > 0) return "Used tools";
   if (isStreaming) return "Thinking...";
@@ -96,7 +88,3 @@ export function allStepsComplete(
     return false;
   });
 }
-
-// Re-export guards so step components don't need to import from "ai" directly
-export { isReasoningUIPart, isToolUIPart };
-export type { ReasoningUIPart, MessagePart };

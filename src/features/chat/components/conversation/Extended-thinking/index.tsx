@@ -8,14 +8,10 @@ import {
   ChainOfThoughtStep,
 } from "@/components/ai-elements/chain-of-thought";
 import { ReasoningStep } from "./ReasoningStep";
-import { SearchStep } from "./SearchStep";
-import { ScrapStep } from "./ScrapStep";
-import { TavilyStep } from "./TavilyStep";
-import { WeatherStep } from "./WeatherStep";
-import { GenericToolStep } from "./GenericToolStep";
+import { ToolStep } from "./ToolStep";
 import { resolveTitle, allStepsComplete } from "./helpers";
-import { isReasoningUIPart, isToolUIPart } from "./helpers";
-import type { MessagePart } from "./helpers";
+import { isReasoningUIPart, isToolUIPart } from "ai"
+import type { MessagePart } from "@/types";
 import { useEffect, useState } from "react";
 
 interface ExtendedThinkingProps {
@@ -23,24 +19,6 @@ interface ExtendedThinkingProps {
   stepParts: MessagePart[];
   isStreaming: boolean;
 }
-
-/**
- * Collapsible chain-of-thought panel. Shown when a single AI message has
- * more than one step part (e.g. reasoning → web search → answer).
- *
- * Each step is delegated to a focused sub-component:
- *   - ReasoningStep  — model's raw thinking text
- *   - SearchStep     — web search query + result links
- *   - GenericToolStep — any other tool call
- */
-const getToolType = (name: string) => {
-  const n = name.toLowerCase();
-  if (n.includes("tavily")) return "tavily";
-  if (n.includes("search")) return "search";
-  if (n.includes("scrap") || n.includes("scrape")) return "scrape";
-  if (n.includes("weather")) return "weather";
-  return "generic";
-};
 
 export default function ExtendedThinking({
   messageId,
@@ -80,22 +58,9 @@ export default function ExtendedThinking({
           }
 
           if (isToolUIPart(part)) {
-            const isRunning = part.state !== "output-available" && part.state !== "output-error";
-            const status = isRunning ? "active" : "complete";
-            const toolName = "toolName" in part ? part.toolName : part.type;
-
-            switch (getToolType(toolName)) {
-              case "search":
-                return <SearchStep key={key} part={part} status={status} />;
-              case "scrape":
-                return <ScrapStep key={key} part={part} status={status} />;
-              case "tavily":
-                return <TavilyStep key={key} part={part} status={status} />;
-              case "weather":
-                return <WeatherStep key={key} part={part} status={status} />;
-              default:
-                return <GenericToolStep key={key} part={part} status={status} />
-            }
+            const status = part.state !== "output-available" && part.state !== "output-error"
+              ? "active" : "complete";
+            return <ToolStep key={key} part={part} status={status} />;
           }
 
           return null;
