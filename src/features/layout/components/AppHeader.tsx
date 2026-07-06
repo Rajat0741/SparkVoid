@@ -21,7 +21,7 @@ export function AppHeader() {
 
   return (
     <header className="sticky top-0 z-10 flex justify-between items-center px-4 py-2 border-b">
-      <div className="flex items-center gap-2 md:invisible">
+      <div className="flex items-center gap-2 md:hidden">
         <SidebarTrigger iconClassName="size-5" />
         <Image src="/icon.svg" alt="SparkVoid Logo" width={24} height={24} className="size-6 shrink-0" />
         <span className="font-bold tracking-tight text-foreground text-base">
