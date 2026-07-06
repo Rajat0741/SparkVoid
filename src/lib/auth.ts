@@ -13,6 +13,12 @@ export const auth = betterAuth({
       ipAddressHeaders: ["x-vercel-forwarded-for", "x-forwarded-for"],
     }
   },
+  session: {
+    cookieCache: {
+      enabled: true,
+      maxAge: 120,
+    },
+  },
   database: drizzleAdapter(db, {
     provider: "pg",
     schema: { user, account, session, verification },

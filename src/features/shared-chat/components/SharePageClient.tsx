@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useAction } from "next-safe-action/hooks";
 import { toast } from "sonner";
 import { BookmarkPlus, Loader2, LogIn } from "lucide-react";
@@ -102,6 +102,7 @@ interface SharePageClientProps {
 
 export function SharePageClient({ conversation, messages, isAuthenticated }: SharePageClientProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const [isSignInOpen, setIsSignInOpen] = useState(false);
 
   const { execute: executeImport, isExecuting: isImporting } = useAction(
@@ -124,7 +125,7 @@ export function SharePageClient({ conversation, messages, isAuthenticated }: Sha
 
   return (
     <div className="flex h-dvh flex-col bg-background">
-      {!isAuthenticated && <OneTapPrompt onSuccess={() => router.refresh()} />}
+      {!isAuthenticated && <OneTapPrompt redirectTo={pathname} />}
 
       <ShareHeader
         title={conversation.title}

@@ -1,30 +1,17 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 
 interface OneTapPromptProps {
-  onSuccess?: () => void;
+  redirectTo?: string;
 }
 
-export function OneTapPrompt({ onSuccess }: OneTapPromptProps = {}) {
-  const router = useRouter();
-
+export function OneTapPrompt({ redirectTo = "/chat" }: OneTapPromptProps = {}) {
   useEffect(() => {
     authClient.oneTap({
-      fetchOptions: {
-        onSuccess: () => {
-          if (onSuccess) {
-            onSuccess();
-          } else {
-            router.push("/chat");
-          }
-        },
-      },
+      callbackURL: redirectTo,
     });
-    // One Tap initializes once on mount. Including onSuccess/router
-    // in deps would reinitialize the Google script on every render.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
