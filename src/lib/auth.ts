@@ -7,6 +7,7 @@ import { dash, sentinel } from "@better-auth/infra";
 
 export const auth = betterAuth({
   appName: "SparkVoid",
+  baseURL: process.env.BETTER_AUTH_URL,
   advanced: {
     ipAddress: {
       ipAddressHeaders: ["x-vercel-forwarded-for", "x-forwarded-for"],
