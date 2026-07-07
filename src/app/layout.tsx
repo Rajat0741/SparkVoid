@@ -24,6 +24,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "SparkVoid AI",
   description: "Intelligent conversations. Limitless possibilities.",
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
