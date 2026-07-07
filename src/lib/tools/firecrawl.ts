@@ -1,7 +1,7 @@
 import { FirecrawlTools } from "firecrawl-aisdk";
 
 const { systemPrompt, ...firecrawlTools } = FirecrawlTools({
-  search: { limit: 8 },
+  search: { limit: 5 },
   scrape: { formats: ["markdown"], onlyMainContent: true },
   interact: false,
 });

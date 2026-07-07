@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Check, ArrowLeft, Zap, Star } from "lucide-react";
 import { motion } from "motion/react";
+import { DAILY_CAP, PRO_DAILY_CAP } from "@/constants";
 
 export default function PricingPage() {
   return (
@@ -77,7 +78,7 @@ export default function PricingPage() {
 
               <ul className="space-y-3.5 mb-8">
                 {[
-                  "100,000 tokens per day limit",
+                  `${DAILY_CAP.toLocaleString("en-US", { notation: "compact" })} tokens per day limit`,
                   "Access to all models",
                   "Basic web search and scraping",
                 ].map((feature, i) => (
@@ -124,7 +125,7 @@ export default function PricingPage() {
 
               <ul className="space-y-3.5 mb-8">
                 {[
-                  "500,000 daily token usage limit",
+                  `${PRO_DAILY_CAP.toLocaleString("en-US", { notation: "compact" })} daily token usage limit`,
                   "Advanced web search and scraping",
                   "Access to upcoming premium tools",
                 ].map((feature, i) => (

@@ -2,14 +2,24 @@ import { db } from "@/lib/db";
 import { userUsage } from "../schema/user-usage";
 import { eq, sql } from "drizzle-orm";
 
-export async function recordAndGetUsage(userId: string, tokenCount: number = 0) {
-  const [result] = await db
+export async function getUsageByUserId(userId: string) {
+  const [row] = await db.select().from(userUsage).where(eq(userUsage.userId, userId));
+  return row;
+}
+
+export async function insertUsageIfNotExists(userId: string) {
+  const [row] = await db
     .insert(userUsage)
-    .values({
-      userId,
-      tokensUsed: tokenCount,
-      dailyCap: 100000,
-    })
+    .values({ userId, tokensUsed: 0 })
+    .onConflictDoNothing()
+    .returning();
+  return row;
+}
+
+export async function recordAndGetUsage(userId: string, tokenCount: number) {
+  const [row] = await db
+    .insert(userUsage)
+    .values({ userId, tokensUsed: tokenCount })
     .onConflictDoUpdate({
       target: userUsage.userId,
       set: {
@@ -22,8 +32,7 @@ export async function recordAndGetUsage(userId: string, tokenCount: number = 0) 
       },
     })
     .returning();
-
-  return result;
+  return row;
 }
 
 export async function getUserUsage(userId: string) {

@@ -28,7 +28,7 @@ export const Spark = new ToolLoopAgent({
     "web-search-tavily": tavilySearch({
       searchDepth: "advanced",
       includeAnswer: true,
-      maxResults: 8,
+      maxResults: 5,
     }),
   },
   stopWhen: stepCountIs(5)

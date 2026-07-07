@@ -7,8 +7,8 @@ export const userUsage = pgTable("user_usage", {
     .primaryKey()
     .references(() => user.id, { onDelete: "cascade" }),
   tokensUsed: integer("tokens_used").notNull().default(0),
-  dailyCap: integer("daily_cap").notNull().default(100000),
-  updatedAt: timestamp("updated_at")
+
+  updatedAt: timestamp("updated_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
 });

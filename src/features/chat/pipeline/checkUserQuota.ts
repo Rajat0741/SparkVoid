@@ -1,18 +1,24 @@
 import { AppError } from "@/utils/app-error";
-import { recordAndGetUsage } from "@/lib/db/queries";
+import { getUsageByUserId, insertUsageIfNotExists } from "@/lib/db/queries";
 import { getFormattedTimeUntilNextReset } from "@/utils/time";
+import { DAILY_CAP } from "@/constants";
+
+export async function getUsage(userId: string) {
+  const existing = await getUsageByUserId(userId);
+  if (existing) return existing;
+  return (
+    (await insertUsageIfNotExists(userId)) ?? (await getUsageByUserId(userId))
+  );
+}
 
 export const checkUserQuota = async (userId: string) => {
-  const usage = await recordAndGetUsage(userId, 0);
-  
-  if (usage.tokensUsed > 100000) {
+  const usage = await getUsage(userId);
+  if (usage.tokensUsed > DAILY_CAP) {
     const formatted = getFormattedTimeUntilNextReset();
-
     throw new AppError(
-      `You've reached your daily limit of 100,000 tokens. Your usage resets in ${formatted}.`,
+      `You've reached your daily limit of ${DAILY_CAP.toLocaleString("en-US", { notation: "compact" })} tokens. Your usage resets in ${formatted}.`,
       429,
     );
   }
-
   return usage;
 };

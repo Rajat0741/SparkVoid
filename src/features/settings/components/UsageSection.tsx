@@ -9,6 +9,7 @@ import {
   ItemHeader,
 } from "@/components/ui/item";
 import { cn } from "@/lib/utils";
+import { DAILY_CAP } from "@/constants";
 
 const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
 
@@ -27,10 +28,9 @@ export async function UsageSection() {
   const usage = await getUserUsage(session.user.id);
 
   let tokensUsed = 0;
-  let dailyCap = 100000;
+  const dailyCap = DAILY_CAP;
 
   if (usage) {
-    dailyCap = usage.dailyCap;
     if (toISTDateString(new Date()) === toISTDateString(usage.updatedAt)) {
       tokensUsed = usage.tokensUsed;
     }
@@ -58,7 +58,7 @@ export async function UsageSection() {
 
             <div className="shrink-0 text-left md:text-right">
               <p className="text-sm font-semibold tracking-tight">
-                {tokensUsed.toLocaleString()} / {dailyCap.toLocaleString()} tokens
+                {tokensUsed.toLocaleString("en-US", { notation: "compact" })} / {dailyCap.toLocaleString("en-US", { notation: "compact" })} tokens
               </p>
               <p
                 className={cn(
