@@ -17,6 +17,8 @@ export type ModelId = "spark" | "void";
 export const RequestSchema = z.object({
   conversationId: z.string(),
   message: CustomUIMessageSchema,
+  temporaryHistory: z.array(CustomUIMessageSchema).optional(),
+  temporary: z.boolean().optional(),
   model: z.enum(["spark", "void"]).optional(),
 });
 

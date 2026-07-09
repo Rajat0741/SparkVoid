@@ -1,10 +1,11 @@
 "use client";
 
-import { createContext, use, useEffect, useState } from "react";
+import {createContext, ReactNode, use, useEffect, useState} from "react";
 import { useStore } from "zustand";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { usePathname } from "next/navigation";
+import { useTemporaryChat } from "@/features/chat/hooks/use-temporary-chat";
 import { useQueryClient } from "@tanstack/react-query";
 import { getConversationQueryOptions } from "@/features/common/queries/get-conversations-query";
 import { createChatStore, type ChatState, type ChatStore } from "@/features/chat/stores/chat-store";
@@ -46,7 +47,7 @@ export function useChatContext<T>(selector: (state: ChatState) => T): T {
 interface ChatProviderProps {
   conversationId: string;
   initialMessages: CustomUIMessage[];
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 /**
@@ -60,6 +61,7 @@ export function ChatProvider({
   children,
 }: ChatProviderProps) {
   const pathname = usePathname();
+  const isTemporaryChat = useTemporaryChat();
   const queryClient = useQueryClient();
 
   const { messages, sendMessage, status, error, stop, clearError, regenerate, setMessages } =
@@ -72,6 +74,8 @@ export function ChatProvider({
           body: {
             conversationId: id,
             message: msgs.at(-1),
+            temporaryHistory: isTemporaryChat ? msgs.slice(0, -1) : undefined,
+            temporary: isTemporaryChat,
             model: (body as { model?: ModelId })?.model,
           },
         }),
@@ -87,7 +91,7 @@ export function ChatProvider({
   }, [status, queryClient]);
 
   const handleSendMessage: typeof sendMessage = async (message, options) => {
-    if (pathname === "/chat") {
+    if (pathname === "/chat" && !isTemporaryChat) {
       history.pushState(null, "", `/chat/${conversationId}`);
     }
     return sendMessage(message, options);
@@ -101,6 +105,7 @@ export function ChatProvider({
       messages,
       status,
       error,
+      isTemporaryChat,
       sendMessage: handleSendMessage,
       stop,
       clearError,
@@ -118,6 +123,7 @@ export function ChatProvider({
       messages,
       status,
       error,
+      isTemporaryChat,
       sendMessage: handleSendMessage,
       stop,
       clearError,

@@ -12,6 +12,7 @@ export const streamAIResponse = async (
   conversationId: string,
   model: ModelId | undefined,
   userId: string,
+  options: { persistMessages: boolean },
 ): Promise<Response> => {
 
   const agent = model === "void" ? Void : Spark;
@@ -29,32 +30,40 @@ export const streamAIResponse = async (
       return "An unexpected error occurred during generation.";
     },
     messageMetadata: ({ part }) => {
+      const baseModel = model ?? "spark";
       if (part.type === "start") {
-        return { model: model ?? "spark" };
+        return { model: baseModel };
       }
       if (part.type === "finish") {
-        const meta: MetadataType = {
-          totalTokens: part.totalUsage?.totalTokens ?? 0 ,
-          model: model ?? "spark",
-        };
-        return meta;
+        return {
+          totalTokens: part.totalUsage?.totalTokens ?? 0,
+          model: baseModel,
+        } as MetadataType;
       }
     },
     onFinish: async (aiMessage) => {
       const assistantMessage = aiMessage.messages.at(-1) as CustomUIMessage;
       const totalTokens = (assistantMessage?.metadata as MetadataType)?.totalTokens ?? 0;
 
+      const persistOperations = options.persistMessages
+        ? [
+            insertMessage({
+              id: assistantMessage.id,
+              conversationId,
+              role: assistantMessage.role,
+              metadata: assistantMessage.metadata,
+              parts: assistantMessage.parts,
+            }),
+            updateConversationTimestamp(conversationId),
+            console.log("Message persisted", assistantMessage),
+          ]
+        : [];
+
       await Promise.all([
-        insertMessage({
-          id: assistantMessage.id,
-          conversationId,
-          role: assistantMessage.role,
-          metadata: assistantMessage.metadata,
-          parts: assistantMessage.parts,
-        }),
-        updateConversationTimestamp(conversationId),
         recordAndGetUsage(userId, totalTokens),
+        ...persistOperations,
       ]);
     },
   });
 };
+

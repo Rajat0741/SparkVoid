@@ -17,13 +17,25 @@ export const parseRequest = async (request: Request) => {
     throw new AppError(parsed.error.message, 400);
   }
 
-  const message = await validateUIMessages({
+  const requestedHistory = parsed.data.temporaryHistory ?? [];
+
+  const [validatedMessage] = await validateUIMessages({
     messages: [parsed.data.message],
   });
 
+  if (!validatedMessage) {
+    throw new AppError("Invalid message payload", 400);
+  }
+
+  const validatedHistory = requestedHistory.length > 0
+    ? (await validateUIMessages({ messages: requestedHistory })) as CustomUIMessage[]
+    : [];
+
   return {
     conversationId: parsed.data.conversationId,
-    message: message[0] as CustomUIMessage,
+    message: validatedMessage as CustomUIMessage,
+    history: validatedHistory,
+    temporary: parsed.data.temporary ?? false,
     model: parsed.data.model,
   };
 }

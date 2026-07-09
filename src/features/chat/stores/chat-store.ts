@@ -20,6 +20,7 @@ export interface ChatState {
   status: ChatStatus;
   error: Error | undefined;
   modelId: ModelId;
+  isTemporaryChat: boolean;
   sendMessage: SendMessageFunctionType;
   stop: stopGenerationFunctionType;
   clearError: clearErrorFunctionType;
