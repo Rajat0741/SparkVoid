@@ -22,9 +22,9 @@ export default withSentryConfig(nextConfig, {
 	// For all available options, see:
 	// https://www.npmjs.com/package/@sentry/webpack-plugin#options
 
-	org: "rajat-p0",
+	org: "rajat-0v",
 
-	project: "javascript-nextjs",
+	project: "sparkvoid",
 
 	// Only print logs for uploading source maps in CI
 	silent: !process.env.CI,
