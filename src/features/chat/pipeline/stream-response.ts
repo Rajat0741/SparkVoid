@@ -73,4 +73,3 @@ export const streamAIResponse = async (
     stream: uiStream,
   });
 };
-

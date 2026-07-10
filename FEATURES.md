@@ -17,7 +17,8 @@ Two specialized agents, switchable mid-conversation, each with its own model and
 ---
 
 ## 💬 Core Chat Interface
-*   **Streaming responses** via the Vercel AI SDK, token-by-token
+*   **Streaming responses** via the Vercel AI SDK v7, token-by-token
+*   **Temporary (incognito) chat mode** — ephemeral conversations that run in memory without database persistence
 *   **Extended thinking visibility** — shows the model's reasoning as it works through tool calls
 *   **Persistent conversation history**, loaded on demand
 *   **Cursor-based infinite scroll** on the sidebar conversation list (TanStack Query)

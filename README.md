@@ -7,13 +7,13 @@ SparkVoid is a modern, high-performance web AI workspace that blends search, web
 ## 🚀 Key Features
 
 *   **Dual AI Agent Modes**: Toggle between **Spark** (Tavily search-enabled, fast 5-step loop agent) and **Void** (Firecrawl-enabled scraping & deep-search 12-step loop agent).
+*   **Temporary (Incognito) Chat Mode**: Start ephemeral conversations that run completely in memory without persisting messages or updating database history.
 *   **Extended Thinking**: Full real-time thought chains streaming from Google Gemini models.
 *   **Rich UI Markdown Renderer**: Render complex outputs including **LaTeX/Math Equations** (both block and inline via KaTeX), **Mermaid Diagrams**, and **Syntax Highlighted Code** (via Shiki).
 *   **Conversational Search**: Client-side, debounced search across all conversation histories.
 *   **Image Uploads**: Drag and drop image attachments processed instantly using ImageKit.
 *   **Infrastructure-Grade Auth & Google One-Tap**: Seamless sign-in experiences built with Better Auth, integrated with Sentinel security plugins (banning, roles, impersonation) and Admin/Dash controls.
 *   **Daily Token Limits & Pricing**: Track token usage with progress bars, reset countdowns in IST, and a public pricing page outlining the Free tier.
-*   **Smooth Loading States**: Integrated skeleton loading UI across chat and navigation routes for optimal visual transitions.
 
 For a full breakdown of platform features, see **FEATURES.md** .
 
@@ -22,7 +22,7 @@ For a full breakdown of platform features, see **FEATURES.md** .
 ## 🛠️ Technology Stack
 
 *   **Frontend**: Next.js 16, React 19, Tailwind CSS v4, Motion (Framer Motion v12), Zustand, TanStack React Query.
-*   **AI Engine**: Vercel AI SDK (`ai`, `@ai-sdk/google`), `@tavily/ai-sdk`, `firecrawl-aisdk`.
+*   **AI Engine**: Vercel AI SDK v7 (`ai`, `@ai-sdk/google`), `@tavily/ai-sdk`, `firecrawl-aisdk`.
 *   **Database**: PostgreSQL (Neon Database), Drizzle ORM.
 *   **Auth**: Better Auth (with Google OAuth, Google One-Tap, Dash, Admin, and Sentinel security plugins).
 *   **Asset Management**: ImageKit NodeJS/Next SDK.
