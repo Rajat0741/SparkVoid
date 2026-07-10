@@ -1,5 +1,5 @@
-import { stepCountIs, ToolLoopAgent } from "ai";
-import { GoogleGenerativeAIProviderOptions } from "@ai-sdk/google";
+import { isStepCount, ToolLoopAgent } from "ai";
+import { GoogleLanguageModelOptions } from "@ai-sdk/google";
 import { weatherTool } from "@/lib/tools/get-weather";
 import { firecrawlTools } from "@/lib/tools/firecrawl";
 import { google, googleTwo } from "./providerInstance";
@@ -21,12 +21,12 @@ export const Void = new ToolLoopAgent({
         includeThoughts: true,
         thinkingLevel: "high",
       },
-    } satisfies GoogleGenerativeAIProviderOptions
+    } satisfies GoogleLanguageModelOptions
   },
   tools: {
     "get-weather": weatherTool,
     "Scrape-firecrawl": firecrawlTools.scrape,
     "web-search-firecrawl": firecrawlTools.search,
   },
-  stopWhen: stepCountIs(12),
+  stopWhen: isStepCount(12),
 });

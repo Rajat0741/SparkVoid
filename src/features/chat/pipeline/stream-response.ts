@@ -1,4 +1,4 @@
-import { convertToModelMessages } from "ai";
+import { convertToModelMessages, toUIMessageStream, createUIMessageStreamResponse } from "ai";
 import { generateId } from "better-auth";
 import { type CustomUIMessage, type MetadataType } from "@/types";
 import { insertMessage, updateConversationTimestamp, recordAndGetUsage } from "@/lib/db/queries";
@@ -21,7 +21,11 @@ export const streamAIResponse = async (
     messages: await convertToModelMessages(messages),
   });
 
-  return (await result).toUIMessageStreamResponse({
+  const agentResult = await result;
+
+  const uiStream = toUIMessageStream({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    stream: agentResult.stream as any,
     generateMessageId: generateId,
     onError: (error) => {
       if (error instanceof AppError) {
@@ -41,22 +45,21 @@ export const streamAIResponse = async (
         } as MetadataType;
       }
     },
-    onFinish: async (aiMessage) => {
-      const assistantMessage = aiMessage.messages.at(-1) as CustomUIMessage;
+    onEnd: async ({ responseMessage }) => {
+      const assistantMessage = responseMessage as CustomUIMessage;
       const totalTokens = (assistantMessage?.metadata as MetadataType)?.totalTokens ?? 0;
 
       const persistOperations = options.persistMessages
         ? [
-            insertMessage({
-              id: assistantMessage.id,
-              conversationId,
-              role: assistantMessage.role,
-              metadata: assistantMessage.metadata,
-              parts: assistantMessage.parts,
-            }),
-            updateConversationTimestamp(conversationId),
-            console.log("Message persisted", assistantMessage),
-          ]
+          insertMessage({
+            id: assistantMessage.id,
+            conversationId,
+            role: assistantMessage.role,
+            metadata: assistantMessage.metadata,
+            parts: assistantMessage.parts,
+          }),
+          updateConversationTimestamp(conversationId),
+        ]
         : [];
 
       await Promise.all([
@@ -64,6 +67,10 @@ export const streamAIResponse = async (
         ...persistOperations,
       ]);
     },
+  });
+
+  return createUIMessageStreamResponse({
+    stream: uiStream,
   });
 };
 

@@ -1,5 +1,5 @@
-import { stepCountIs, ToolLoopAgent } from "ai";
-import { GoogleGenerativeAIProviderOptions } from "@ai-sdk/google";
+import { isStepCount, ToolLoopAgent } from "ai";
+import { GoogleLanguageModelOptions } from "@ai-sdk/google";
 import { weatherTool } from "@/lib/tools/get-weather";
 import { google, googleTwo } from "./providerInstance";
 import { SPARK_PROMPT } from "../prompts";
@@ -21,7 +21,7 @@ export const Spark = new ToolLoopAgent({
             includeThoughts: true,
             thinkingLevel: "high",
         }
-    } satisfies GoogleGenerativeAIProviderOptions
+    } satisfies GoogleLanguageModelOptions
   },
   tools: {
     "get-weather": weatherTool,
@@ -31,5 +31,5 @@ export const Spark = new ToolLoopAgent({
       maxResults: 5,
     }),
   },
-  stopWhen: stepCountIs(5)
+  stopWhen: isStepCount(5)
 });

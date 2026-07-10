@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "migrate-ai-sdk-v6-to-v7": {
+      "source": "vercel/ai",
+      "sourceType": "github",
+      "skillPath": "skills/migrate-ai-sdk-v6-to-v7/SKILL.md",
+      "computedHash": "e5ce0d999481d4b30a25d579554ef5bbf53321963f7a23b5f22b8c92ea3954fb"
+    },
     "neon-postgres": {
       "source": "neondatabase/agent-skills",
       "sourceType": "github",

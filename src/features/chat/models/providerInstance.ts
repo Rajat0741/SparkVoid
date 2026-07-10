@@ -1,9 +1,9 @@
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { createGoogle } from "@ai-sdk/google";
 
-export const google = createGoogleGenerativeAI({
+export const google = createGoogle({
   apiKey: process.env.GOOGLE_API_KEY,
 });
 
-export const googleTwo = createGoogleGenerativeAI({
+export const googleTwo = createGoogle({
   apiKey: process.env.GOOGLE_TWO_API_KEY,
 });
