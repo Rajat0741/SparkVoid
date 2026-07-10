@@ -8,6 +8,7 @@ import { prepareMessage } from "@/features/chat/pipeline/prepareMessage";
 import { getUserSession } from "@/lib/getUser";
 import { checkUserQuota } from "@/features/chat/pipeline/checkUserQuota";
 import { CustomUIMessage } from "@/types";
+import * as Sentry from "@sentry/nextjs";
 
 export async function POST(request: Request) {
   try {
@@ -19,6 +20,10 @@ export async function POST(request: Request) {
     
     const userId = session.user.id;
     const { conversationId, model, message, temporary, history: temporaryHistory } = parsedRequest;
+
+    if (temporary) {
+      Sentry.metrics.count('incognito_session_started', 1);
+    }
 
     await checkUserQuota(userId);
 

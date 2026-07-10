@@ -67,3 +67,14 @@ Neon (serverless Postgres) + Drizzle ORM.
 ## ⚙️ Usage & Limits
 *   **Real-time token usage** display with progress bar and IST-based reset countdown
 *   **Server-side quota enforcement** on every API route, not just client-side display
+
+---
+
+## 📊 Monitoring & Observability
+Sentry integration for production-grade error tracking and custom metrics.
+
+*   **Error tracking** — automatic exception capture with full stack traces
+*   **Custom metrics** for key application events:
+    *   `agent_selected` — tracks which AI agent (Spark/Void) is selected per conversation
+    *   `incognito_session_started` — counts ephemeral/temporary chat sessions
+    *   `tool_execution_error` — tracks tool failures with attributes for error type (HTTP/network), tool name, and status codes

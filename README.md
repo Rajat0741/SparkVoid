@@ -25,6 +25,7 @@ For a full breakdown of platform features, see **FEATURES.md** .
 *   **AI Engine**: Vercel AI SDK v7 (`ai`, `@ai-sdk/google`), `@tavily/ai-sdk`, `firecrawl-aisdk`.
 *   **Database**: PostgreSQL (Neon Database), Drizzle ORM.
 *   **Auth**: Better Auth (with Google OAuth, Google One-Tap, Dash, Admin, and Sentinel security plugins).
+*   **Monitoring**: Sentry (error tracking, performance monitoring, and custom metrics for agent selection, incognito sessions, and tool execution).
 *   **Asset Management**: ImageKit NodeJS/Next SDK.
 *   **Rendering**: Streamdown (`@streamdown/code`, `@streamdown/math`, `@streamdown/mermaid`), KaTeX, Shiki.
 

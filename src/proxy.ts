@@ -10,11 +10,10 @@ export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Protect chat, search, and settings routes
-  if (
-    pathname.startsWith("/chat") ||
-    pathname === "/search" ||
-    pathname === "/settings"
-  ) {
+  const PROTECTED_ROUTES = ["/search", "/settings"];
+  const isProtectedRoute = PROTECTED_ROUTES.includes(pathname) || pathname.startsWith("/chat");
+
+  if (isProtectedRoute) {
     if (!sessionToken) {
       return NextResponse.redirect(new URL("/login", request.url));
     }

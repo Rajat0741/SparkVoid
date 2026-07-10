@@ -6,6 +6,7 @@ import { Spark } from "../models/Spark";
 import { Void } from "../models/Void";
 import { ModelId } from "../validators";
 import { AppError } from "@/utils/app-error";
+import * as Sentry from "@sentry/nextjs";
 
 export const streamAIResponse = async (
   messages: CustomUIMessage[],
@@ -16,6 +17,9 @@ export const streamAIResponse = async (
 ): Promise<Response> => {
 
   const agent = model === "void" ? Void : Spark;
+  const baseModel = model ?? "spark";
+
+  Sentry.metrics.count('agent_selected', 1, { attributes: { agent: baseModel } });
 
   const result = agent.stream({
     messages: await convertToModelMessages(messages),
@@ -34,7 +38,6 @@ export const streamAIResponse = async (
       return "An unexpected error occurred during generation.";
     },
     messageMetadata: ({ part }) => {
-      const baseModel = model ?? "spark";
       if (part.type === "start") {
         return { model: baseModel };
       }
