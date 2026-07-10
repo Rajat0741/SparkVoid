@@ -6,7 +6,10 @@ import {
   type PromptInputMessage,
 } from "@/components/ai-elements/prompt-input";
 import { useChatContext } from "@/features/chat/components/layout/ChatProvider";
-import { useAttachmentUpload } from "@/hooks/use-attachment-upload";
+import {
+  type AttachmentUploadState,
+  useAttachmentUpload,
+} from "@/hooks/use-attachment-upload";
 import { PromptUIHeader } from "./PromptUIHeader";
 import { PromptUIFooter } from "./PromptUIFooter";
 import type { FileUIPart } from "ai";
@@ -16,9 +19,12 @@ interface PromptUIProps {
   className?: string;
 }
 
+const EMPTY_UPLOAD_STATES = new Map<string, AttachmentUploadState>();
+
 export default function PromptUI({ className }: PromptUIProps) {
   const conversationId = useChatContext((s) => s.conversationId);
   const sendMessage = useChatContext((s) => s.sendMessage);
+  const isTemporaryChat = useChatContext((s) => s.isTemporaryChat);
   const [textInput, setTextInput] = useState("");
   const selectedModel = useChatContext((s) => s.modelId);
   const setSelectedModel = useChatContext((s) => s.setModelId);
@@ -31,22 +37,23 @@ export default function PromptUI({ className }: PromptUIProps) {
     clearUploads,
   } = useAttachmentUpload(conversationId);
 
-  const status = useChatContext((s)=> s.status)
-  const submitIsBlocked = uploadInProgress || status!=="ready"
+  const status = useChatContext((s) => s.status);
+  const activeUploadInProgress = !isTemporaryChat && uploadInProgress;
+  const submitIsBlocked = activeUploadInProgress || status !== "ready";
 
   const handleSubmit = async (message: PromptInputMessage) => {
     if (submitIsBlocked) {
       return
     }
 
-    const fileParts: FileUIPart[] = [...uploadedFiles.values()].map(
-      (uploaded) => ({
-        type: "file" as const,
-        filename: uploaded.fileName,
-        mediaType: uploaded.fileType,
-        url: uploaded.url,
-      }),
-    );
+    const fileParts: FileUIPart[] = isTemporaryChat
+      ? message.files
+      : [...uploadedFiles.values()].map((uploaded) => ({
+          type: "file" as const,
+          filename: uploaded.fileName,
+          mediaType: uploaded.fileType,
+          url: uploaded.url,
+        }));
 
     setTextInput("");
 
@@ -68,14 +75,16 @@ export default function PromptUI({ className }: PromptUIProps) {
     <div className={className}>
       <PromptInput
         onSubmit={handleSubmit}
-        onFilesAdded={handleFilesAdded}
-        onFileRemoved={handleFileRemoved}
+        onFilesAdded={isTemporaryChat ? undefined : handleFilesAdded}
+        onFileRemoved={isTemporaryChat ? undefined : handleFileRemoved}
         multiple
         maxFiles={5}
         accept="image/*"
         onError={handlePromptInputError}
       >
-        <PromptUIHeader uploadStates={uploadStates} />
+        <PromptUIHeader
+          uploadStates={isTemporaryChat ? EMPTY_UPLOAD_STATES : uploadStates}
+        />
         <PromptInputBody>
           <PromptInputTextarea
             placeholder="How can I help you today?"
@@ -84,10 +93,11 @@ export default function PromptUI({ className }: PromptUIProps) {
           />
         </PromptInputBody>
         <PromptUIFooter
-          uploadInProgress={uploadInProgress}
+          uploadInProgress={activeUploadInProgress}
           textInput={textInput}
           selectedModel={selectedModel}
-          onSelectModel={setSelectedModel} />
+          onSelectModel={setSelectedModel}
+        />
       </PromptInput>
     </div>
   );

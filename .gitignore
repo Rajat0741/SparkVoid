@@ -44,5 +44,6 @@ next-env.d.ts
 .agents
 PRD.md
 .eslintcache
+.vscode
 
 !.env.example
