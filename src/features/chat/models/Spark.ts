@@ -1,6 +1,5 @@
 import { isStepCount, ToolLoopAgent } from "ai";
 import { GoogleLanguageModelOptions } from "@ai-sdk/google";
-import { weatherTool } from "@/lib/tools/get-weather";
 import { google, googleTwo } from "./providerInstance";
 import { SPARK_PROMPT } from "../prompts";
 import { tavilySearch } from "@tavily/ai-sdk";
@@ -24,7 +23,6 @@ export const Spark = new ToolLoopAgent({
     } satisfies GoogleLanguageModelOptions
   },
   tools: {
-    "get-weather": weatherTool,
     "web-search-tavily": tavilySearch({
       searchDepth: "advanced",
       includeAnswer: true,

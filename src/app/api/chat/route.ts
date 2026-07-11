@@ -21,9 +21,11 @@ export async function POST(request: Request) {
     const userId = session.user.id;
     const { conversationId, model, message, temporary, history: temporaryHistory } = parsedRequest;
 
-    if (temporary) {
-      Sentry.metrics.count('incognito_session_started', 1);
-    }
+    Sentry.metrics.count('session_started', 1, {
+      attributes: {
+        mode: temporary ? 'incognito' : 'regular',
+      },
+    });
 
     await checkUserQuota(userId);
 
