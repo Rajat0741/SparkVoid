@@ -4,15 +4,19 @@
 
 import * as Sentry from "@sentry/nextjs";
 
+if (!process.env.NEXT_PUBLIC_SENTRY_DSN) {
+  console.error("Sentry DSN not found in environment variables. Sentry will not be initialized.");
+}
+
 Sentry.init({
-  dsn: "https://92f4b97bfa11f5e98ee79f2fa22d4ed7@o4511711159451648.ingest.de.sentry.io/4511711168102480",
+  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
 
   integrations: [
     Sentry.consoleLoggingIntegration({ levels: ["warn", "error"] }),
   ],
 
   // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
-  tracesSampleRate: 1,
+  tracesSampleRate: process.env.NODE_ENV === "development" ? 1.0 : 0.1,
   // Enable logs to be sent to Sentry
   enableLogs: true,
 
