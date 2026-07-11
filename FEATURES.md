@@ -1,80 +1,73 @@
-# Features of SparkVoid
+# SparkVoid
 
-## 🤖 Dual AI Agent Architecture
-Two specialized agents, switchable mid-conversation, each with its own model and tool access.
+A full-stack AI chatbot built with Next.js featuring multi-agent conversations, streaming responses, persistent chat history, image uploads, and web-powered research.
 
-*   **Spark**
-    *   **LLM**: Gemini 3.1 Flash-Lite
-    *   **Max Turns**: 5 tool-loop steps per query
-    *   **Tools**: Tavily Web Search, Weather
-    *   **Profile**: Fast, conversational, real-time web lookups
-*   **Void**
-    *   **LLM**: Gemini 3.1 Flash-Lite
-    *   **Max Turns**: 12 tool-loop steps per query
-    *   **Tools**: Firecrawl Search, Firecrawl Scrape, Weather
-    *   **Profile**: Deep research — multi-page traversal and scraping for grounded, longer-form answers
+## Overview
 
----
+SparkVoid explores what a production-oriented AI chat application should look like beyond a basic prompt-response interface. It combines real-time streaming, persistent conversations, multimodal input, tool execution, and usage controls into a cohesive user experience.
 
-## 💬 Core Chat Interface
-*   **Streaming responses** via the Vercel AI SDK v7, token-by-token
-*   **Temporary (incognito) chat mode** — ephemeral conversations that run in memory without database persistence
-*   **Extended thinking visibility** — shows the model's reasoning as it works through tool calls
-*   **Persistent conversation history**, loaded on demand
-*   **Cursor-based infinite scroll** on the sidebar conversation list (TanStack Query)
-*   **Debounced client-side search** across conversation titles
-*   **Conversation actions** — pin, rename, share, delete (mobile drawer / desktop dropdown)
-*   **Skeleton loading states** across chat and navigation
-*   **Mobile-first responsive layout** with auto-collapsing sidebar
+## Core Features
 
----
+- Multi-agent chat with specialized assistants
+- Streaming responses with structured reasoning
+- Persistent conversations with rename, pin, delete, share, and import
+- Image uploads using ImageKit
+- Web search and scraping through integrated tools
+- Public conversation sharing
+- Daily usage tracking and quota enforcement
 
-## 📎 Media & Attachments
-*   **Inline image uploads** from the prompt box
-*   **ImageKit CDN hosting** with reference-counted cleanup (attachments are only deleted once no message references them)
-*   **Attachment preview popover** before send
+## Engineering Highlights
 
----
+### Intelligent Agent Pipeline
 
-## 🎨 Rendering (Streamdown)
-*   **Syntax highlighting** via Shiki
-*   **LaTeX/math** via KaTeX
-*   **Mermaid diagrams** rendered inline
-*   **JSX preview rendering** for generated component code
-*   Typography: Space Grotesk (headings) / Geist (body), Sky/Zinc theme
+- Separate Spark and Void agents with different reasoning limits
+- Multi-step tool execution with configurable stop conditions
+- Provider fallback for improved availability
+- Background AI title generation without delaying the first response
 
----
+### Conversation Experience
 
-## 🔒 Authentication & Account Management
-*   **Better Auth** with Google OAuth + inline One Tap
-*   **Admin dashboard** via the Dash plugin (`@better-auth/infra`)
-*   **Sentinel plugin** — role checks, ban management, session impersonation, proxy/IP forwarding detection
-*   **Route-level middleware** protecting search, settings, and home routes; redirects authenticated users to the dashboard
+- Streaming markdown with live syntax highlighting, LaTeX, Mermaid diagrams, and CJK support
+- Reasoning steps are consolidated into a single expandable panel to keep conversations readable
+- Regenerate responses for better answer refinement
 
----
+### Persistence
 
-## 💾 Database & Persistence
-Neon (serverless Postgres) + Drizzle ORM.
+- PostgreSQL + Drizzle data model for conversations, messages, attachments, and usage
+- Cursor-based infinite conversation history
+- Public conversation sharing with import/clone support
 
-*   `users` — accounts, roles, profile data
-*   `conversations` — chat metadata and relations
-*   `messages` — message content and parts (JSONB), per conversation
-*   `attachments` — uploaded asset references
-*   `user_usages` — daily token consumption, caps, reset timestamps
+### Media Handling
 
----
+- Secure ImageKit uploads using server-generated signatures
+- Reference-counted attachment cleanup prevents deleting files still used by shared conversations
+- Temporary chats keep uploaded files entirely client-side for privacy
 
-## ⚙️ Usage & Limits
-*   **Real-time token usage** display with progress bar and IST-based reset countdown
-*   **Server-side quota enforcement** on every API route, not just client-side display
+### Performance
 
----
+- Memoized streaming renderer to reduce unnecessary re-renders
+- Zustand store isolation minimizes updates during token streaming
+- Debounced search with infinite scrolling for large chat histories
 
-## 📊 Monitoring & Observability
-Sentry integration for production-grade error tracking and custom metrics.
+## Technical Decisions
 
-*   **Error tracking** — automatic exception capture with full stack traces
-*   **Custom metrics** for key application events:
-    *   `agent_selected` — tracks which AI agent (Spark/Void) is selected per conversation
-    *   `incognito_session_started` — counts ephemeral/temporary chat sessions
-    *   `tool_execution_error` — tracks tool failures with attributes for error type (HTTP/network), tool name, and status codes
+- Usage limits are reset atomically in PostgreSQL using upserts instead of scheduled cron jobs.
+- Conversation titles are generated asynchronously so the initial response is never blocked.
+- Agent identities are injected into conversation history while preventing the models from exposing those internal markers.
+
+## Challenges
+
+- Integrating ImageKit securely with authenticated uploads
+- Designing an expandable reasoning UI instead of rendering every intermediate step
+- Managing streamed responses alongside multi-step tool execution
+- Keeping shared conversations and attachments consistent without orphaning files
+
+## What I Learned
+
+- Building production-style AI workflows instead of simple chat demos
+- Designing streaming interfaces that remain performant
+- Managing persistent conversational state
+- Combining AI orchestration with modern full-stack architecture
+## Summary
+
+SparkVoid is my first Next.js project and a good example of building a real AI product with streaming, persistence, media support, and agent orchestration.
