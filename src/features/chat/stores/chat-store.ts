@@ -27,6 +27,7 @@ export interface ChatState {
   regenerate: RegenerateFunctionType;
   setMessages: SetMessagesFunctionType;
   setModelId: (modelId: ModelId) => void;
+  setTemporaryChat: (isTemporary: boolean) => void;
 }
 
 export type ChatStore = StoreApi<ChatState>;
@@ -40,10 +41,13 @@ export type ChatStore = StoreApi<ChatState>;
  * Using `createStore` (not `create`) ensures no global singleton is shared
  * across conversations — each ChatProvider mounts its own instance.
  */
-export const createChatStore = (initial: Omit<ChatState, "modelId" | "setModelId">): ChatStore => {
+export const createChatStore = (
+  initial: Omit<ChatState, "modelId" | "setModelId" | "setTemporaryChat">,
+): ChatStore => {
   return createStore<ChatState>()((set) => ({
     ...initial,
     modelId: "spark",
     setModelId: (modelId) => set({ modelId }),
+    setTemporaryChat: (isTemporary) => set({ isTemporaryChat: isTemporary }),
   }));
 };

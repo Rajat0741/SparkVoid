@@ -11,7 +11,7 @@ if (!process.env.SENTRY_DSN) {
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
-
+  enabled: process.env.NODE_ENV==="production",
   integrations: [
     Sentry.consoleLoggingIntegration({ levels: ["warn", "error"] }),
   ],

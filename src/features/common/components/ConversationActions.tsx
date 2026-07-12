@@ -40,9 +40,6 @@ interface ConversationActionsProps {
 }
 
 
-const TRIGGER_CLASS =
-  "flex items-center justify-center w-7 h-8 rounded-md hover:bg-sidebar-accent-foreground/10 active:bg-sidebar-accent-foreground/10 cursor-pointer focus-visible:outline-hidden data-popup-open:bg-sidebar-accent-foreground/10 ";
-
 function formatDate(date: Date | string) {
   return format(new Date(date), "MMM d, yyyy");
 }
@@ -93,7 +90,7 @@ export function ConversationActions({
       <>
         <Drawer open={isControlled ? open : undefined} onOpenChange={onOpenChange} showSwipeHandle>
           {!isControlled && (
-            <DrawerTrigger className={cn(TRIGGER_CLASS, className)}>
+            <DrawerTrigger className={cn("inline-flex shrink-0 items-center justify-center size-9 rounded-lg hover:bg-muted hover:text-foreground transition-all outline-none select-none cursor-pointer", className)}>
               <MoreVertical className="size-5" />
             </DrawerTrigger>
           )}
@@ -143,7 +140,7 @@ export function ConversationActions({
   return (
     <>
       <DropdownMenu onOpenChange={onOpenChange}>
-        <DropdownMenuTrigger className={cn(TRIGGER_CLASS, className)}>
+        <DropdownMenuTrigger className={cn("inline-flex shrink-0 items-center justify-center size-9 rounded-lg hover:bg-muted hover:text-foreground transition-all outline-none select-none cursor-pointer", className)}>
           <MoreVertical className="size-4" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align={align} side={side}>
