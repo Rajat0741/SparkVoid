@@ -167,7 +167,7 @@ interface MessageUIProps {
 /** Renders the full conversation message list. */
 export default function MessageUI({ messages, status, readOnly = false }: MessageUIProps) {
   return (
-    <div className="flex flex-col gap-4 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5">
+    <div className="flex flex-col pt-12 gap-4 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5">
       {messages.map((message, idx) => {
         const isStreaming = status === "streaming" && idx === messages.length - 1;
         return (
