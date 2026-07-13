@@ -37,16 +37,31 @@ For a full breakdown of platform features, see **FEATURES.md** .
 src/
 ├── app/               # Next.js App Router (Layouts, Pages, APIs)
 │   ├── (app)/         # Main application views (chat, search, settings)
+│   ├── api/           # API routes
 │   ├── login/         # Auth pages (with One-Tap and Google Sign-In)
-│   └── globals.css    # Tailwind CSS v4 imports & custom design tokens
-├── components/        # Shared presentation components (auth, theme-provider)
+│   ├── pricing/       # Public pricing page
+│   ├── share/         # Shared conversation pages
+│   ├── layout.tsx     # Root layout
+│   ├── page.tsx       # Home page
+│   ├── globals.css    # Tailwind CSS v4 imports & custom design tokens
+│   └── global-error.tsx # Global error boundary for sentry
+├── components/        # Shared presentation components (auth, theme-provider, ui)
 ├── features/          # Domain-driven features
+│   ├── auth/          # Authentication components
 │   ├── chat/          # Chat UI, state stores, pipelines, and agents
+│   ├── common/        # Common shared components
+│   ├── layout/        # Layout components
 │   ├── search/        # Search views and debounced listing logic
-│   └── settings/      # Settings components and clean database actions
+│   ├── settings/      # Settings components and clean database actions
+│   └── shared-chat/   # Shared chat functionality
 ├── hooks/             # Custom React hooks
 ├── lib/               # Shared libraries (auth, db connection, utilities)
-└── types/             # Global TypeScript type definitions
+├── types/             # Global TypeScript type definitions
+├── utils/             # Utility functions
+├── constants.ts       # Application constants
+├── proxy.ts           # Proxy configuration
+├── instrumentation.ts # Server-side instrumentation ( sentry )
+└── instrumentation-client.ts # Client-side instrumentation ( sentry )
 ```
 
 ---
@@ -54,7 +69,7 @@ src/
 ## 🏁 Getting Started
 
 ### Prerequisites
-*   Node.js (v20+ recommended)
+*   Node.js (v24+ recommended)
 *   `pnpm` package manager
 
 ### 1. Install Dependencies
@@ -70,9 +85,10 @@ cp .env.example .env.local
 
 Fill in the required configuration:
 - **Database**: `DATABASE_URL` (Neon PostgreSQL connection string)
-- **AI Keys**: `GOOGLE_API_KEY`, `TAVILY_API_KEY`, `FIRECRAWL_API_KEY`
-- **Auth**: `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL` (e.g., `http://localhost:3000`), `GOOGLE_CLIENT_SECRET`, `NEXT_PUBLIC_GOOGLE_CLIENT_ID`
+- **AI Keys**: `GOOGLE_API_KEY`, `GOOGLE_TWO_API_KEY`, `TAVILY_API_KEY`, `FIRECRAWL_API_KEY`
+- **Auth**: `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL` (e.g., `http://localhost:3000`), `BETTER_AUTH_API_KEY`, `GOOGLE_CLIENT_SECRET`, `NEXT_PUBLIC_GOOGLE_CLIENT_ID`, `NEXT_PUBLIC_BETTER_AUTH_IDENTIFY_URL`
 - **Image Uploads**: `IMAGEKIT_PUBLIC_KEY`, `IMAGEKIT_PRIVATE_KEY`, `IMAGEKIT_ENDPOINT`
+- **Monitoring**: `SENTRY_AUTH_TOKEN` (optional, for error tracking)
 
 ### 3. Push Database Schema
 Ensure your database tables are initialized using Drizzle Kit:

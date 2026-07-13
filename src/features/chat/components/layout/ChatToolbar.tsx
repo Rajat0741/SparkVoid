@@ -32,7 +32,7 @@ export function ChatToolbar() {
   });
 
   return (
-    <div className="fixed top-4 right-4 z-20 flex items-center gap-1 rounded-xl border-2 border-border backdrop-blur-xl">
+    <div className="fixed top-4 right-4 z-20 pr-1 flex items-center gap-1 rounded-lg border-2 border-border divide-x-2 md:border-none backdrop-blur-xl">
       <Button
         variant="ghost"
         size="lg"
@@ -65,7 +65,8 @@ export function ChatToolbar() {
         </Tooltip>
       ) : conversation ? (
         <ConversationActions
-          className="size-7 rounded-xl mr-2"
+          className="size-7 p-1"
+          iconClassName="size-6"
           conversation={conversation}
           side="bottom"
           align="end"

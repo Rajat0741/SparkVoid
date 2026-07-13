@@ -29,6 +29,7 @@ import { format } from "date-fns";
 interface ConversationActionsProps {
   conversation: ConversationType;
   className?: string;
+  iconClassName?: string;
   /**
    * Controlled open state (mobile Drawer only).
    * When provided, no trigger button is rendered — the caller controls open/close.
@@ -47,6 +48,7 @@ function formatDate(date: Date | string) {
 export function ConversationActions({
   conversation,
   className,
+  iconClassName,
   open,
   onOpenChange,
   align = "start",
@@ -91,7 +93,7 @@ export function ConversationActions({
         <Drawer open={isControlled ? open : undefined} onOpenChange={onOpenChange} showSwipeHandle>
           {!isControlled && (
             <DrawerTrigger className={cn("inline-flex shrink-0 items-center justify-center size-9 rounded-lg hover:bg-muted hover:text-foreground transition-all outline-none select-none cursor-pointer", className)}>
-              <MoreVertical className="size-5" />
+              <MoreVertical className={cn("size-5", iconClassName)} />
             </DrawerTrigger>
           )}
           <DrawerContent className={"pb-6 pt-1 px-2 text-base"}>
@@ -141,7 +143,7 @@ export function ConversationActions({
     <>
       <DropdownMenu onOpenChange={onOpenChange}>
         <DropdownMenuTrigger className={cn("inline-flex shrink-0 items-center justify-center size-9 rounded-lg hover:bg-muted hover:text-foreground transition-all outline-none select-none cursor-pointer", className)}>
-          <MoreVertical className="size-4" />
+          <MoreVertical className={cn("size-4", iconClassName)} />
         </DropdownMenuTrigger>
         <DropdownMenuContent align={align} side={side}>
           {items.map((item) => (
