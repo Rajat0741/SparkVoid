@@ -69,7 +69,7 @@ export function useAttachmentUpload(conversationId: string) {
           token: authParams.token,
           signature: authParams.signature,
           publicKey: authParams.publicKey,
-          folder: "/chat-attachments",
+          folder: "/SparkVoid/chat-attachments",
         });
 
         if (!response.fileId || !response.url) {
