@@ -7,7 +7,6 @@ import {
 } from "@/components/ai-elements/prompt-input";
 import { useChatContext } from "@/features/chat/components/layout/ChatProvider";
 import {
-  type AttachmentUploadState,
   useAttachmentUpload,
 } from "@/hooks/use-attachment-upload";
 import { PromptUIHeader } from "./PromptUIHeader";
@@ -19,10 +18,7 @@ interface PromptUIProps {
   className?: string;
 }
 
-const EMPTY_UPLOAD_STATES = new Map<string, AttachmentUploadState>();
-
 export default function PromptUI({ className }: PromptUIProps) {
-  const conversationId = useChatContext((s) => s.conversationId);
   const sendMessage = useChatContext((s) => s.sendMessage);
   const isTemporaryChat = useChatContext((s) => s.isTemporaryChat);
   const [textInput, setTextInput] = useState("");
@@ -35,7 +31,7 @@ export default function PromptUI({ className }: PromptUIProps) {
     handleFilesAdded,
     handleFileRemoved,
     clearUploads,
-  } = useAttachmentUpload(conversationId);
+  } = useAttachmentUpload(isTemporaryChat);
 
   const status = useChatContext((s) => s.status);
   const activeUploadInProgress = !isTemporaryChat && uploadInProgress;
@@ -57,11 +53,11 @@ export default function PromptUI({ className }: PromptUIProps) {
 
     setTextInput("");
 
+    clearUploads();
     await sendMessage(
       { text: message.text, files: fileParts },
       { body: { model: selectedModel } },
     );
-    clearUploads();
   };
 
   const handlePromptInputError = (err: {
@@ -74,17 +70,16 @@ export default function PromptUI({ className }: PromptUIProps) {
   return (
     <div className={className}>
       <PromptInput
+        key={isTemporaryChat ? "temporary" : "persistent"}
         onSubmit={handleSubmit}
-        onFilesAdded={isTemporaryChat ? undefined : handleFilesAdded}
-        onFileRemoved={isTemporaryChat ? undefined : handleFileRemoved}
+        onFilesAdded={handleFilesAdded}
+        onFileRemoved={handleFileRemoved}
         multiple
         maxFiles={5}
         accept="image/*"
         onError={handlePromptInputError}
       >
-        <PromptUIHeader
-          uploadStates={isTemporaryChat ? EMPTY_UPLOAD_STATES : uploadStates}
-        />
+        <PromptUIHeader uploadStates={uploadStates} />
         <PromptInputBody>
           <PromptInputTextarea
             placeholder="How can I help you today?"

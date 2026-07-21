@@ -5,7 +5,7 @@ import {
   createPendingAttachmentAction,
   deleteAttachmentAction,
 } from "@/features/chat/actions/attachment-actions";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export type AttachmentUploadStatus = "uploading" | "error" | "done";
 
@@ -24,7 +24,7 @@ export interface UploadedAttachment {
   fileSize: number;
 }
 
-export function useAttachmentUpload(conversationId: string) {
+export function useAttachmentUpload(isTemporaryChat: boolean) {
   // Set of attachment IDs currently being uploaded, mapped to their upload state
   const [uploadStates, setUploadStates] = useState<Map<string, AttachmentUploadState>>(new Map());
   // Map of successfully uploaded attachments, keyed by attachment ID
@@ -45,6 +45,8 @@ export function useAttachmentUpload(conversationId: string) {
   const handleFilesAdded = async (
     entries: { id: string; file: File }[],
   ) => {
+    if (isTemporaryChat) return;
+
     const uploadPromises = entries.map(async ({ id, file }) => {
       setState(id, { status: "uploading" });
 
@@ -118,6 +120,8 @@ export function useAttachmentUpload(conversationId: string) {
       next.delete(id);
       return next;
     });
+    if (isTemporaryChat) return;
+
     await deleteAttachmentAction({ attachmentId: id }).catch((err) => {
       console.error("Failed to delete attachment from server:", err);
     });
@@ -127,6 +131,32 @@ export function useAttachmentUpload(conversationId: string) {
     setUploadedFiles(new Map());
     setUploadStates(new Map());
   };
+
+  const discardPendingUploads = async () => {
+    const attachmentIds = [...uploadedFiles.keys()];
+    clearUploads();
+
+    if (attachmentIds.length === 0) return;
+
+    await Promise.all(
+      attachmentIds.map((attachmentId) =>
+        deleteAttachmentAction({ attachmentId }).catch((err) => {
+          console.error("Failed to delete attachment from server:", err);
+        }),
+      ),
+    );
+  };
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      void discardPendingUploads();
+    });
+
+    return () => window.clearTimeout(timeoutId);
+    // Mode changes invalidate all attachments. Submission uses clearUploads
+    // directly so successfully linked attachments are never deleted.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isTemporaryChat]);
 
   return {
     uploadedFiles,

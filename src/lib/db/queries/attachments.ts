@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { attachments, AttachmentType, NewAttachmentType } from "@/lib/db/schema";
-import { and, eq, inArray, notInArray, sql } from "drizzle-orm";
+import { and, count, eq, inArray, notInArray } from "drizzle-orm";
 
 export async function insertAttachment(
   data: NewAttachmentType,
@@ -74,17 +74,17 @@ export async function countDuplicateFileReferences(
   imagekitFileId: string,
   excludedAttachmentIds: string[],
 ): Promise<number> {
+
+  const conditions = [eq(attachments.imagekitFileId, imagekitFileId)];
+  
+  if (excludedAttachmentIds.length > 0) {
+    conditions.push(notInArray(attachments.id, excludedAttachmentIds));
+  }
+
   const [result] = await db
-    .select({ count: sql<string>`count(*)` })
+    .select({ count: count() })
     .from(attachments)
-    .where(
-      and(
-        eq(attachments.imagekitFileId, imagekitFileId),
-        excludedAttachmentIds.length > 0
-          ? notInArray(attachments.id, excludedAttachmentIds)
-          : undefined,
-      ),
-    );
+    .where(and(...conditions));
   return Number(result?.count ?? 0);
 }
 
