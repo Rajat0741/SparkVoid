@@ -1,4 +1,4 @@
-import { isStepCount, ToolLoopAgent } from "ai";
+import { isStepCount, ToolLoopAgent, Tool } from "ai";
 import { GoogleLanguageModelOptions } from "@ai-sdk/google";
 import { google, googleTwo } from "./providerInstance";
 import { SPARK_PROMPT } from "../prompts";
@@ -27,7 +27,7 @@ export const Spark = new ToolLoopAgent({
       searchDepth: "advanced",
       includeAnswer: true,
       maxResults: 5,
-    }),
+    }) as Tool,
   },
   stopWhen: isStepCount(5)
 });

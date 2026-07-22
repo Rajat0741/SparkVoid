@@ -1,4 +1,4 @@
-import { isStepCount, ToolLoopAgent } from "ai";
+import { isStepCount, ToolLoopAgent, Tool } from "ai";
 import { GoogleLanguageModelOptions } from "@ai-sdk/google";
 import { firecrawlTools } from "@/lib/tools/firecrawl";
 import { google, googleTwo } from "./providerInstance";
@@ -9,8 +9,8 @@ import { createFallback } from "ai-fallback";
 export const Void = new ToolLoopAgent({
   model: createFallback({
     models: [
-      googleTwo("gemini-3.1-flash-lite"),
-      google("gemini-3.1-flash-lite"),
+      googleTwo("gemini-3.5-flash-lite"),
+      google("gemini-3.5-flash-lite"),
     ],
   }),
   instructions: VOID_PROMPT(),
@@ -23,8 +23,8 @@ export const Void = new ToolLoopAgent({
     } satisfies GoogleLanguageModelOptions
   },
   tools: {
-    "Scrape-firecrawl": firecrawlTools.scrape,
-    "web-search-firecrawl": firecrawlTools.search,
+    "Scrape-firecrawl": firecrawlTools.scrape as Tool,
+    "web-search-firecrawl": firecrawlTools.search as Tool,
   },
   stopWhen: isStepCount(12),
 });
