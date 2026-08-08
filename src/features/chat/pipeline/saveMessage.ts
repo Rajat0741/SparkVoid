@@ -1,4 +1,9 @@
-import { insertMessage, linkPendingAttachments, updateConversationTimestamp } from "@/lib/db/queries";
+import { db } from "@/lib/db";
+import {
+  insertMessage,
+  updateConversationTimestamp,
+  linkPendingAttachments,
+} from "@/lib/db/queries";
 import { CustomUIMessage } from "@/types";
 
 export const saveMessage = async (
@@ -6,26 +11,30 @@ export const saveMessage = async (
   conversationId: string,
   message: CustomUIMessage,
 ): Promise<void> => {
-
-  const newAttachmentUrls = message.parts
+  const attachmentUrls = message.parts
     .filter((part) => part.type === "file")
     .map((part) => part.url);
 
-  await Promise.all([
-    insertMessage({
-      id: message.id,
+  await db.transaction(async (tx) => {
+    await Promise.all([
+      insertMessage(
+        {
+          id: message.id,
+          conversationId,
+          role: message.role,
+          metadata: message.metadata,
+          parts: message.parts,
+        },
+        tx,
+      ),
+      updateConversationTimestamp(conversationId, tx),
+    ]);
+    await linkPendingAttachments(
+      userId,
+      message.id,
       conversationId,
-      role: message.role,
-      metadata: message.metadata,
-      parts: message.parts,
-    }),
-    updateConversationTimestamp(conversationId),
-  ]);
-
-  await linkPendingAttachments(
-    userId,
-    message.id,
-    conversationId,
-    newAttachmentUrls,
-  );
+      attachmentUrls,
+      tx,
+    );
+  });
 };

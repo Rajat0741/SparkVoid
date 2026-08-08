@@ -1,7 +1,16 @@
-import { convertToModelMessages, toUIMessageStream, createUIMessageStreamResponse } from "ai";
+import {
+  convertToModelMessages,
+  toUIMessageStream,
+  createUIMessageStreamResponse,
+} from "ai";
 import { generateId } from "better-auth";
 import { type CustomUIMessage, type MetadataType } from "@/types";
-import { insertMessage, updateConversationTimestamp, recordAndGetUsage } from "@/lib/db/queries";
+import {
+  insertMessage,
+  updateConversationTimestamp,
+  recordAndGetUsage,
+} from "@/lib/db/queries";
+import { db } from "@/lib/db";
 import { Spark } from "../models/Spark";
 import { Void } from "../models/Void";
 import { ModelId } from "../validators";
@@ -15,11 +24,12 @@ export const streamAIResponse = async (
   userId: string,
   options: { persistMessages: boolean },
 ): Promise<Response> => {
-
   const agent = model === "void" ? Void : Spark;
   const baseModel = model ?? "spark";
 
-  Sentry.metrics.count('agent_selected', 1, { attributes: { agent: baseModel } });
+  Sentry.metrics.count("agent_selected", 1, {
+    attributes: { agent: baseModel },
+  });
 
   const result = agent.stream({
     messages: await convertToModelMessages(messages),
@@ -50,25 +60,29 @@ export const streamAIResponse = async (
     },
     onEnd: async ({ responseMessage }) => {
       const assistantMessage = responseMessage as CustomUIMessage;
-      const totalTokens = (assistantMessage?.metadata as MetadataType)?.totalTokens ?? 0;
+      const totalTokens =
+        (assistantMessage?.metadata as MetadataType)?.totalTokens ?? 0;
 
-      const persistOperations = options.persistMessages
-        ? [
-          insertMessage({
-            id: assistantMessage.id,
-            conversationId,
-            role: assistantMessage.role,
-            metadata: assistantMessage.metadata,
-            parts: assistantMessage.parts,
-          }),
-          updateConversationTimestamp(conversationId),
-        ]
-        : [];
-
-      await Promise.all([
-        recordAndGetUsage(userId, totalTokens),
-        ...persistOperations,
-      ]);
+      if (options.persistMessages) {
+        await db.transaction(async (tx) => {
+          await Promise.all([
+            insertMessage(
+              {
+                id: assistantMessage.id,
+                conversationId,
+                role: assistantMessage.role,
+                metadata: assistantMessage.metadata,
+                parts: assistantMessage.parts,
+              },
+              tx,
+            ),
+            updateConversationTimestamp(conversationId, tx),
+            recordAndGetUsage(userId, totalTokens, tx),
+          ]);
+        });
+      } else {
+        await recordAndGetUsage(userId, totalTokens);
+      }
     },
   });
 

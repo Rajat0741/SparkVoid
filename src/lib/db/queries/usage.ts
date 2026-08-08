@@ -1,14 +1,23 @@
-import { db } from "@/lib/db";
+import { db, type TransactionScope } from "@/lib/db";
 import { userUsage } from "../schema/user-usage";
 import { eq, sql } from "drizzle-orm";
 
-export async function getUsageByUserId(userId: string) {
-  const [row] = await db.select().from(userUsage).where(eq(userUsage.userId, userId));
+export async function getUsageByUserId(
+  userId: string,
+  executor: TransactionScope = db,
+) {
+  const [row] = await executor
+    .select()
+    .from(userUsage)
+    .where(eq(userUsage.userId, userId));
   return row;
 }
 
-export async function insertUsageIfNotExists(userId: string) {
-  const [row] = await db
+export async function insertUsageIfNotExists(
+  userId: string,
+  executor: TransactionScope = db,
+) {
+  const [row] = await executor
     .insert(userUsage)
     .values({ userId, tokensUsed: 0 })
     .onConflictDoNothing()
@@ -16,8 +25,12 @@ export async function insertUsageIfNotExists(userId: string) {
   return row;
 }
 
-export async function recordAndGetUsage(userId: string, tokenCount: number) {
-  const [row] = await db
+export async function recordAndGetUsage(
+  userId: string,
+  tokenCount: number,
+  executor: TransactionScope = db,
+) {
+  const [row] = await executor
     .insert(userUsage)
     .values({ userId, tokensUsed: tokenCount })
     .onConflictDoUpdate({
@@ -35,8 +48,11 @@ export async function recordAndGetUsage(userId: string, tokenCount: number) {
   return row;
 }
 
-export async function getUserUsage(userId: string) {
-  const [result] = await db
+export async function getUserUsage(
+  userId: string,
+  executor: TransactionScope = db,
+) {
+  const [result] = await executor
     .select()
     .from(userUsage)
     .where(eq(userUsage.userId, userId));

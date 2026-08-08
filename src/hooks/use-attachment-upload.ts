@@ -155,7 +155,6 @@ export function useAttachmentUpload(isTemporaryChat: boolean) {
     return () => window.clearTimeout(timeoutId);
     // Mode changes invalidate all attachments. Submission uses clearUploads
     // directly so successfully linked attachments are never deleted.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isTemporaryChat]);
 
   return {

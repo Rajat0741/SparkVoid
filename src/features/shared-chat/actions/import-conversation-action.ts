@@ -4,12 +4,12 @@ import { authActionClient } from "@/lib/safe-action";
 import {
   findSharedConversation,
   findMessagesByConversationId,
+  findAttachmentsByConversationId,
   insertConversation,
   insertMessageBatch,
-  deleteConversationById,
-  findAttachmentsByConversationId,
   insertAttachmentBatch,
 } from "@/lib/db/queries";
+import { db } from "@/lib/db";
 import { AppError } from "@/utils/app-error";
 import { generateId } from "ai";
 import { z } from "zod";
@@ -29,59 +29,57 @@ export const importConversationAction = authActionClient
 
     const newConversationId = generateId();
 
-    // Step 1: create the new conversation owned by the importing user
-    await insertConversation({
-      id: newConversationId,
-      userId: ctx.user.id,
-      title: conversation.title,
-      isShared: false,
+    const [sourceMessages, sourceAttachments] = await Promise.all([
+      findMessagesByConversationId(conversationId),
+      findAttachmentsByConversationId(conversationId),
+    ]);
+
+    const messageIdMap = new Map<string, string>();
+
+    const clonedMessages = sourceMessages.map((msg) => {
+      const newMsgId = generateId();
+      messageIdMap.set(msg.id, newMsgId);
+      return {
+        id: newMsgId,
+        conversationId: newConversationId,
+        role: msg.role,
+        parts: msg.parts,
+        metadata: msg.metadata,
+        createdAt: msg.createdAt,
+      };
     });
 
-    try {
-      const [sourceMessages, sourceAttachments] = await Promise.all([
-        findMessagesByConversationId(conversationId),
-        findAttachmentsByConversationId(conversationId),
-      ]);
+    const clonedAttachments = sourceAttachments.map((att) => ({
+      id: generateId(),
+      conversationId: newConversationId,
+      messageId: att.messageId
+        ? (messageIdMap.get(att.messageId) ?? null)
+        : null,
+      userId: ctx.user.id,
+      status: att.status,
+      fileName: att.fileName,
+      fileType: att.fileType,
+      fileSize: att.fileSize,
+      imagekitFileId: att.imagekitFileId,
+      url: att.url,
+      thumbnailUrl: att.thumbnailUrl,
+      createdAt: att.createdAt,
+    }));
 
-      const messageIdMap = new Map<string, string>();
-      
-      const clonedMessages = sourceMessages.map((msg) => {
-        const newMsgId = generateId();
-        messageIdMap.set(msg.id, newMsgId);
-        return {
-          id:             newMsgId,
-          conversationId: newConversationId,
-          role:           msg.role,
-          parts:          msg.parts,
-          metadata:       msg.metadata,
-          createdAt:      msg.createdAt,
-        };
-      });
-
-      await insertMessageBatch(clonedMessages);
-
-      if (sourceAttachments.length > 0) {
-        const clonedAttachments = sourceAttachments.map((att) => ({
-          id:             generateId(),
-          conversationId: newConversationId,
-          messageId:      att.messageId ? (messageIdMap.get(att.messageId) ?? null) : null,
-          userId:         ctx.user.id,
-          status:         att.status,
-          fileName:       att.fileName,
-          fileType:       att.fileType,
-          fileSize:       att.fileSize,
-          imagekitFileId: att.imagekitFileId,
-          url:            att.url,
-          thumbnailUrl:   att.thumbnailUrl,
-          createdAt:      att.createdAt,
-        }));
-        await insertAttachmentBatch(clonedAttachments);
+    await db.transaction(async (tx) => {
+      await insertConversation(
+        {
+          id: newConversationId,
+          userId: ctx.user.id,
+          title: conversation.title,
+        },
+        tx,
+      );
+      await insertMessageBatch(clonedMessages, tx);
+      if (clonedAttachments.length > 0) {
+        await insertAttachmentBatch(clonedAttachments, tx);
       }
-    } catch (error) {
-      console.error("Failed to copy messages/attachments during import — rolling back conversation:", error);
-      await deleteConversationById(newConversationId);
-      throw new AppError("Failed to import conversation", 500);
-    }
+    });
 
     return { newConversationId };
   });

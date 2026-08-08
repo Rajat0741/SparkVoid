@@ -1,11 +1,12 @@
-import { db } from "@/lib/db";
+import { db, type TransactionScope } from "@/lib/db";
 import { messages, MessageType, NewMessageType } from "@/lib/db/schema";
 import { and, asc, eq, inArray } from "drizzle-orm";
 
 export async function insertMessage(
   data: Omit<NewMessageType, "createdAt">,
+  executor: TransactionScope = db,
 ): Promise<NewMessageType> {
-  const [result] = await db
+  const [result] = await executor
     .insert(messages)
     .values(data)
     .onConflictDoUpdate({
@@ -21,15 +22,17 @@ export async function insertMessage(
 
 export async function insertMessageBatch(
   data: Array<Omit<NewMessageType, never>>,
+  executor: TransactionScope = db,
 ): Promise<void> {
   if (data.length === 0) return;
-  await db.insert(messages).values(data);
+  await executor.insert(messages).values(data);
 }
 
 export async function findMessagesByConversationId(
   conversationId: string,
+  executor: TransactionScope = db,
 ): Promise<MessageType[]> {
-  return db
+  return executor
     .select()
     .from(messages)
     .where(eq(messages.conversationId, conversationId))
@@ -39,9 +42,10 @@ export async function findMessagesByConversationId(
 export async function deleteMessagesByIds(
   conversationId: string,
   messageIds: string[],
+  executor: TransactionScope = db,
 ): Promise<void> {
   if (messageIds.length === 0) return;
-  await db
+  await executor
     .delete(messages)
     .where(
       and(
