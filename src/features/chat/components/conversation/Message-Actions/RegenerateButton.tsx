@@ -3,10 +3,7 @@
 import { useState } from "react";
 import { MessageAction } from "@/components/ai-elements/message";
 import { useChatContext } from "@/features/chat/components/layout/ChatProvider";
-import { useAction } from "next-safe-action/hooks";
-import { deleteMessagesAction } from "@/features/chat/actions/message-actions";
 import { RefreshCw } from "lucide-react";
-import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
@@ -24,7 +21,6 @@ interface RegenerateButtonProps {
 }
 
 export function RegenerateButton({ message }: RegenerateButtonProps) {
-  const conversationId = useChatContext((s) => s.conversationId);
   const messages = useChatContext((s) => s.messages);
   const setMessages = useChatContext((s) => s.setMessages);
   const regenerate = useChatContext((s) => s.regenerate);
@@ -35,65 +31,36 @@ export function RegenerateButton({ message }: RegenerateButtonProps) {
 
   // Identify index of the clicked message
   const idx = messages.findIndex((m) => m.id === message.id);
-
-  // Determine what to keep and what to delete
-  const isUserMsg = message.role === "user";
-  
-  const messagesToKeep = idx !== -1
-    ? (isUserMsg ? messages.slice(0, idx + 1) : messages.slice(0, idx))
-    : [];
-  
-  const messagesToDelete = idx !== -1
-    ? (isUserMsg ? messages.slice(idx + 1) : messages.slice(idx))
-    : [];
-
-  const messageIdsToDelete = messagesToDelete.map((m) => m.id);
-
-  const { execute, isExecuting } = useAction(deleteMessagesAction, {
-    onSuccess: () => {
-      // Truncate client state
-      setMessages(messagesToKeep);
-      // Trigger regenerate
-      regenerate({ body: { model: modelId } });
-      setIsOpen(false);
-    },
-    onError: () => {
-      toast.error("Failed to delete subsequent messages");
-    },
-  });
-
-  // If message not found, do not render button
   if (idx === -1) return null;
 
-  const handleRegenerate = () => {
-    if (messageIdsToDelete.length > 0) {
-      execute({ conversationId, messageIds: messageIdsToDelete });
-    } else {
-      // No subsequent messages to delete, just trigger regeneration
-      regenerate({ body: { model: modelId } });
-    }
-  };
+  // Determine what to keep on the client
+  const isUserMsg = message.role === "user";
+  const messagesToKeep = isUserMsg
+    ? messages.slice(0, idx + 1)
+    : messages.slice(0, idx);
 
-  const handleClick = () => {
-    if (messageIdsToDelete.length > 0) {
-      setIsOpen(true);
-    } else {
-      handleRegenerate();
+  const willDiscardMessages = messagesToKeep.length < messages.length;
+
+  const handleRegenerate = () => {
+    if (willDiscardMessages) {
+      setMessages(messagesToKeep);
     }
+    regenerate({ body: { model: modelId } });
+    setIsOpen(false);
   };
 
   // Block clicking during generation
-  const isBlocked = status === "streaming" || status === "submitted" || isExecuting;
+  const isBlocked = status === "streaming" || status === "submitted";
 
   return (
     <>
       <MessageAction
         tooltip="Regenerate response"
-        onClick={handleClick}
+        onClick={() => setIsOpen(true)}
         disabled={isBlocked}
         aria-label="Regenerate message"
       >
-        <RefreshCw size={14} className={isExecuting ? "animate-spin" : ""} />
+        <RefreshCw size={14} />
       </MessageAction>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -107,7 +74,7 @@ export function RegenerateButton({ message }: RegenerateButtonProps) {
           <DialogFooter className="gap-2">
             <DialogClose
               render={
-                <Button type="button" variant="outline" disabled={isExecuting} />
+                <Button type="button" variant="outline" />
               }
             >
               Cancel
@@ -115,9 +82,8 @@ export function RegenerateButton({ message }: RegenerateButtonProps) {
             <Button
               variant="destructive"
               onClick={handleRegenerate}
-              disabled={isExecuting}
             >
-              {isExecuting ? "Regenerating..." : "Regenerate"}
+              Regenerate
             </Button>
           </DialogFooter>
         </DialogContent>
