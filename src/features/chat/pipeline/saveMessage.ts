@@ -14,27 +14,18 @@ export const saveMessage = async (
   const attachmentUrls = message.parts
     .filter((part) => part.type === "file")
     .map((part) => part.url);
-
   await db.transaction(async (tx) => {
-    await Promise.all([
-      insertMessage(
-        {
-          id: message.id,
-          conversationId,
-          role: message.role,
-          metadata: message.metadata,
-          parts: message.parts,
-        },
-        tx,
-      ),
-      updateConversationTimestamp(conversationId, tx),
-    ]);
-    await linkPendingAttachments(
-      userId,
-      message.id,
-      conversationId,
-      attachmentUrls,
+    await insertMessage(
+      {
+        id: message.id,
+        conversationId,
+        role: message.role,
+        metadata: message.metadata,
+        parts: message.parts,
+      },
       tx,
     );
+    await linkPendingAttachments(userId, message.id, conversationId, attachmentUrls, tx);
+    await updateConversationTimestamp(conversationId, tx);
   });
 };

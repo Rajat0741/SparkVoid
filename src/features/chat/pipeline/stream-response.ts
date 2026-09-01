@@ -42,6 +42,11 @@ export const streamAIResponse = async (
     stream: agentResult.stream as any,
     generateMessageId: generateId,
     onError: (error) => {
+      console.error("Stream error:", error);
+      Sentry.captureException(error, {
+        extra: { conversationId, userId, model: baseModel },
+      });
+
       if (error instanceof AppError) {
         return error.message;
       }
@@ -59,33 +64,40 @@ export const streamAIResponse = async (
       }
     },
     onEnd: async ({ responseMessage }) => {
-      const assistantMessage = responseMessage as CustomUIMessage;
-      const totalTokens =
-        (assistantMessage?.metadata as MetadataType)?.totalTokens ?? 0;
+      try {
+        const assistantMessage = responseMessage as CustomUIMessage;
+        const totalTokens =
+          (assistantMessage?.metadata as MetadataType)?.totalTokens ?? 0;
 
-      if (options.persistMessages) {
-        await db.transaction(async (tx) => {
-          await Promise.all([
-            insertMessage(
-              {
-                id: assistantMessage.id,
-                conversationId,
-                role: assistantMessage.role,
-                metadata: assistantMessage.metadata,
-                parts: assistantMessage.parts,
-              },
-              tx,
-            ),
-            updateConversationTimestamp(conversationId, tx),
-            recordAndGetUsage(userId, totalTokens, tx),
-          ]);
+        if (options.persistMessages) {
+          await db.transaction(async (tx) => {
+            await Promise.all([
+              insertMessage(
+                {
+                  id: assistantMessage.id,
+                  conversationId,
+                  role: assistantMessage.role,
+                  metadata: assistantMessage.metadata,
+                  parts: assistantMessage.parts,
+                },
+                tx,
+              ),
+              updateConversationTimestamp(conversationId, tx),
+              recordAndGetUsage(userId, totalTokens, tx),
+            ]);
+          });
+        } else {
+          await recordAndGetUsage(userId, totalTokens);
+        }
+      } catch (error) {
+        console.error("Stream onEnd persistence error:", error);
+        Sentry.captureException(error, {
+          extra: { conversationId, userId, phase: "onEnd" },
         });
-      } else {
-        await recordAndGetUsage(userId, totalTokens);
       }
     },
   });
-
+  
   return createUIMessageStreamResponse({
     stream: uiStream,
   });
