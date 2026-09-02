@@ -4,6 +4,7 @@ import { fetchHistory } from "./fetchHistory";
 import { createConversation } from "./createConversation";
 import { saveMessage } from "./saveMessage";
 import { prepareMessage } from "./prepareMessage";
+import { inlineFileUrlParts } from "../../../utils/inlineFileUrls";
 import { streamAIResponse } from "./stream-response";
 import { db } from "@/lib/db";
 import {
@@ -65,8 +66,9 @@ export const executePersistentPipeline = async ({
   await saveMessage(userId, conversationId, userMessage);
 
   const messages = prepareMessage(historyToKeep, userMessage);
+  const inlinedMessages = await inlineFileUrlParts(messages);
 
-  return streamAIResponse(messages, conversationId, model, userId, {
+  return streamAIResponse(inlinedMessages, conversationId, model, userId, {
     persistMessages: true,
   });
 };
